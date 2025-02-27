@@ -5,7 +5,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost/Geometrik/pages/index.html",
+            "url": "http://localhost/Geometrik/assets/pages/index.html",
             "webRoot": "${workspaceFolder}",
             "sourceMaps": true,
         },
