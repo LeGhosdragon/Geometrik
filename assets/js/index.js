@@ -58,6 +58,7 @@ window.addEventListener('resize', () => {
     app.stage.removeChildren(); // Remove previous grid
     drawGridBackground(); // Redraw the grid with new dimensions
 });
+
 function resizeApp()
 {
     let width = window.innerWidth;
@@ -119,12 +120,7 @@ function updateBackgroundColor(delta) {
     // Get the contrasting color
     const { r: contrastR, g: contrastG, b: contrastB } = getContrastingColor(bgR, bgG, bgB);
     ennemiColor = (contrastR << 16) | (contrastG << 8) | contrastB;
-
-    // Output the contrasting color
 }
-
-
-
 
 
 function setup() {
@@ -134,7 +130,7 @@ function setup() {
 
     // Create monsters every 
     setInterval(() => { 
-      ajouterMonstre(app, 20);////////////////////////////////////////
+      ajouterMonstre(app, 20);//////////////////////////////////////////////////////////////
     }, 1000);
 
     // Create the `joueur` sprite
@@ -216,7 +212,7 @@ function play(delta) {
 
  updateBackgroundColor(); // Update the background color
   monstres.forEach(monstre => {
-      bouger(joueur, monstre, 1,-(xF - xI ), -(yF - yI), 5);
+      bouger(joueur, monstre, 1,-(xF - xI ), -(yF - yI), 3);///////////////////////////////////
   });
 
   
@@ -318,7 +314,7 @@ function oscillatePolygon(ennemi, sides, size = 1) {
 // Function to check and handle collision avoidance between monsters
 function avoidMonsterCollision(monstre, monstres, size = 1) {
     const minDistance = 25; // Minimum distance between monsters to avoid collision
-    const avoidFactor = 1; // Smaller value for less avoidance movement
+    const avoidFactor = 1.4; // Smaller value for less avoidance movement
 
     monstres.forEach(otherMonstre => {
         // Skip self-collision check (monstre vs. itself)
@@ -360,7 +356,7 @@ function faireJoueur(app) {
     return joueur;
 }
 
-function createShape(numSides = 3, size = 1, x = 0, y = 0, color = 0xff0000) {
+function createShape(x = 0, y = 0) {
     const shape = new PIXI.Graphics();
 
     shape.x = x;
@@ -388,7 +384,7 @@ function ajouterMonstre(app, amount = 1) {
         }
 
         // Create a monster at the random position
-        const poly = createShape(5,0.5, randomX, randomY, 0xccff99);
+        const poly = createShape(randomX, randomY);
 
         // Add the monster to the stage and store it in the monstres array
         app.stage.addChild(poly);
@@ -434,4 +430,132 @@ function keyboard(keyCode) {
     window.addEventListener("keydown", key.downHandler.bind(key), false);
     window.addEventListener("keyup", key.upHandler.bind(key), false);
     return key;
+}
+
+
+
+class monstre {
+    static monstres = [];
+
+    constructor(x, y, sides, size, type, vitesse = 1, hp = 100, dmg = 1, elapsedTime = 0, couleur = 0xff0000) {
+        this.size = size;
+        this.vitesse = vitesse;
+        this.couleur = couleur;
+        this.sides = sides;
+        this.type = type
+        this.hp = hp;
+        this.dmg = dmg;
+        this.body = this.createShape(x, y);
+        this.elapsedTime = elapsedTime;
+        monstres.push(this);
+    }
+
+    // Ceci est la référence à la forme du monstre en PIXI, alors x et y sont les coordonnées de la forme
+    createShape(x = 0, y = 0) {
+        const shape = new PIXI.Graphics();
+        shape.x = x;
+        shape.y = y;
+        shape.sides = this.sides;
+        shape.pivot.set(0, 0);
+        return shape;
+    }
+
+    vecteurVersLeJoueur(joueur) {
+        let dx = joueur.x + joueur.width / 2 - this.getX();
+        let dy = joueur.y + joueur.height / 2 - this.getY();
+        let magnitude = Math.sqrt(dx * dx + dy * dy);
+      
+        return { x: vitesse * dx / magnitude, y: vitesse * dy / magnitude };
+    }
+
+    getX() {
+        return this.body.x;
+    }
+    setX(x) {
+        this.body.x = x;
+    }
+    getY() {
+        return this.body.y;
+    }
+    setY(y) {
+        this.body.y = y;
+    }
+    getCouleur() {
+        return this.couleur;
+    }
+    setCouleur(couleur) {
+        this.couleur = couleur;
+        
+        this.body.endFill();
+    }    
+
+}
+
+class monstreNorm extends monstre {
+    constructor(x, y, sides = 0.3, size, type = "normal") {
+        super(x, y, sides, size, type);
+    }
+
+    bouger(joueur, deltaX, deltaY) {
+        let moveVector = vecteurVersLeJoueur(joueur);
+        this.setX(getX() + moveVector.x + deltaX);
+        this.setY(getY() + moveVector.y + deltaY);
+        this.body.rotation += 0.02;
+
+
+        // Call the avoid collision function for all monsters
+        avoidMonsterCollision();
+
+        oscillatePolygon(this.size);
+    }
+    
+    oscillatePolygon(size) {
+        if (sides < 3) return; // A polygon must have at least 3 sides
+    
+        this.elapsed += 3;
+        let newSize = size + 0.05 * Math.cos(this.elapsed / 50.0);
+        this.body.clear();
+        this.body.beginFill(ennemiColor);
+    
+        const radius = newSize * 50; // Adjust size scaling
+        const angleStep = (2 * Math.PI) / sides;
+    
+        this.body.moveTo(radius * Math.cos(0), radius * Math.sin(0));
+    
+        for (let i = 1; i <= sides; i++) {
+            let angle = i * angleStep;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+    
+        this.body.closePath();
+        this.body.endFill();
+    }
+
+    // Function to check and handle collision avoidance between monsters
+    avoidMonsterCollision() {
+        const minDistance = 25; // Minimum distance between monsters to avoid collision
+        const avoidFactor = 1.4; // Smaller value for less avoidance movement
+
+        monstres.forEach(otherMonstre => {
+            // Skip self-collision check (monstre vs. itself)
+            if (this === otherMonstre) return;
+
+            let dx = this.getX() - otherMonstre.getX();
+            let dy = this.getY() - otherMonstre.getY();
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < minDistance) {
+                // Apply smaller avoidance: move the monster away by a smaller factor
+                let angle = Math.atan2(dy, dx);
+                let avoidX = Math.cos(angle) * avoidFactor; // Smaller movement to avoid collision
+                let avoidY = Math.sin(angle) * avoidFactor;
+
+                // Move the monster slightly away from the other monster
+                this.setX(this.getX() + avoidX);
+                this.setY(this.getY() + avoidY);
+            }
+        });
+    }
 }
