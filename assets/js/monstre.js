@@ -1,9 +1,10 @@
 
 export class Monstre {
     static monstres = [];
-    constructor(x, y, sides, size, type, vitesse = 1, hp = 100, dmg = 1, elapsedTime = 0, couleur = 0xff0000, oscillates = true, spins = true) {
+    constructor(x, y, sides, size, type, vitesse = 1, spinSpeed = 0.02, hp = 100, dmg = 1, elapsedTime = 0, couleur = 0xff0000, oscillates = true, spins = true) {
         this.size = size;
         this.vitesse = vitesse;
+        this.spinSpeed = spinSpeed;
         this.couleur = couleur;
         this.sides = sides;
         this.type = type
@@ -33,44 +34,6 @@ export class Monstre {
         return { x: this.vitesse * dx / magnitude, y: this.vitesse * dy / magnitude };
     }
 
-    getX() {
-        return this.body.x;
-    }
-    setX(x) {
-        this.body.x = x;
-    }
-    getY() {
-        return this.body.y;
-    }
-    setY(y) {
-        this.body.y = y;
-    }
-    getCouleur() {
-        return this.couleur;
-    }
-
-
-
-}
-
-export class MonstreNorm extends Monstre {
-    constructor(x, y, sides, size = 0.3, type = "normal") {
-        super(x, y, sides, size, type);
-    }
-
-    bouger(joueur, deltaX, deltaY, ennemiColor) {
-        let moveVector = this.vecteurVersLeJoueur(joueur);
-        this.setX(this.getX() + moveVector.x + deltaX);
-        this.setY(this.getY() + moveVector.y + deltaY);
-        this.spins ? this.body.rotation += 0.02 : 0;
-
-
-        // Call the avoid collision function for all monsters
-        this.avoidMonsterCollision();
-
-        this.actualiserPolygone(ennemiColor);
-    }
-    
     actualiserPolygone(ennemiColor) {
         if (this.sides < 3) return; // A polygon must have at least 3 sides
     
@@ -97,29 +60,74 @@ export class MonstreNorm extends Monstre {
         this.body.endFill();
     }
 
-    // Function to check and handle collision avoidance between monsters
-    avoidMonsterCollision() {
-        const minDistance = 25; // Minimum distance between monsters to avoid collision
-        const avoidFactor = 1; // Smaller value for less avoidance movement
+    bouger(joueur, deltaX, deltaY, ennemiColor) {
+        let moveVector = this.vecteurVersLeJoueur(joueur);
+        this.setX(this.getX() + moveVector.x + deltaX);
+        this.setY(this.getY() + moveVector.y + deltaY);
+        this.spins ? this.body.rotation += this.spinSpeed : 0;
+        this.avoidMonsterCollision();
+        this.actualiserPolygone(ennemiColor);
+    }
 
-        Monstre.monstres.forEach(otherMonstre => {
-            // Skip self-collision check (monstre vs. itself)
-            if (this === otherMonstre) return;
+        // Function to check and handle collision avoidance between monsters
+        avoidMonsterCollision() {
+            const minDistance = 75 * this.size; // Minimum distance between monsters to avoid collision
+            const avoidFactor = 1; // Smaller value for less avoidance movement
+    
+            Monstre.monstres.forEach(otherMonstre => {
+                // Skip self-collision check (monstre vs. itself)
+                if (this === otherMonstre) return;
+    
+                let dx = this.getX() - otherMonstre.getX();
+                let dy = this.getY() - otherMonstre.getY();
+                let distance = Math.sqrt(dx * dx + dy * dy);
+    
+                if (distance < minDistance) {
+                    // Apply smaller avoidance: move the monster away by a smaller factor
+                    let angle = Math.atan2(dy, dx);
+                    let avoidX = Math.cos(angle) * avoidFactor; // Smaller movement to avoid collision
+                    let avoidY = Math.sin(angle) * avoidFactor;
+    
+                    // Move the monster slightly away from the other monster
+                    this.setX(this.getX() + avoidX);
+                    this.setY(this.getY() + avoidY);
+                }
+            });
+        }
 
-            let dx = this.getX() - otherMonstre.getX();
-            let dy = this.getY() - otherMonstre.getY();
-            let distance = Math.sqrt(dx * dx + dy * dy);
+    getX() {
+        return this.body.x;
+    }
+    setX(x) {
+        this.body.x = x;
+    }
+    getY() {
+        return this.body.y;
+    }
+    setY(y) {
+        this.body.y = y;
+    }
+    getCouleur() {
+        return this.couleur;
+    }
 
-            if (distance < minDistance) {
-                // Apply smaller avoidance: move the monster away by a smaller factor
-                let angle = Math.atan2(dy, dx);
-                let avoidX = Math.cos(angle) * avoidFactor; // Smaller movement to avoid collision
-                let avoidY = Math.sin(angle) * avoidFactor;
 
-                // Move the monster slightly away from the other monster
-                this.setX(this.getX() + avoidX);
-                this.setY(this.getY() + avoidY);
-            }
-        });
+
+}
+
+export class MonstreNormal extends Monstre {
+    constructor(x, y, sides, size = 0.3, type = "normal") {
+        super(x, y, sides, size, type);
+    }
+}
+
+export class MonstreRunner extends Monstre {
+    constructor(x, y, sides, size = 0.2, type = "runner") {
+        super(x, y, sides, size, type, 3, 0.5);
+    }
+}
+export class MonstreTank extends Monstre {
+    constructor(x, y, sides, size, type = "tank") {
+        super(x, y, sides, size, type, 0.4);
     }
 }

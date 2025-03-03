@@ -1,5 +1,5 @@
 import { setupKeyboardControls } from './mouvement.js';
-import { Monstre, MonstreNorm } from './monstre.js';
+import { Monstre, MonstreNormal, MonstreRunner, MonstreTank } from './monstre.js';
 import { drawGridBackground, updateBackgroundColor } from './background.js';
 import { faireJoueur, onPlayerCollision } from './joueur.js';
 import { createSword, isSwordCollidingWithMonster, onSwordHitEnemy, playSwordSwing} from './weapons.js';
@@ -17,7 +17,7 @@ const Application = PIXI.Application,
     TextStyle = PIXI.TextStyle;
 
 // Create a Pixi Application
-let joueur, message, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, monstres = Monstre.monstres, sword, previousSwordPosition, swordAttackSpeed = 1;
+let joueur, message, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, monstres = Monstre.monstres, sword, previousSwordPosition, swordAttackSpeed = 1, hasSword = true;
 
 
 const app = new Application({
@@ -36,15 +36,25 @@ function setup() {
     // Create the `joueur` sprite
     joueur = faireJoueur(app);
 
-    // Create the spinning sword with trail
-    sword = createSword(app, 10, 100, 0x0000FF, joueur);  // Blue rectangle of 10x80
-
+    if(hasSword){
+        // Create the spinning sword with trail
+        sword = createSword(app, 10, 100, 0x0000FF, joueur);  // Blue rectangle of 10x80
+    }
     // Create monsters at regular intervals
     let i = 0;
     let j = 0;
+    let k = 0;
+    let l = 0;
     setInterval(() => { 
-        ajouterMONSTRE(app, 1, "normal", 3 + (i % 5 == 0 ? j++ : j - 1));//////////////////////////////////////////////////////////////
+        ajouterMONSTRE(app, 10, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));//////////////////////////////////////////////////////////////
         i++;
+    }, 1000);
+    setInterval(() => { 
+        ajouterMONSTRE(app, 1, "runner", 4);//////////////////////////////////////////////////////////////
+    }, 1000);
+    setInterval(() => { 
+        ajouterMONSTRE(app, 1, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));//////////////////////////////////////////////////////////////
+        k++;
     }, 1000);
 
     setupKeyboardControls(joueur);
@@ -88,12 +98,16 @@ function play() {
 
     ennemiColor = updateBackgroundColor(app);
 
-    playSwordSwing(app, joueur, sword, cursorX, cursorY, previousSwordPosition, swordAttackSpeed);
-
+    if(hasSword){
+        playSwordSwing(app, joueur, sword, cursorX, cursorY, previousSwordPosition, swordAttackSpeed);
+    }
     monstres.forEach(monstre => {
         monstre.bouger(joueur, -(xF - xI), -(yF - yI), ennemiColor);
-        if (isSwordCollidingWithMonster(monstre, sword)) {
-            onSwordHitEnemy(app, monstre);  
+        if(hasSword)
+        {
+            if (isSwordCollidingWithMonster(monstre, sword)) {
+                onSwordHitEnemy(app, monstre);  
+            }
         }
     });
 
@@ -101,12 +115,28 @@ function play() {
 }
 
 
-function ajouterMONSTRE(app, amount = 1, type = "normal", sides = 3, size = 0.3) {    
+function ajouterMONSTRE(app, amount = 1, type = "normal", sides = 3, size = 0.3) {  
+    if(type == "normal") { 
     for (let i = 0; i < amount; i++) {
         let rngPos = posRandomExterieur(app);
-        const monstre = new MonstreNorm(rngPos[0], rngPos[1], sides, size, type);
+        const monstre = new MonstreNormal(rngPos[0], rngPos[1], sides, size, type);
         app.stage.addChild(monstre.body);
         monstres.push(monstre);
+    }} else if(type == "runner") {
+        for (let i = 0; i < amount; i++) {
+            let rngPos = posRandomExterieur(app);
+            const monstre = new MonstreRunner(rngPos[0], rngPos[1], sides, size, type);
+            app.stage.addChild(monstre.body);
+            monstres.push(monstre);
+        }
+    }
+    else if(type == "tank") {
+        for (let i = 0; i < amount; i++) {
+            let rngPos = posRandomExterieur(app);
+            const monstre = new MonstreTank(rngPos[0], rngPos[1], sides, 0.45, type);
+            app.stage.addChild(monstre.body);
+            monstres.push(monstre);
+        }
     }
 }
 
