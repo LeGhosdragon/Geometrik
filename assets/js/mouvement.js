@@ -32,10 +32,19 @@ export function keyboard(keyCode) {
 }
 
 export function setupKeyboardControls(joueur) {
-    const left = keyboard(37),
-        up = keyboard(38),
-        right = keyboard(39),
-        down = keyboard(40);
+    console.log("this is working");
+    
+    // Arrow keys
+    const leftArrow = keyboard(37),  // Left arrow
+        upArrow = keyboard(38),     // Up arrow
+        rightArrow = keyboard(39), // Right arrow 
+        downArrow = keyboard(40); // Down arrow
+    
+    // WASD keys
+    const leftWASD = keyboard(65),   // 'A' key
+        upWASD = keyboard(87),       // 'W' key
+        rightWASD = keyboard(68),    // 'D' key
+        downWASD = keyboard(83);     // 'S' key
 
     let moveX = 0, moveY = 0;
     const speed = 3;
@@ -50,15 +59,29 @@ export function setupKeyboardControls(joueur) {
         }
     }
 
-    left.press = () => { moveX = -1; updateVelocity(); };
-    left.release = () => { if (moveX === -1) moveX = 0; updateVelocity(); };
+    // Arrow keys press and release
+    leftArrow.press = () => { moveX = -1; updateVelocity(); };
+    leftArrow.release = () => { if (moveX === -1) moveX = 0; updateVelocity(); };
 
-    right.press = () => { moveX = 1; updateVelocity(); };
-    right.release = () => { if (moveX === 1) moveX = 0; updateVelocity(); };
+    rightArrow.press = () => { moveX = 1; updateVelocity(); };
+    rightArrow.release = () => { if (moveX === 1) moveX = 0; updateVelocity(); };
 
-    up.press = () => { moveY = -1; updateVelocity(); };
-    up.release = () => { if (moveY === -1) moveY = 0; updateVelocity(); };
+    upArrow.press = () => { moveY = -1; updateVelocity(); };
+    upArrow.release = () => { if (moveY === -1) moveY = 0; updateVelocity(); };
 
-    down.press = () => { moveY = 1; updateVelocity(); };
-    down.release = () => { if (moveY === 1) moveY = 0; updateVelocity(); };
+    downArrow.press = () => { moveY = 1; updateVelocity(); };
+    downArrow.release = () => { if (moveY === 1) moveY = 0; updateVelocity(); };
+
+    // WASD keys press and release
+    leftWASD.press = () => { moveX = -1; updateVelocity(); };
+    leftWASD.release = () => { if (moveX === -1) moveX = 0; updateVelocity(); };
+
+    rightWASD.press = () => { moveX = 1; updateVelocity(); };
+    rightWASD.release = () => { if (moveX === 1) moveX = 0; updateVelocity(); };
+
+    upWASD.press = () => { moveY = -1; updateVelocity(); };
+    upWASD.release = () => { if (moveY === -1) moveY = 0; updateVelocity(); };
+
+    downWASD.press = () => { moveY = 1; updateVelocity(); };
+    downWASD.release = () => { if (moveY === 1) moveY = 0; updateVelocity(); };
 }
