@@ -51,11 +51,11 @@ export function setupKeyboardControls(joueur) {
 
     function updateVelocity() {
         if (moveX !== 0 && moveY !== 0) {
-            joueur.vx = (moveX / Math.sqrt(2)) * speed;
-            joueur.vy = (moveY / Math.sqrt(2)) * speed;
+            joueur.setVX( (moveX / Math.sqrt(2)) * speed);
+            joueur.setVY(  (moveY / Math.sqrt(2)) * speed);
         } else {
-            joueur.vx = moveX * speed;
-            joueur.vy = moveY * speed;
+            joueur.setVX( moveX * speed);
+            joueur.setVY( moveY * speed);
         }
     }
 
