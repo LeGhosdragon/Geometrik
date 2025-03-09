@@ -1,11 +1,14 @@
+//import { Exp } from "./experience";
 export class Monstre {
     static monstres = [];
     static cleanMonstres = [];
     static app = null;
+    static showLife = false;
+
 
     constructor(x, y, sides, size, type, vitesse = 1, spinSpeed = 0.02, baseHP = 100, baseDMG = 1, couleur = 0xff0000) {
         this.isIn = true;
-        this.lifeShow = false;
+        this.showLife = Monstre.showLife;
         this.size = size;
         this.vitesse = vitesse;
         this.spinSpeed = spinSpeed;
@@ -21,6 +24,7 @@ export class Monstre {
         this.oscillates = true;
         this.spins = true;
         this.hasSwordHit = false;
+        this.hasExplHit = false;
     }
 
     static addApp(appInput) {
@@ -46,7 +50,7 @@ export class Monstre {
 
     actualiserPolygone(ennemiColor) {
         if (this.sides < 3) return;
-    
+        this.couleur = ennemiColor;
         this.elapsedTime += 3;
         let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
         this.body.clear();
@@ -80,14 +84,13 @@ export class Monstre {
         this.avoidMonsterCollision();
         this.actualiserPolygone(ennemiColor);
 
-        if(this.lifeShow && this.currentHP <= 0)
+        if(this.showLife && this.currentHP > 0)
         {
             // Update HP text position
             this.hpText.x = this.getX();
             this.hpText.y = this.getY() - 10;
             this.hpText.text = this.currentHP;
         }
-
     }
 
     static cleanup() {
@@ -157,6 +160,11 @@ export class Monstre {
 
     updateHP() {
         if (this.currentHP <= 0) {
+            // Trigger death animation before removal
+            this.disintegrationAnimation();
+
+            //new Exp(this.getX(), this.getY(), 1);
+    
             let index = Monstre.monstres.indexOf(this);
             Monstre.app.stage.removeChild(this.hpText);
             if (index !== -1) {
@@ -164,25 +172,134 @@ export class Monstre {
             }
             // Clear the monster's graphics
             this.body.clear();
-            
+            delete this;
             return;
         }
-        
-        if(this.lifeShow)
-        {
+    
+        if (this.showLife) {
             this.hpText.text = this.currentHP;
             this.hpText.x = this.getX();
             this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
         }
-        else{Monstre.app.stage.removeChild(this.hpText);}
-        return
-
     }
+    
+    disintegrationAnimation() {
+        const particleCount = 50; // Number of particles
+        const particles = [];
+        const gravity = 2; // Gravity force pulling particles downward
+        const drag = 0.98; // Drag to slow down particles over time
+    
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            const particle = new PIXI.Graphics();
+            particle.beginFill(this.couleur); // Red color for particles (you can change this)
+            particle.drawCircle(0, 0, 2); // Small particles
+            particle.endFill();
+            particle.x = this.getX(); // Starting position of the monster
+            particle.y = this.getY();
+            particle.alpha = 1; // Fully opaque initially
+    
+            // Random initial velocity
+            const angle = Math.random() * 2 * Math.PI;
+            const speed = Math.random() * 2 + 1; // Random speed for initial velocity
+            particle.vx = Math.cos(angle) * speed;
+            particle.vy = Math.sin(angle) * speed;
+    
+            Monstre.app.stage.addChild(particle);
+            particles.push(particle);
+        }
+    
+        // Animate the particles' movement with gravity and fading
+        let disintegrationInterval = setInterval(() => {
+            particles.forEach((particle, index) => {
+                // Apply gravity
+                particle.vy += gravity; // Increase vertical speed due to gravity
+    
+                // Apply drag to slow down particles over time
+                particle.vx *= drag; // Horizontal speed decreases over time
+                particle.vy *= drag; // Vertical speed decreases over time
+    
+                // Move the particle based on velocity
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+    
+                // Fade out over time
+                particle.alpha -= 0.03; // Fade out gradually
+    
+                // Remove particle when fully faded or goes off-screen
+                if (particle.alpha <= 0 || particle.y > Monstre.app.view.height) {
+                    Monstre.app.stage.removeChild(particle); // Remove particle from stage
+                    particles.splice(index, 1); // Remove from particles array
+                }
+            });
+    
+            // Stop the animation once all particles are removed
+            if (particles.length === 0) {
+                clearInterval(disintegrationInterval);
+            }
+        }, 20); // Update every 20ms for smooth animation
+    }
+    
+    
+    
       
     
-    endommagé(dmg) {
+    endommagé(dmg, type) {
         this.setHP(this.getHP() - dmg);
+        this.createHitEffect(this, dmg);
+        if(type == "sword")
+        {
+            setTimeout(()=> {
+                this.setSwordHit(false);
+            }, 300);
+        }
+        if(type == "explosion")
+        {
+            setTimeout(()=> {
+                this.setExplosionHit(false);
+            }, 300);
+        }
         this.updateHP();
+    }
+
+
+    createHitEffect(monstre, damage) {
+        // Create the damage text
+        const damageText = new PIXI.Text(damage, {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            fill: 0xFF0000,
+            align: 'center',
+            fontWeight: 'bold'
+        });
+    
+        // Set initial position based on monster's position
+        damageText.x = monstre.getX();
+        damageText.y = monstre.getY();
+    
+        // Add the damage text to the stage
+        Monstre.app.stage.addChild(damageText);
+    
+        // Set the initial scale and alpha
+        damageText.scale.set(1);
+        damageText.alpha = 1;
+    
+        // Animation to move the text upwards and fade out
+        Monstre.app.ticker.add(() => {
+            damageText.y -= 2;  // Move text upwards
+            damageText.alpha -= 0.02;  // Fade out
+    
+            // Shrink the text slightly over time
+            damageText.scale.x -= 0.01;
+            damageText.scale.y -= 0.01;
+    
+            // Remove the text once it's fully transparent
+            if (damageText.alpha <= 0) {
+                Monstre.app.stage.removeChild(damageText);
+            }
+        });
     }
 
     getX() { return this.body.x; }
@@ -198,14 +315,10 @@ export class Monstre {
     getHP() { return this.currentHP; }
     setDMG(dmg) { this.baseDMG = dmg; }
     getDMG() { return this.baseDMG; }
-    setSwordHit(bool)
-    {
-        this.hasSwordHit = bool;
-    }
-    getSwordHit()
-    {
-        return this.hasSwordHit;
-    }
+    setSwordHit(bool){this.hasSwordHit = bool;}
+    getSwordHit(){return this.hasSwordHit;}
+    setExplosionHit(bool){this.hasExplHit = bool;}
+    getExplosionHit(){return this.hasExplHit;}
 }
 
 export class MonstreNormal extends Monstre {
@@ -222,7 +335,7 @@ export class MonstreNormal extends Monstre {
 export class MonstreRunner extends Monstre {
     constructor(x, y, sides) {
         const type = "runner";
-        const size = 0.2;
+        const size = 0.25;
         const speed = 3;
         const spinSpeed = 0.5;
         const baseHP = 15;

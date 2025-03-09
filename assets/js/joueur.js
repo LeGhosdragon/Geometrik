@@ -1,6 +1,9 @@
 export class Joueur {
 
     constructor(app, size = 16, vitesse = 1, baseHP = 100, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0x9966FF, weapons = []) {
+        this.exp = 0;
+        this.distanceDattraction = 150;
+        this.isImmune = false;
         this.app = app;
         this.size = size;
         this.vitesse = vitesse;
@@ -18,10 +21,7 @@ export class Joueur {
     faireJoueur() {
         const joueur = new PIXI.Graphics();
         joueur.beginFill(this.couleur);
-    
-        
         joueur.drawCircle(this.size, this.size, this.size);
-    
         joueur.endFill();
         
         joueur.x = window.innerWidth/2;
@@ -34,24 +34,44 @@ export class Joueur {
     }
 
 
-    onPlayerCollision(monstres, message) {
+    onPlayerCollision(monstres) {
         let collidedMonstres = [];
     
         monstres.forEach(monstre => {
             // Check for collision between player and each monster
             if (this.hitTestCircle(monstre)) {
-                // console.log('Player touched an enemy!');
-                // message.text = "Player hit an enemy!";
-                // monstre.tint += 0x9966FF; // Change monster color upon collision (optional)
                 collidedMonstres.push(monstre); // Store the collided monster
             }
         });
-    
+            
         // Remove collided monsters from the main array
         collidedMonstres.forEach(monstre => {
-            this.endommagé(monstre.getDMG());
-            monstre.setHP(0);
-            
+            if(!this.isImmune)
+            {
+                this.endommagé(monstre.getDMG());
+                this.isImmune = true;
+                setTimeout(() => {this.isImmune = false;}, 750);
+            }
+
+            // Now resolve overlap by pushing the monster apart (player stays immovable)
+            let dx = this.getX() + this.getWidth()/2  - monstre.getX() - monstre.size / 2;
+            let dy = this.getY() + this.getHeight()/2 - monstre.getY() - monstre.size / 2;
+
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            const minDistance = this.getWidth()/2.5 + monstre.getWidth() / 2; // Minimum distance to avoid overlap
+
+            if (distance < minDistance) {
+                let overlap = minDistance - distance; // Calculate the overlap distance
+                let angle = Math.atan2(dy, dx); // Get angle of collision
+
+                // Push the monster apart from the player along the collision vector
+                let pushX = Math.cos(angle) * overlap;
+                let pushY = Math.sin(angle) * overlap;
+
+                // Move the monster away from the player
+                monstre.setX(monstre.getX() - pushX);
+                monstre.setY(monstre.getY() - pushY);
+            }
         });
     }
     
@@ -59,8 +79,8 @@ export class Joueur {
     // Collision detection based on circle (using radius)
     hitTestCircle(autreCercle) {
         // Define the distance between the centers of the two objects
-        let dx = this.getX() + this.getWidth()/2 - autreCercle.getX();
-        let dy = this.getY() + this.getHeight()/2 - autreCercle.getY();
+        let dx = this.getX() + this.getWidth()/2.3 - autreCercle.getX();
+        let dy = this.getY() + this.getHeight()/2.3 - autreCercle.getY();
     
         // Calculate the distance between the centers
         let distance = Math.sqrt(dx * dx*0.9 + dy * dy*0.9);
@@ -90,13 +110,19 @@ export class Joueur {
         return text;
     }
 
+    addExp(qty)
+    {
+        this.exp += qty;
+        this.updateHP();
+    }
+
     // Update HP display
     updateHP() {
         if(this.currentHP <= 0)
         {
             this.setHP(0);
         }
-        this.hpText.text = this.currentHP;
+        this.hpText.text = "hp:" + this.currentHP + ", xp:" + this.exp;
         this.hpText.x = this.getX() + this.size;
         this.hpText.y = this.getY() + this.size;
     }
@@ -105,6 +131,11 @@ export class Joueur {
     {
         this.setHP(this.getHP() - dmg);
         this.updateHP();
+    }
+
+    getMagDist()
+    {
+        return this.distanceDattraction;
     }
 
 

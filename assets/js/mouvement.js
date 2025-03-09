@@ -31,14 +31,16 @@ export function keyboard(keyCode) {
     return key;
 }
 
-export function setupKeyboardControls(joueur) {
+export function setupKeyboardControls(joueur, sword, mstr) {
     console.log("this is working");
     
     // Arrow keys
     const leftArrow = keyboard(37),  // Left arrow
         upArrow = keyboard(38),     // Up arrow
         rightArrow = keyboard(39), // Right arrow 
-        downArrow = keyboard(40); // Down arrow
+        downArrow = keyboard(40), // Down arrow
+        enableSword = keyboard(81),
+        enableText = keyboard(84);
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -57,6 +59,34 @@ export function setupKeyboardControls(joueur) {
             joueur.setVX( moveX * speed);
             joueur.setVY( moveY * speed);
         }
+    }
+
+    enableSword.press = () => {
+        if(sword.hasSword)
+        {
+            sword.hasSword = false;
+
+            sword.body.visible = false;
+        }
+        else{
+            sword.hasSword = true;
+            sword.body.visible = true;
+        }
+    }
+
+    enableText.press = () => {
+        mstr.showLife = mstr.showLife ?  false : true;
+        mstr.monstres.forEach(monstre => {
+            if(mstr.showLife)
+            {
+                monstre.showLife = true;
+                monstre.hpText = monstre.createHPText();
+            }
+            else{
+                monstre.showLife = false;
+                
+            }
+        });
     }
 
     // Arrow keys press and release

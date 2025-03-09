@@ -2,7 +2,8 @@ import { setupKeyboardControls } from './mouvement.js';
 import { Monstre, MonstreNormal, MonstreRunner, MonstreTank } from './monstre.js';
 import { drawGridBackground, updateBackgroundColor } from './background.js';
 import { Joueur } from './joueur.js';
-import { createSword, isSwordCollidingWithMonster, onSwordHitEnemy, playSwordSwing} from './weapons.js';
+import { Weapon, Sword, Explosion } from './weapons.js';
+import { Exp } from './experience.js';
 
 
 // Aliases
@@ -16,13 +17,32 @@ const Application = PIXI.Application,
     Text = PIXI.Text,
     TextStyle = PIXI.TextStyle;
 
+
+
+//DEBUG ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// la touche Q active ou désactive l'épée
+// la touche T active ou désactive les textes de vie des ennemis
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Create a Pixi Application
 
-//CHANGE THE SWING OF THE SWORD SO THAT IT STARTS WHERE THE PLAYER HAS HIS CURSOR BUT DOESNT FOLLOW WHEN ITS SWINGING
-
 //noComeBacks makes it so the spawner stops to let in the ones that were lost tot the cleansing !
-let joueur, message, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, monstres = Monstre.monstres, sword, previousSwordPosition, swordAttackSpeed = 1, hasSword = true, areaSize = 2, noComeBacks = false;
-
+let joueur, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, 
+monstres = Monstre.monstres, explosions = Explosion.explosions, exps = Exp.exps, 
+sword, hasSword = false, noComeBacks = false, dedPos = 0, mstr = Monstre,
+cursorX, cursorY;
 
 const app = new Application({
     width: 900,
@@ -37,48 +57,46 @@ document.body.appendChild(app.view);
 
 function setup() {
     resizeApp();
-    // Create the `joueur` sprite
+
     Monstre.addApp(app);
+    Weapon.addApp(app);
+    Weapon.addMonstres(monstres);
     joueur = new Joueur(app);
+    Weapon.addJoueur(joueur);
+    Exp.addJoueur(joueur);
+    Exp.addApp(app);
 
 
-
-    if(hasSword){
-        // Create the spinning sword with trail
-        sword = createSword(app, monstres, areaSize/12 + 0.7, 100 * areaSize, 0x0000FF, joueur);  // Blue rectangle of 10x80
-    }
+    sword = new Sword(1, 15, 80, hasSword);  // Blue rectangle of 10x80
+    
+    
+    
     // Create monsters at regular intervals
     let i = 0;
     let j = 0;
     let k = 0;
     let l = 0;
     setInterval(() => { 
-        ajouterMONSTRE( 3, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));//////////////////////////////////////////////////////////////
+        ajouterMONSTRE( 3, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));
         i++;
     }, 1000);
     setInterval(() => { 
-        ajouterMONSTRE( 3, "runner", 4);//////////////////////////////////////////////////////////////
+        ajouterMONSTRE( 3, "runner", 4);
     }, 1000);
     setInterval(() => { 
-        ajouterMONSTRE( 3, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));//////////////////////////////////////////////////////////////
+        ajouterMONSTRE( 3, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));
         k++;
     }, 1000);
-
-    // setInterval(() => { 
-    //    placeOldOnes();
-    // }, 1000);
+    // setInterval(() => {
+    //     new Exp (0,0, 10);
+    // }, 100);
 
     setInterval(() => {
         Monstre.cleanup();
     });
 
-    setupKeyboardControls(joueur);
+    setupKeyboardControls(joueur, sword, mstr);
 
-    // Create the text sprite
-    const style = new TextStyle({fontFamily: "sans-serif", fontSize: 18, fill: "white"});
-    message = new Text("No collision...", style);
-    message.position.set(8, 8);
-    app.stage.addChild(message);
 
     // Set the game state
     state = play;
@@ -89,12 +107,6 @@ function setup() {
 function gameLoop(delta) {
     state(delta);
 }
-
-
-
-let cursorX = app.view.width / 2;
-let cursorY = app.view.height / 2;
-
 
 // Update cursor position on mouse move
 document.addEventListener("mousemove", (event) => {
@@ -113,25 +125,41 @@ function play() {
 
     ennemiColor = updateBackgroundColor(app);
 
-    if(hasSword){
-        playSwordSwing(app, joueur, sword, cursorX, cursorY, previousSwordPosition, swordAttackSpeed);
-    }
+    sword.playSwordSwing(cursorX, cursorY);
+    
+    
     monstres.forEach(monstre => {
         monstre.bouger(joueur, -(xF - xI), -(yF - yI), ennemiColor);
-        if(hasSword)
+        if(sword.hasSword)
         {
-            if (isSwordCollidingWithMonster(monstre, sword)) {
-                onSwordHitEnemy(app, monstre);  
+            if (sword.isSwordCollidingWithMonster(monstre)) {
+                //new Explosion(monstre.getX(), monstre.getY(), monstre.body.width*2, 1, 0xFF0000);
+                dedPos = sword.onSwordHitEnemy(monstre);
+
+                if (Array.isArray(dedPos)) {
+                    new Exp(dedPos[0], dedPos[1], 10);
+                }                
             }
         }
     });
 
-    joueur.onPlayerCollision(monstres, message);
+    
+
+    explosions.forEach(explosion => {
+        explosion.updateExplosion();
+        explosion.applyDamage(monstres);
+    });
+
+    exps.forEach(exp => {
+        exp.updatePos(-(xF - xI), -(yF - yI));
+    });
+    
+    joueur.onPlayerCollision(monstres);
 }
 
 
 function ajouterMONSTRE(amount = 1, type = "normal", sides = 3) {  
-    console.log(Monstre.monstres.length);
+    
     if((Monstre.cleanMonstres.length < 10 || noComeBacks) && Monstre.monstres.length < 200)
     {
         if(type == "normal") { 
