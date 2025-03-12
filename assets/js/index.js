@@ -71,7 +71,7 @@ function setup() {
     app.stage.sortableChildren = true;
     Monstre.addApp(app);
     Weapon.addApp(app);
-    Weapon.addMonstres(monstres);
+    Weapon.addMonstres(mstr);
     joueur = new Joueur(app);
     Weapon.addJoueur(joueur);
     Exp.addJoueur(joueur);
@@ -158,7 +158,7 @@ function play() {
     grid.x -= joueur.getVX();
     grid.y -= joueur.getVY();
 
-    ennemiColor = updateBackgroundColor(app);
+    ennemiColor = updateBackgroundColor(app, mstr);
 
     sword.playSwordSwing(cursorX, cursorY);
     

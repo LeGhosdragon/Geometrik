@@ -8,6 +8,7 @@ export class Monstre {
     static showLife = false;
     static dedExpl = false;
     static dedEXP = true;
+    static dedMilkMan = false;
 
     constructor(x, y, sides, size, type, vitesse = 1, spinSpeed = 0.02, baseHP = 100, baseDMG = 1, couleur = 0xff0000) {
         this.isIn = true;
@@ -138,7 +139,7 @@ export class Monstre {
 
     avoidMonsterCollision() {
         const minDistance = 85 * this.size;
-        const avoidFactor = 1.6;
+        const avoidFactor = 1;
 
         Monstre.monstres.forEach(otherMonstre => {
             if (this === otherMonstre) return;
@@ -280,11 +281,6 @@ export class Monstre {
         // Add update function to PIXI ticker (better than `setInterval`)
         Monstre.app.ticker.add(updateParticles);
     }
-    
-    
-    
-    
-      
     
     endommagé(dmg, type) {
         this.setHP(this.getHP() - dmg);

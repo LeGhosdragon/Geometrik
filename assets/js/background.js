@@ -28,12 +28,19 @@ export function drawGridBackground(app) {
 }
 
 // The function to update the background color to pulse through the rainbow
-export function updateBackgroundColor(app) {
+export function updateBackgroundColor(app, mstr) {
     // Update the RGB components using sine waves to cycle through colors
     r = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + 0) + 1) * 128); // Sinusoidal for red
     g = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 2 / 3) + 1) * 128); // Sinusoidal for green
     b = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 4 / 3) + 1) * 128); // Sinusoidal for blue
 
+    if(mstr.dedMilkMan)
+    {
+        r = 255;
+        g = 255;
+        b = 255;
+    }
+  
     // Recombine the RGB components into a hex color code
     backColor = (r << 16) | (g << 8) | b;
 
@@ -41,7 +48,14 @@ export function updateBackgroundColor(app) {
     app.renderer.backgroundColor = backColor;
 
     // Get the RGB components from the backColor
-    const { r: bgR, g: bgG, b: bgB } = hexToRgb(backColor);
+    let { r: bgR, g: bgG, b: bgB } = hexToRgb(backColor);
+    if(mstr.dedMilkMan)
+    {
+        bgR = 0;
+        bgG = 0;
+        bgB = 0;
+    }
+
 
     // Get the contrasting color
     const { r: contrastR, g: contrastG, b: contrastB } = getContrastingColor(bgR, bgG, bgB);

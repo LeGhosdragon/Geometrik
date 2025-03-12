@@ -1,8 +1,10 @@
 // weapons.js
 export class Weapon{
-    static monstres = [];
+    static mstr = null;
+    static monstres = null;
     static app = null;
     static joueur = null;
+
 
     constructor(type, cooldown, baseDMG, body) {
 
@@ -23,7 +25,8 @@ export class Weapon{
 
     static addMonstres(monstresInput)
     {
-        Weapon.monstres = monstresInput;
+        Weapon.mstr = monstresInput;
+        Weapon.monstres = Weapon.mstr.monstres;
     }
     static addApp(appInput) {
         Weapon.app = appInput;
@@ -262,9 +265,16 @@ export class Gun extends Weapon {
         this.isOnCooldown = true;
         
         const bullet = new PIXI.Graphics();
-        bullet.radius = 5;
+        bullet.radius = 6;
         bullet.lineStyle(3, 0x000000, 1);
         bullet.beginFill(0xFF0000); // Bullet color
+        if(Weapon.mstr.dedMilkMan)
+        {
+            bullet.lineStyle(3, 0xFFFFFF, 1);
+            bullet.beginFill(0xFFFFFF); // Bullet color
+        }
+        
+        
         bullet.drawCircle(0, 0, bullet.radius);
         bullet.endFill();
 
@@ -342,14 +352,13 @@ export class Gun extends Weapon {
     }
 }
 
-
 export class Explosion {
     static explosions = [];
 
     constructor(x, y, rayon, baseDMG, couleur) {
         this.rayon = rayon;
         this.baseDMG = baseDMG;
-        this.couleur = couleur;
+        this.couleur = Weapon.mstr.dedMilkMan ? 0xFFFFFF : couleur;
         this.maxRayon = rayon;
         this.currentRayon = Math.max(1, rayon / 20); // Avoid 0 radius
 
@@ -389,7 +398,10 @@ export class Explosion {
             this.body.clear();
             this.body.beginFill(this.couleur);
             this.body.drawCircle(0, 0, this.currentRayon);
-            this.body.alpha -= 0.065;
+            if(!Weapon.mstr.dedMilkMan)
+            {
+                this.body.alpha -= 0.065;
+            }
             this.body.endFill();
 
             this.applyDamage(Weapon.monstres);
