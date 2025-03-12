@@ -20,11 +20,6 @@ export class Weapon{
     setY(y) { this.body.y = y; }
     setBody(body) { this.body = body; } 
 
-    isHit()
-    {
-
-    }
-
 
     static addMonstres(monstresInput)
     {
@@ -53,17 +48,14 @@ export class Sword extends Weapon {
         this.wideness = 1.3;
         this.swingDirection = 1; // 1 for normal, -1 for inverted
         this.swingTime = 0;
-        this.swingDuration = 100; // Adjust this value to control swing duration
+        this.swingDuration = 100;
         this.storedAngle = 0;
         this.isSwinging = false;
         this.baseAngle = 0;
         this.setBody(this.createSword());
         this.body.visible = false;
         this.previousSwordPosition = {x: 0, y: 0};
-        
-
     }
-    
 
     createSword() {
         const rectangle = new PIXI.Graphics();
@@ -105,12 +97,12 @@ export class Sword extends Weapon {
                     const y = pivotY + Math.sin(angle) * (distance + 30);
     
                     const trailParticle = new PIXI.Graphics();
-                    trailParticle.beginFill(0x0FFFFF, 0.3);  // Less opaque (0.3 instead of 0.7)
-                    trailParticle.drawCircle(0, 0, 6);  // Particle size
+                    trailParticle.beginFill(0x0FFFFF, 0.3);
+                    trailParticle.drawCircle(0, 0, 6);
                     trailParticle.endFill();
                     trailParticle.x = x;
                     trailParticle.y = y;
-                    trailParticle.zIndex = -1;  // Ensures particles are below the monsters
+                    trailParticle.zIndex = -1;
     
                     Weapon.app.stage.addChild(trailParticle);
                     this.trail.push({ particle: trailParticle, age: 0 });
@@ -122,15 +114,16 @@ export class Sword extends Weapon {
             const particle = trailData.particle;
             if (particle.alpha > 0) {
                 trailData.age++;
-                particle.alpha -= 0.012 * trailData.age;  // Gradually fade out particles
+                particle.alpha -= 0.012 * trailData.age;
             }
         });
     
-        // Clean up particles when they're fully transparent
+        // Clean up particles when they are fully transparent
         for (let i = this.trail.length - 1; i >= 0; i--) {
             const trailData = this.trail[i];
             if (trailData.particle.alpha <= 0) {
                 Weapon.app.stage.removeChild(trailData.particle);
+                trailData.particle.destroy();  // Ensure proper cleanup
                 this.trail.splice(i, 1);
             }
         }
@@ -138,8 +131,7 @@ export class Sword extends Weapon {
         this.body.zIndex = 1;
         Weapon.app.stage.addChild(this.body);
     }
-    
-    
+
     hideSwordAndParticles() {
         this.body.visible = false;
 
@@ -180,58 +172,9 @@ export class Sword extends Weapon {
             const dmg = this.swordDMG();
 
             monstre.endommagé(dmg, "sword");
-            monstre.setSwordHit(true);
-            if(monstre.currentHP <= 0)
-            {
-                let box = [];
-                box.push(monstre.getX());
-                box.push(monstre.getY());
-                return box;
-            }
-            else
-            {
-                return false;
-            }
-            
+            monstre.setSwordHit(true);            
         }
     }
-
-    // createHitEffect(monstre, damage) {
-    //     // Create the damage text
-    //     const damageText = new PIXI.Text(damage, {
-    //         fontFamily: 'Arial',
-    //         fontSize: 24,
-    //         fill: 0xFF0000,
-    //         align: 'center',
-    //         fontWeight: 'bold'
-    //     });
-    
-    //     // Set initial position based on monster's position
-    //     damageText.x = monstre.getX();
-    //     damageText.y = monstre.getY();
-    
-    //     // Add the damage text to the stage
-    //     Weapon.app.stage.addChild(damageText);
-    
-    //     // Set the initial scale and alpha
-    //     damageText.scale.set(1);
-    //     damageText.alpha = 1;
-    
-    //     // Animation to move the text upwards and fade out
-    //     Weapon.app.ticker.add(() => {
-    //         damageText.y -= 2;  // Move text upwards
-    //         damageText.alpha -= 0.02;  // Fade out
-    
-    //         // Shrink the text slightly over time
-    //         damageText.scale.x -= 0.01;
-    //         damageText.scale.y -= 0.01;
-    
-    //         // Remove the text once it's fully transparent
-    //         if (damageText.alpha <= 0) {
-    //             Weapon.app.stage.removeChild(damageText);
-    //         }
-    //     });
-    // }
 
     playSwordSwing(cursorX, cursorY) {
         if(this.hasSword)
@@ -277,6 +220,129 @@ export class Sword extends Weapon {
     }
 }
 
+
+export class Gun extends Weapon {
+    static bullets = [];
+
+    constructor(cooldown, baseDMG, pierce) {
+        super("Gun", cooldown, baseDMG, new PIXI.Graphics());
+        this.hasGun = false;
+        this.pierce = pierce;
+        this.isOnCooldown = false;
+        this.color = 0x9966FF;
+        this.wideness = 1.3;
+        this.storedAngle = 0;
+        this.isSwinging = false;
+        this.baseAngle = 0;
+        this.setBody(this.createGun());
+        this.body.visible = this.hasGun;
+    }
+
+    createGun() {
+        const gun = new PIXI.Graphics();
+        gun.lineStyle(3, 0x000000, 1);
+        gun.beginFill(this.color);
+        gun.drawRect(0, 0, 10, 15); // Adjust gun size
+        gun.endFill();
+        gun.pivot.set(5, 30);  
+        gun.x = Weapon.joueur.getX() + 15;
+        gun.y = Weapon.joueur.getY() + 100;
+        gun.zIndex = 1000;
+        gun.visible = true;
+        Weapon.app.stage.addChild(gun);
+        return gun;
+    }
+
+    gunDMG() {
+        return Math.round(this.baseDMG + Math.random() * 15);
+    }
+
+    shoot() {
+        if (this.isOnCooldown || !this.hasGun) return;
+        this.isOnCooldown = true;
+        
+        const bullet = new PIXI.Graphics();
+        bullet.radius = 5;
+        bullet.lineStyle(3, 0x000000, 1);
+        bullet.beginFill(0xFF0000); // Bullet color
+        bullet.drawCircle(0, 0, bullet.radius);
+        bullet.endFill();
+
+        bullet.angle = this.storedAngle;
+        // Calculate bullet spawn position at gun barrel
+        const gunLength = 30; // Length of the gun shape
+        bullet.x = this.body.x + Math.cos(this.storedAngle - Math.PI / 2) * gunLength;
+        bullet.y = this.body.y + Math.sin(this.storedAngle - Math.PI / 2) * gunLength;
+
+        Weapon.app.stage.addChild(bullet);
+        Gun.bullets.push(bullet);
+
+        setTimeout(() => this.isOnCooldown = false, 1000 * this.cooldown);
+    }
+
+    update(cursorX, cursorY, deltaX, deltaY) {
+        // Update gun position based on the player
+        this.body.x = Weapon.joueur.getX() + Weapon.joueur.getWidth() / 2- 1;
+        this.body.y = Weapon.joueur.getY() + Weapon.joueur.getHeight() / 2 -1; 
+
+        // Calculate gun rotation to aim at the cursor
+        let dx = cursorX - this.body.x;
+        let dy = cursorY - this.body.y;
+        this.storedAngle = Math.atan2(dy, dx) + Math.PI / 2; // Store aiming angle
+        this.body.rotation = this.storedAngle; // Rotate gun
+
+        // Update bullets
+        Gun.bullets.forEach((b, index) => {
+            b.x += Math.cos(b.angle - Math.PI / 2) * 10 + deltaX;
+            b.y += Math.sin(b.angle - Math.PI / 2) * 10 + deltaY;
+
+            // Remove bullets that go off-screen
+            if (b.x < 0 - b.radius || b.x > Weapon.app.view.width + b.radius ||
+                b.y < 0 - b.radius || b.y > Weapon.app.view.height + b.radius) {
+                Weapon.app.stage.removeChild(b);
+                b.destroy();  // Destroy the bullet to prevent memory leak
+                Gun.bullets.splice(index, 1);  // Remove from bullets array
+            }
+        });
+    }
+
+    isBulletCollidingWithMonster(monstre) {
+        if (!monstre || !monstre.body) return;  // Check if monstre or monstre.body is null
+    
+        Gun.bullets.forEach((bullet, index) => {
+            if (!bullet || !monstre.body) return;  // Check if bullet is valid
+    
+            const bulletBounds = bullet.getBounds();
+            const monstreBounds = monstre.body.getBounds();
+    
+            if (
+                bulletBounds.x < monstreBounds.x + monstreBounds.width &&
+                bulletBounds.x + bulletBounds.width > monstreBounds.x &&
+                bulletBounds.y < monstreBounds.y + monstreBounds.height &&
+                bulletBounds.y + bulletBounds.height > monstreBounds.y
+            ) {
+                this.onBulletHitEnemy(monstre);
+                Weapon.app.stage.removeChild(bullet);
+                bullet.destroy();  
+                Gun.bullets.splice(index, 1); 
+            }
+        });
+    }
+    
+    
+
+    onBulletHitEnemy(monstre) {
+        if (!monstre.getBulletHit()) {
+            monstre.setBulletHit(true);
+            const dmg = this.gunDMG();
+
+            monstre.endommagé(dmg, "gun");
+            monstre.setBulletHit(true);            
+        }
+    }
+}
+
+
 export class Explosion {
     static explosions = [];
 
@@ -284,9 +350,17 @@ export class Explosion {
         this.rayon = rayon;
         this.baseDMG = baseDMG;
         this.couleur = couleur;
-        this.body = this.createExplosion(x, y);
         this.maxRayon = rayon;
-        this.currentRayon = rayon -1;
+        this.currentRayon = Math.max(1, rayon / 20); // Avoid 0 radius
+
+        this.body = this.createExplosion(x, y);
+
+        // Ensure body has valid x, y immediately
+        if (!this.body) {
+            console.error("Explosion creation failed.");
+            return;
+        }
+
         Explosion.explosions.push(this);
     }
 
@@ -295,55 +369,65 @@ export class Explosion {
         cercle.beginFill(this.couleur);
         cercle.drawCircle(0, 0, this.currentRayon);
         cercle.endFill();
+        
+        // Set position BEFORE adding to stage
         cercle.x = x;
         cercle.y = y;
-        cercle.visible = true;
+        
         Weapon.app.stage.addChild(cercle);
         return cercle;
     }
 
-    updateExplosion() {
+    updateExplosion(deltaX, deltaY) {
+        if (!this.body) return;
+
+        this.body.x += deltaX;
+        this.body.y += deltaY;
+
         if (this.currentRayon < this.maxRayon) {
             this.currentRayon += this.maxRayon / 20;
             this.body.clear();
             this.body.beginFill(this.couleur);
             this.body.drawCircle(0, 0, this.currentRayon);
+            this.body.alpha -= 0.065;
             this.body.endFill();
 
-            // Apply damage to monsters within the explosion range while the explosion is growing
             this.applyDamage(Weapon.monstres);
 
         } else {
-            Weapon.app.stage.removeChild(this.body);
-            let index = Explosion.explosions.indexOf(this);
-            if (index !== -1) {
-                Explosion.explosions.splice(index, 1);
-                delete this;
-            }
+            this.destroy();
         }
     }
 
-    // Apply damage to monsters in the explosion range
     applyDamage(monstres) {
-        monstres.forEach(monstre => {
-            if(!monstre.getExplosionHit())
-            {
-                
-                // Calculate distance between the monster and the explosion's center
-                const monstreCenter = { 
-                    x: monstre.body.x , 
-                    y: monstre.body.y 
-                };
-                const explosionCenter = { x: this.body.x, y: this.body.y };
-                const distance = Math.sqrt(Math.pow(explosionCenter.x - monstreCenter.x, 2) + Math.pow(explosionCenter.y - monstreCenter.y, 2));
+        if (!this.body) return;
 
-                // Check if the monster is within the explosion's current radius
+        monstres.forEach(monstre => {
+            if (!monstre.getExplosionHit()) {
+                const distance = Math.hypot(this.body.x - monstre.getX(), this.body.y - monstre.getY());
+
                 if (distance <= this.currentRayon) {
                     monstre.setExplosionHit(true);
-                    // Calculate damage based on distance, so further monsters take less damage
-                    monstre.endommagé(this.baseDMG,  "explosion");
+                    monstre.endommagé(this.baseDMG, "explosion");
                 }
             }
         });
     }
+
+    destroy() {
+        if (!this.body) return;
+
+        Weapon.app.stage.removeChild(this.body);
+        this.body.destroy({ children: true });
+
+        const index = Explosion.explosions.indexOf(this);
+        if (index !== -1) {
+            Explosion.explosions.splice(index, 1);
+        }
+
+        this.body = null;
+    }
 }
+
+
+

@@ -31,7 +31,7 @@ export function keyboard(keyCode) {
     return key;
 }
 
-export function setupKeyboardControls(joueur, sword, mstr) {
+export function setupKeyboardControls(joueur, sword, mstr, gun, exp) {
     console.log("this is working");
     
     // Arrow keys
@@ -40,7 +40,11 @@ export function setupKeyboardControls(joueur, sword, mstr) {
         rightArrow = keyboard(39), // Right arrow 
         downArrow = keyboard(40), // Down arrow
         enableSword = keyboard(81),
-        enableText = keyboard(84);
+        enableText = keyboard(84),
+        enableDedBomb = keyboard(66),
+        enableDedExp = keyboard(89),
+        enableGun = keyboard(71),
+        enableDebug = keyboard(186);
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -88,30 +92,73 @@ export function setupKeyboardControls(joueur, sword, mstr) {
             }
         });
     }
+    enableDedExp.press = () => {
+        if(mstr.dedEXP)
+        {
+            mstr.dedEXP = false;
+            exp.forEach(expb => {
+                expb.body.clear();
+            });
+            exp = [];
+        }
+        else{
+            mstr.dedEXP = true;
+        }
+    }
+    enableDedBomb.press = () => {
+        if(mstr.dedExpl)
+        {
+            mstr.dedExpl = false;
+        }
+        else{
+            mstr.dedExpl = true;
+        }
+    }
+    enableGun.press = () => {
+        if(gun.hasGun)
+        {
+            gun.hasGun = false;
+            gun.body.visible = false;
+        }
+        else{
+            gun.hasGun = true;
+            gun.body.visible = true;
+        }
+    }
+
+    enableDebug.press = () => {
+        if(joueur.debug)
+        {
+            joueur.debug = false;
+        }
+        else{
+            joueur.debug = true;
+        }
+    }
 
     // Arrow keys press and release
-    leftArrow.press = () => { moveX = -1; updateVelocity(); };
-    leftArrow.release = () => { if (moveX === -1) moveX = 0; updateVelocity(); };
+    leftArrow.press = () => { moveX = -joueur.vitesse; updateVelocity(); };
+    leftArrow.release = () => { if (moveX === -joueur.vitesse) moveX = 0; updateVelocity(); };
 
-    rightArrow.press = () => { moveX = 1; updateVelocity(); };
-    rightArrow.release = () => { if (moveX === 1) moveX = 0; updateVelocity(); };
+    rightArrow.press = () => { moveX = joueur.vitesse; updateVelocity(); };
+    rightArrow.release = () => { if (moveX === joueur.vitesse) moveX = 0; updateVelocity(); };
 
-    upArrow.press = () => { moveY = -1; updateVelocity(); };
-    upArrow.release = () => { if (moveY === -1) moveY = 0; updateVelocity(); };
+    upArrow.press = () => { moveY = -joueur.vitesse; updateVelocity(); };
+    upArrow.release = () => { if (moveY === -joueur.vitesse) moveY = 0; updateVelocity(); };
 
-    downArrow.press = () => { moveY = 1; updateVelocity(); };
-    downArrow.release = () => { if (moveY === 1) moveY = 0; updateVelocity(); };
+    downArrow.press = () => { moveY = joueur.vitesse; updateVelocity(); };
+    downArrow.release = () => { if (moveY === joueur.vitesse) moveY = 0; updateVelocity(); };
 
     // WASD keys press and release
-    leftWASD.press = () => { moveX = -1; updateVelocity(); };
-    leftWASD.release = () => { if (moveX === -1) moveX = 0; updateVelocity(); };
+    leftWASD.press = () => { moveX = -joueur.vitesse; updateVelocity(); };
+    leftWASD.release = () => { if (moveX === -joueur.vitesse) moveX = 0; updateVelocity(); };
 
-    rightWASD.press = () => { moveX = 1; updateVelocity(); };
-    rightWASD.release = () => { if (moveX === 1) moveX = 0; updateVelocity(); };
+    rightWASD.press = () => { moveX = joueur.vitesse; updateVelocity(); };
+    rightWASD.release = () => { if (moveX === joueur.vitesse) moveX = 0; updateVelocity(); };
 
-    upWASD.press = () => { moveY = -1; updateVelocity(); };
-    upWASD.release = () => { if (moveY === -1) moveY = 0; updateVelocity(); };
+    upWASD.press = () => { moveY = -joueur.vitesse; updateVelocity(); };
+    upWASD.release = () => { if (moveY === -joueur.vitesse) moveY = 0; updateVelocity(); };
 
-    downWASD.press = () => { moveY = 1; updateVelocity(); };
-    downWASD.release = () => { if (moveY === 1) moveY = 0; updateVelocity(); };
+    downWASD.press = () => { moveY = joueur.vitesse; updateVelocity(); };
+    downWASD.release = () => { if (moveY === joueur.vitesse) moveY = 0; updateVelocity(); };
 }

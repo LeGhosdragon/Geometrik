@@ -2,9 +2,12 @@
 export class Monstre {
     static monstres = [];
     static cleanMonstres = [];
+    static Explosion = null;
+    static Exp = null;
     static app = null;
     static showLife = false;
-
+    static dedExpl = false;
+    static dedEXP = true;
 
     constructor(x, y, sides, size, type, vitesse = 1, spinSpeed = 0.02, baseHP = 100, baseDMG = 1, couleur = 0xff0000) {
         this.isIn = true;
@@ -25,17 +28,26 @@ export class Monstre {
         this.spins = true;
         this.hasSwordHit = false;
         this.hasExplHit = false;
+        this.hasBulletHit = false;
     }
 
     static addApp(appInput) {
         Monstre.app = appInput;
     }
+    static addExp(expInput) {
+        Monstre.Exp = expInput;
+    }
+    static addExplosion(explInput) {
+        Monstre.Explosion = explInput;
+    }
 
     createShape(x = 0, y = 0) {
         const shape = new PIXI.Graphics();
+        
         shape.x = x;
         shape.y = y;
         shape.sides = this.sides;
+        shape.zIndex = 1;
         shape.pivot.set(0, 0);
         return shape;
     }
@@ -54,6 +66,7 @@ export class Monstre {
         this.elapsedTime += 3;
         let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
         this.body.clear();
+        this.body.lineStyle(3, 0x000000, 1);
         this.body.beginFill(ennemiColor);
     
         const radius = newSize * 50;
@@ -124,8 +137,8 @@ export class Monstre {
     
 
     avoidMonsterCollision() {
-        const minDistance = 75 * this.size;
-        const avoidFactor = 1;
+        const minDistance = 85 * this.size;
+        const avoidFactor = 1.6;
 
         Monstre.monstres.forEach(otherMonstre => {
             if (this === otherMonstre) return;
@@ -146,8 +159,10 @@ export class Monstre {
     createHPText() {
         const text = new PIXI.Text(this.currentHP, {
             fontFamily: 'Arial',
-            fontSize: 12,
-            fill: 0x000000,
+            fontSize: 26,
+            fill: 0xFFFFFF,
+            stroke: 0x000000,      // Black outline
+            strokeThickness: 4, 
             align: 'center'
         });
 
@@ -157,25 +172,44 @@ export class Monstre {
         Monstre.app.stage.addChild(text);
         return text;
     }
-
     updateHP() {
         if (this.currentHP <= 0) {
             // Trigger death animation before removal
             this.disintegrationAnimation();
-
-            //new Exp(this.getX(), this.getY(), 1);
     
+            if (Monstre.dedExpl) {
+                new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            }
+            if (Monstre.dedEXP) {
+                new Monstre.Exp(this.getX(), this.getY(), 1);
+            }
+    
+            // Remove the monster from the array
             let index = Monstre.monstres.indexOf(this);
-            Monstre.app.stage.removeChild(this.hpText);
             if (index !== -1) {
                 Monstre.monstres.splice(index, 1);
             }
-            // Clear the monster's graphics
-            this.body.clear();
-            delete this;
+    
+            // Remove all graphics from the stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+    
+            // Stop any running ticker-based animations
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+    
+            // Clean up references for garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+    
             return;
         }
     
+        // Update HP display if still alive
         if (this.showLife) {
             this.hpText.text = this.currentHP;
             this.hpText.x = this.getX();
@@ -185,25 +219,26 @@ export class Monstre {
         }
     }
     
+    
     disintegrationAnimation() {
-        const particleCount = 50; // Number of particles
+        const particleCount = 2; // Number of particles
         const particles = [];
-        const gravity = 2; // Gravity force pulling particles downward
+        const gravity = 0.05; // Gravity force pulling particles downward
         const drag = 0.98; // Drag to slow down particles over time
     
         // Create particles
         for (let i = 0; i < particleCount; i++) {
             const particle = new PIXI.Graphics();
-            particle.beginFill(this.couleur); // Red color for particles (you can change this)
-            particle.drawCircle(0, 0, 2); // Small particles
+            particle.beginFill(this.couleur);
+            particle.drawCircle(0, 0, 2);
             particle.endFill();
-            particle.x = this.getX(); // Starting position of the monster
+            particle.x = this.getX();
             particle.y = this.getY();
-            particle.alpha = 1; // Fully opaque initially
+            particle.alpha = 1;
     
             // Random initial velocity
             const angle = Math.random() * 2 * Math.PI;
-            const speed = Math.random() * 2 + 1; // Random speed for initial velocity
+            const speed = Math.random() * 2 + 1;
             particle.vx = Math.cos(angle) * speed;
             particle.vy = Math.sin(angle) * speed;
     
@@ -211,36 +246,41 @@ export class Monstre {
             particles.push(particle);
         }
     
-        // Animate the particles' movement with gravity and fading
-        let disintegrationInterval = setInterval(() => {
-            particles.forEach((particle, index) => {
-                // Apply gravity
-                particle.vy += gravity; // Increase vertical speed due to gravity
+        // Function to update particles
+        const updateParticles = () => {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let particle = particles[i];
     
-                // Apply drag to slow down particles over time
-                particle.vx *= drag; // Horizontal speed decreases over time
-                particle.vy *= drag; // Vertical speed decreases over time
+                // Apply gravity and drag
+                particle.vy += gravity;
+                particle.vx *= drag;
+                particle.vy *= drag;
     
-                // Move the particle based on velocity
+                // Move particle
                 particle.x += particle.vx;
                 particle.y += particle.vy;
     
-                // Fade out over time
-                particle.alpha -= 0.03; // Fade out gradually
+                // Fade out
+                particle.alpha -= 0.03;
     
-                // Remove particle when fully faded or goes off-screen
+                // Remove fully faded particles
                 if (particle.alpha <= 0 || particle.y > Monstre.app.view.height) {
-                    Monstre.app.stage.removeChild(particle); // Remove particle from stage
-                    particles.splice(index, 1); // Remove from particles array
+                    Monstre.app.stage.removeChild(particle);
+                    particle.destroy({ children: true }); // Ensures PIXI fully cleans it up
+                    particles.splice(i, 1); // Remove from array
                 }
-            });
-    
-            // Stop the animation once all particles are removed
-            if (particles.length === 0) {
-                clearInterval(disintegrationInterval);
             }
-        }, 20); // Update every 20ms for smooth animation
+    
+            // Stop animation when no particles are left
+            if (particles.length === 0) {
+                Monstre.app.ticker.remove(updateParticles);
+            }
+        };
+    
+        // Add update function to PIXI ticker (better than `setInterval`)
+        Monstre.app.ticker.add(updateParticles);
     }
+    
     
     
     
@@ -261,9 +301,15 @@ export class Monstre {
                 this.setExplosionHit(false);
             }, 300);
         }
+        if(type == "gun")
+            {
+                setTimeout(()=> {
+                    this.setBulletHit(false);
+                }, 0);
+            }
+
         this.updateHP();
     }
-
 
     createHitEffect(monstre, damage) {
         // Create the damage text
@@ -271,6 +317,8 @@ export class Monstre {
             fontFamily: 'Arial',
             fontSize: 24,
             fill: 0xFF0000,
+            stroke: 0x000000,      // Black outline
+            strokeThickness: 4, 
             align: 'center',
             fontWeight: 'bold'
         });
@@ -286,21 +334,27 @@ export class Monstre {
         damageText.scale.set(1);
         damageText.alpha = 1;
     
-        // Animation to move the text upwards and fade out
-        Monstre.app.ticker.add(() => {
-            damageText.y -= 2;  // Move text upwards
-            damageText.alpha -= 0.02;  // Fade out
+        // Store a reference to the update function
+        const updateFn = (delta) => this.damageText(damageText, updateFn);
     
-            // Shrink the text slightly over time
-            damageText.scale.x -= 0.01;
-            damageText.scale.y -= 0.01;
-    
-            // Remove the text once it's fully transparent
-            if (damageText.alpha <= 0) {
-                Monstre.app.stage.removeChild(damageText);
-            }
-        });
+        // Add the function to the ticker
+        Monstre.app.ticker.add(updateFn);
     }
+    
+    damageText(damageText, updateFn) {
+        damageText.y -= 2; 
+        damageText.alpha -= 0.02;  
+        damageText.scale.x -= 0.01;
+        damageText.scale.y -= 0.01;
+    
+
+        if (damageText.alpha <= 0) {
+            Monstre.app.stage.removeChild(damageText);
+            Monstre.app.ticker.remove(updateFn);  
+            damageText.destroy({ children: true });
+        }
+    }
+    
 
     getX() { return this.body.x; }
     setX(x) { this.body.x = x; }
@@ -319,6 +373,8 @@ export class Monstre {
     getSwordHit(){return this.hasSwordHit;}
     setExplosionHit(bool){this.hasExplHit = bool;}
     getExplosionHit(){return this.hasExplHit;}
+    setBulletHit(bool){this.hasBulletHit = bool;}
+    getBulletHit(){return this.hasBulletHit;}
 }
 
 export class MonstreNormal extends Monstre {

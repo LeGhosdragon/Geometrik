@@ -5,9 +5,11 @@ export class Exp {
 
     constructor(x, y, qty) {
         this.qty = qty;
+        this.vx = 0; // Initialize velocity
+        this.vy = 0;
         this.body = this.createEXP(x, y);
         this.color = 0x000000;
-        Exp.exps.push(this); // Ajouter à la liste des orbes d'expérience
+        Exp.exps.push(this);
     }
 
     createEXP(x = 0, y = 0) {
@@ -16,7 +18,7 @@ export class Exp {
         EXP.y = y;
         EXP.pivot.set(0, 0);
 
-        // Dessiner un cercle bleu pour représenter l'expérience
+        // Initial color
         EXP.beginFill(0x0000FF);
         EXP.drawCircle(0, 0, 5);
         EXP.endFill();
@@ -29,9 +31,8 @@ export class Exp {
     }
 
     updatePos(deltaX = 0, deltaY = 0) {
-        if (!Exp.joueur) return; // Vérifier si le joueur est défini
+        if (!Exp.joueur || !this.body) return; // Ensure the player exists and the object is not deleted
     
-        // Move with the background (this is what was missing)
         this.body.x += deltaX;
         this.body.y += deltaY;
     
@@ -40,67 +41,59 @@ export class Exp {
     
         let dx = playerX - this.body.x;
         let dy = playerY - this.body.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
+        let distance = Math.hypot(dx, dy);
     
         // Pulsing rainbow effect
-        const time = Date.now() / 100; // Time-based value to cycle the colors
-        const red = Math.sin(time) * 127 + 128;  // RGB value for red
-        const green = Math.sin(time + 2) * 127 + 128;  // RGB value for green
-        const blue = Math.sin(time + 4) * 127 + 128;  // RGB value for blue
+        const time = Date.now() / 100;
+        const red = Math.sin(time) * 127 + 128;
+        const green = Math.sin(time + 2) * 127 + 128;
+        const blue = Math.sin(time + 4) * 127 + 128;
+        const color = (red << 16) | (green << 8) | blue;
     
-        const color = (red << 16) | (green << 8) | blue; // Combine RGB into hex color format
-    
-        // Clear the previous circle
-        this.body.clear(); 
-    
-        // Draw the orb with the new color
-        this.body.beginFill(color);  
-        this.body.drawCircle(0, 0, 5); 
+        this.body.clear();
+        this.body.beginFill(color);
+        this.body.drawCircle(0, 0, 5);
         this.body.endFill();
-        if (distance < 3) {
-            this.collect(); // Collect the orb when close enough
-            delete this;
+    
+        if (distance < 16) {
+            this.collect();
         } else if (distance < Exp.joueur.getMagDist()) {
-            // If within attraction range, adjust movement towards the player
-            let force = 0.2 / Math.max(distance, 10); // Attraction force (weaker when far, stronger when close)
+            let force = 0.2 / Math.max(distance, 10);
     
-            this.vx = (this.vx || 0) + dx * force; // Apply force to velocity
-            this.vy = (this.vy || 0) + dy * force;
+            this.vx += dx * force;
+            this.vy += dy * force;
     
-            let friction = 0.95; // Slow down movement over time (prevents jitter)
-            this.vx *= friction;
-            this.vy *= friction;
+            this.vx *= 0.95;
+            this.vy *= 0.95;
     
             this.body.x += this.vx;
             this.body.y += this.vy;
         }
     }
-    
-    
-    
-    
 
     collect() {
+        if (!this.body) return; // Prevent double deletion
+
         let index = Exp.exps.indexOf(this);
         if (index !== -1) {
-            
-            Exp.exps.splice(index, 1);
+            Exp.exps.splice(index, 1); // Remove from active list
         }
-        this.body.clear();
-        Exp.joueur.addExp(this.qty);
-        delete this;
+
+        Exp.joueur.addExp(this.qty); // Give EXP to player
+
+        if (Exp.app) {
+            Exp.app.stage.removeChild(this.body);
+        }
+
+        this.body.destroy({ children: true }); // Fully remove PIXI object
+        this.body = null; // Remove reference for garbage collection
     }
 
-    getX() { return this.body.x; }
-    setX(x) { this.body.x = x; }
-    getY() { return this.body.y; }
-    setY(y) { this.body.y = y; }
-    setBody(body) { this.body = body; }
-    getQty() { return this.qty; }
+    getX() { return this.body?.x ?? 0; }
+    getY() { return this.body?.y ?? 0; }
 
     static addApp(appInput) {
         Exp.app = appInput;
-        // Ajouter un ticker pour animer les orbes
         Exp.app.ticker.add(() => {
             Exp.exps.forEach(exp => exp.updatePos());
         });

@@ -1,6 +1,7 @@
 export class Joueur {
 
-    constructor(app, size = 16, vitesse = 1, baseHP = 100, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0x9966FF, weapons = []) {
+    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0x9966FF, weapons = []) {
+        this.debug = false;
         this.exp = 0;
         this.distanceDattraction = 150;
         this.isImmune = false;
@@ -20,10 +21,11 @@ export class Joueur {
     // Function to create the player (joueur)
     faireJoueur() {
         const joueur = new PIXI.Graphics();
+        joueur.lineStyle(3, 0x000000, 1);
         joueur.beginFill(this.couleur);
         joueur.drawCircle(this.size, this.size, this.size);
         joueur.endFill();
-        
+        joueur.zIndex = 99;
         joueur.x = window.innerWidth/2;
         joueur.y = window.innerHeight/2;
         joueur.vx = 0;
@@ -103,6 +105,7 @@ export class Joueur {
             fill: 0xFFFFFF,
             align: 'center'
         });
+        text.zIndex = 100;
         text.anchor.set(0.5);
         text.x = this.body.x + this.size;
         text.y = this.body.y + this.size;
@@ -120,9 +123,9 @@ export class Joueur {
     updateHP() {
         if(this.currentHP <= 0)
         {
-            this.setHP(0);
+            this.setHP("");
         }
-        this.hpText.text = "hp:" + this.currentHP + ", xp:" + this.exp;
+        this.hpText.text = this.currentHP;
         this.hpText.x = this.getX() + this.size;
         this.hpText.y = this.getY() + this.size;
     }
