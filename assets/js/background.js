@@ -1,6 +1,6 @@
 let r = 0, g = 0, b = 0, backColor = 0x000000;
 
-const vitesseCouleur = 0.00001; // Change this for faster/slower pulses
+let vitesseCouleur = 0.00001; // Change this for faster/slower pulses
 
 export function drawGridBackground(app) {
     const grid = new PIXI.Graphics();
@@ -30,10 +30,13 @@ export function drawGridBackground(app) {
 // The function to update the background color to pulse through the rainbow
 export function updateBackgroundColor(app, mstr) {
     // Update the RGB components using sine waves to cycle through colors
-    r = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + 0) + 1) * 128); // Sinusoidal for red
-    g = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 2 / 3) + 1) * 128); // Sinusoidal for green
-    b = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 4 / 3) + 1) * 128); // Sinusoidal for blue
-
+    if(app.pause)
+    {
+       vitesseCouleur = 0;
+    }
+        r = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + 0) + 1) * 128); // Sinusoidal for red
+        g = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 2 / 3) + 1) * 128); // Sinusoidal for green
+        b = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 4 / 3) + 1) * 128); // Sinusoidal for blue
     if(mstr.dedMilkMan)
     {
         r = 255;

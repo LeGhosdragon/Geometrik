@@ -245,6 +245,10 @@ export class Gun extends Weapon {
         const gun = new PIXI.Graphics();
         gun.lineStyle(3, 0x000000, 1);
         gun.beginFill(this.color);
+        if(Weapon.mstr.dedMilkMan)
+        {
+            gun.beginFill(0xFFFFFF);
+        }
         gun.drawRect(0, 0, 10, 15); // Adjust gun size
         gun.endFill();
         gun.pivot.set(5, 30);  
@@ -270,6 +274,7 @@ export class Gun extends Weapon {
         bullet.beginFill(0xFF0000); // Bullet color
         if(Weapon.mstr.dedMilkMan)
         {
+            bullet.radius = 20;
             bullet.lineStyle(3, 0xFFFFFF, 1);
             bullet.beginFill(0xFFFFFF); // Bullet color
         }

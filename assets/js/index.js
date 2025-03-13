@@ -17,8 +17,6 @@ const Application = PIXI.Application,
     Text = PIXI.Text,
     TextStyle = PIXI.TextStyle;
 
-
-
 //DEBUG ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // la touche Q active ou désactive l'épée
 // la touche T active ou désactive les textes de vie des ennemis
@@ -26,8 +24,8 @@ const Application = PIXI.Application,
 // la touche B active ou désactive les explosions lors de la mort d'ennemis
 // la touche ; active debug mode
 // la touche G active ou désactive gun
-// 
-//
+// la touche M active MILK_MODE
+// la touche "échap" pause la partie
 //
 //
 //
@@ -36,7 +34,8 @@ const Application = PIXI.Application,
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Create a Pixi Application
+
+
 
 //noComeBacks makes it so the spawner stops to let in the ones that were lost tot the cleansing !
 let joueur, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, 
@@ -50,8 +49,10 @@ const app = new Application({
     antialias: true,
     transparent: false,
     resolution: 1,
-    backgroundColor: 0x000000
+    backgroundColor: 0x000000,
+    x: 200
 });
+app.pause = false;
 
 let debugText = new Text('', {
     fontFamily: 'Arial',
@@ -67,13 +68,17 @@ debugText.zIndex = 1000;
 
 function setup() {
     
-    resizeApp();
+    
     app.stage.sortableChildren = true;
     Monstre.addApp(app);
     Weapon.addApp(app);
     Weapon.addMonstres(mstr);
+    Joueur.addMonstre(mstr);
     joueur = new Joueur(app);
+    resizeApp(joueur);
+    joueur.updateExpBar();
     Weapon.addJoueur(joueur);
+    
     Exp.addJoueur(joueur);
     Exp.addApp(app);
     Monstre.addExp(exp);
@@ -91,15 +96,24 @@ function setup() {
     let k = 0;
     let l = 0;
     setInterval(() => { 
-        ajouterMONSTRE( 3, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));
-        i++;
+        if(!app.pause)
+        {
+            ajouterMONSTRE( 7, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));
+            i++;
+        }
     }, 1000);
     setInterval(() => { 
-        ajouterMONSTRE( 3, "runner", 4);
+        if(!app.pause)
+        {
+            ajouterMONSTRE( 20, "runner", 4);
+        }
     }, 1000);
     setInterval(() => { 
-        ajouterMONSTRE( 3, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));
-        k++;
+        if(!app.pause)
+        {
+            ajouterMONSTRE( 10, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));
+            k++;
+        }
     }, 1000);
 
 
@@ -113,11 +127,12 @@ function setup() {
         Monstre.cleanup();
     });
 
-    setupKeyboardControls(joueur, sword, mstr, gun, exps);
+    setupKeyboardControls(app, joueur, sword, mstr, gun, exps);
 
 
     // Set the game state
     state = play;
+    
     // Start the game loop
     app.ticker.add((delta) => gameLoop(delta));
     app.stage.addChild(debugText);
@@ -147,73 +162,80 @@ document.addEventListener('contextmenu', (event) =>{
 });
 
 function play() {
-    let xI = xF;
-    let yI = yF;
-    xF += joueur.getVX();
-    yF += joueur.getVY();
-
-    const deltaX = -(xF - xI);
-    const deltaY = -(yF - yI);
-
-    grid.x -= joueur.getVX();
-    grid.y -= joueur.getVY();
-
-    ennemiColor = updateBackgroundColor(app, mstr);
-
-    sword.playSwordSwing(cursorX, cursorY);
-    
-    gun.update(cursorX, cursorY, deltaX, deltaY);
-    
-    monstres.forEach(monstre => {
-        monstre.bouger(joueur, deltaX, deltaY, ennemiColor);
-        if(sword.hasSword)
-        {
-            if (sword.isSwordCollidingWithMonster(monstre)) {
-                //new Explosion(monstre.getX(), monstre.getY(), monstre.body.width*6, 15, 0xFF0000);
-                sword.onSwordHitEnemy(monstre);             
-            }
-        }
-        if(gun.isBulletCollidingWithMonster(monstre))
-        {
-            gun.onBulletHitEnemy(monstre);
-        }
-    });
-    if(hold)
+    if(!app.pause)
     {
-        gun.shoot();
-    }
-    
-    
-    explosions.forEach(explosion => {
-        explosion.updateExplosion(deltaX, deltaY);
-        explosion.applyDamage(monstres);
-    });
+        let xI = xF;
+        let yI = yF;
+        xF += joueur.getVX();
+        yF += joueur.getVY();
 
-    exps.forEach(exp => {
-        let index = exps.indexOf(exp);
-        if(mstr.dedEXP)
-        {
-            exp.updatePos(deltaX, deltaY);
-        }
-        else if(exps.length > 0)
-        {
-            exp.body.clear();
-            app.stage.removeChild(exp);
-            if (index !== -1) {
-                exps.splice(index, 1);
+        const deltaX = -(xF - xI);
+        const deltaY = -(yF - yI);
+
+        grid.x -= joueur.getVX();
+        grid.y -= joueur.getVY();
+
+        
+
+        sword.playSwordSwing(cursorX, cursorY);
+        
+        gun.update(cursorX, cursorY, deltaX, deltaY);
+        
+        monstres.forEach(monstre => {
+            monstre.bouger(joueur, deltaX, deltaY, ennemiColor);
+            if(sword.hasSword)
+            {
+                if (sword.isSwordCollidingWithMonster(monstre)) {
+                    //new Explosion(monstre.getX(), monstre.getY(), monstre.body.width*6, 15, 0xFF0000);
+                    sword.onSwordHitEnemy(monstre);             
+                }
             }
+            if(gun.isBulletCollidingWithMonster(monstre))
+            {
+                gun.onBulletHitEnemy(monstre);
+            }
+        });
+        if(hold)
+        {
+            gun.shoot();
         }
         
-    });
-    
-    joueur.onPlayerCollision(monstres);
+        
+        explosions.forEach(explosion => {
+            explosion.updateExplosion(deltaX, deltaY);
+            explosion.applyDamage(monstres);
+        });
+
+        exps.forEach(exp => {
+            let index = exps.indexOf(exp);
+            if(mstr.dedEXP)
+            {
+                exp.updatePos(deltaX, deltaY);
+            }
+            else if(exps.length > 0)
+            {
+                exp.body.clear();
+                app.stage.removeChild(exp);
+                if (index !== -1) {
+                    exps.splice(index, 1);
+                }
+            }
+            
+        });
+        
+        joueur.onPlayerCollision(monstres);
+    }
+    else{
+
+    }
+    ennemiColor = updateBackgroundColor(app, mstr);
     afficherDebug();
 }
 
 
 function ajouterMONSTRE(amount = 1, type = "normal", sides = 3) {  
     
-    if((Monstre.cleanMonstres.length < 10 || noComeBacks) && Monstre.monstres.length < 300)
+    if((Monstre.cleanMonstres.length < 10 || noComeBacks) && Monstre.monstres.length < 500)
     {
         if(type == "normal") { 
         for (let i = 0; i < amount; i++) {
@@ -326,7 +348,8 @@ function afficherDebug() {
         Vitesse X: ${joueur.getVX().toFixed(2)}
         Vitesse Y: ${joueur.getVY().toFixed(2)}
         HP : ${joueur.currentHP}
-        Exp : ${joueur.exp}
+        Exp : ${joueur.exp} 
+        ${joueur.getExpBar()}
         Monstres: ${monstres.length}
         Storage Monsters : ${Monstre.cleanMonstres.length}
         Explosions: ${explosions.length}
@@ -334,6 +357,7 @@ function afficherDebug() {
         Exp orbs: ${exps.length}
         Epée Active: ${sword.hasSword ? "Oui" : "Non"}
         Gun Active: ${gun.hasGun ? "Oui" : "Non"}
+        MILK : ${mstr.dedMilkMan}
         Cursor X: ${cursorX}
         Cursor Y: ${cursorY}
     `;
@@ -348,12 +372,29 @@ window.addEventListener('resize', () => {
     grid = drawGridBackground(app); 
     grid.zIndex = 0;
 });
+const EXP_BAR = document.getElementById('expBar');
 
-function resizeApp() {
+
+function updateExpBar(joueur) {
+    let height = window.innerHeight;
+    let width = window.innerWidth;
+    let expRatio = joueur.exp / joueur.expReq;
+
+    EXP_BAR.style.height = `${expRatio * height}px`;
+    EXP_BAR.style.width = `${width}px`;
+}
+
+function resizeApp(joueur) {
     let width = window.innerWidth;
     let height = window.innerHeight;
-    app.renderer.resize(width * 0.989, height * 0.98);
+    app.renderer.resize(width * 0.98, height * 0.98);
+    app.view.style.position = "absolute"; // Ensure positioning works
+    
+    app.view.style.bottom = "0";
+    app.view.style.transform = "translateX(0.5%)";
+    updateExpBar(joueur);
 }
+
 
 // Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);

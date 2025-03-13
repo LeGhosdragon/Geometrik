@@ -31,7 +31,7 @@ export function keyboard(keyCode) {
     return key;
 }
 
-export function setupKeyboardControls(joueur, sword, mstr, gun, exp) {
+export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
     console.log("this is working");
     
     // Arrow keys
@@ -44,7 +44,9 @@ export function setupKeyboardControls(joueur, sword, mstr, gun, exp) {
         enableDedBomb = keyboard(66),
         enableDedExp = keyboard(89),
         enableGun = keyboard(71),
-        enableDebug = keyboard(186);
+        enableDebug = keyboard(186),
+        milk = keyboard(77),
+        pause = keyboard(27);
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -133,6 +135,44 @@ export function setupKeyboardControls(joueur, sword, mstr, gun, exp) {
         }
         else{
             joueur.debug = true;
+        }
+    }
+    milk.press = () =>
+    {
+        if(mstr.dedMilkMan)
+        {
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0x000000, 1);
+            joueur.body.beginFill(0x9966FF);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0x000000, 1);
+            gun.body.beginFill(0x9966FF);
+            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.endFill();
+            mstr.dedMilkMan = false;
+        }
+        else{
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0x000000, 1);
+            joueur.body.beginFill(0xFFFFFF);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0x000000, 1);
+            gun.body.beginFill(0xFFFFFF);
+            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.endFill();
+            mstr.dedMilkMan = true;
+        }
+    }
+    pause.press = () =>
+    {
+        if(app.pause)
+        {
+            app.pause = false;
+        }
+        else{
+            app.pause = true;
         }
     }
 

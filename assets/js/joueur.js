@@ -1,6 +1,11 @@
 export class Joueur {
 
+    static mstr = null;
+    static EXP_BAR = document.getElementById('expBar');
+
     constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0x9966FF, weapons = []) {
+        this.lvl = 0;
+        this.expReq = 20 + this.lvl*this.lvl; 
         this.debug = false;
         this.exp = 0;
         this.distanceDattraction = 150;
@@ -23,6 +28,11 @@ export class Joueur {
         const joueur = new PIXI.Graphics();
         joueur.lineStyle(3, 0x000000, 1);
         joueur.beginFill(this.couleur);
+        if(Joueur.mstr.dedMilkMan)
+        {
+            joueur.beginFill(0xFFFFFF);
+        }
+        
         joueur.drawCircle(this.size, this.size, this.size);
         joueur.endFill();
         joueur.zIndex = 99;
@@ -102,7 +112,7 @@ export class Joueur {
         const text = new PIXI.Text(this.currentHP, {
             fontFamily: 'Arial',
             fontSize: 12,
-            fill: 0xFFFFFF,
+            fill: Joueur.mstr.dedMilkMan ? 0x000000 : 0xFFFFFF,
             align: 'center'
         });
         text.zIndex = 100;
@@ -117,7 +127,19 @@ export class Joueur {
     {
         this.exp += qty;
         this.updateHP();
+        this.updatelvl();
+        this.updateExpBar()
     }
+
+    updateExpBar() {
+        let height = window.innerHeight;
+        let width = window.innerWidth;
+        let expRatio = this.exp / this.expReq + 0.02;
+    
+        Joueur.EXP_BAR.style.height = `${expRatio * height}px`;
+        Joueur.EXP_BAR.style.width = `${width}px`;
+    }
+    
 
     // Update HP display
     updateHP() {
@@ -130,6 +152,22 @@ export class Joueur {
         this.hpText.y = this.getY() + this.size;
     }
 
+    updatelvl()
+    {
+        if(this.exp >= this.expReq)
+        {
+            this.lvl+=1;
+            this.exp = 0;
+            this.expReq = 20 + this.lvl*this.lvl;
+        }
+    }
+
+    getExpBar(width = 20) {
+        let progress = Math.floor((this.exp / this.expReq) * width);
+        let bar = "[" + "#".repeat(progress) + "-".repeat(width - progress) + "]";
+        return `Lvl ${this.lvl} ${bar} ${this.exp}/${this.expReq}`;
+    }
+
     endommagé(dmg)
     {
         this.setHP(this.getHP() - dmg);
@@ -139,6 +177,10 @@ export class Joueur {
     getMagDist()
     {
         return this.distanceDattraction;
+    }
+    static addMonstre(mstr)
+    {
+        Joueur.mstr = mstr;
     }
 
 

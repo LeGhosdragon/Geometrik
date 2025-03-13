@@ -162,7 +162,7 @@ export class Monstre {
             fontFamily: 'Arial',
             fontSize: 26,
             fill: 0xFFFFFF,
-            stroke: 0x000000,      // Black outline
+            stroke: 0x000000,      
             strokeThickness: 4, 
             align: 'center'
         });
@@ -318,7 +318,7 @@ export class Monstre {
             align: 'center',
             fontWeight: 'bold'
         });
-    
+        damageText.zIndex = 101;
         // Set initial position based on monster's position
         damageText.x = monstre.getX();
         damageText.y = monstre.getY();
