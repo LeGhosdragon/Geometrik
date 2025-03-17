@@ -161,14 +161,7 @@ input:checked + .slider:before {
     padding: 20px;
 }
 
-.form-container {
-    display: flex;
-    width: 80%;
-    max-width: 1000px;
-    height: 600px;
-    border-radius: 10px;
-    overflow: hidden;
-}
+
 
 .form-section {
     width: 60%;
@@ -325,4 +318,60 @@ input:checked + .slider:before {
     max-height: 100%;
 }
 
+/* Modification pour le nav */
+nav {
+    background-color: var(--background);
+    border-bottom: var(--text) 1px solid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px;
+    height: 60px; /* Définir une hauteur fixe */
+    position: relative; /* Ajouter position relative */
+    z-index: 10; /* S'assurer que la nav reste au-dessus */
+}
+
+/* Correction pour le main-container */
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* Utiliser min-height au lieu de height */
+    padding: 20px;
+    position: relative; /* Ajouter position relative */
+    margin-top: 60px; /* Ajouter une marge supérieure équivalente à la hauteur de nav */
+    box-sizing: border-box; /* S'assurer que le padding est inclus dans la hauteur */
+}
+
+/* Rendre le formulaire responsive */
+.form-container {
+    display: flex;
+    width: 80%;
+    max-width: 1000px;
+    height: auto; 
+    min-height: 500px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-direction: row; 
+}
+
+/* Media query pour les petits écrans */
+@media (max-width: 768px) {
+    .form-container {
+        flex-direction: column; 
+        height: auto;
+    }
+    
+    .form-section, .image-section {
+        width: 100%; 
+    }
+    
+    .nav-left li {
+        margin-right: 2em; 
+    }
+    
+    .nav-left li:first-child {
+        margin-right: 2em;
+    }
+}
 
