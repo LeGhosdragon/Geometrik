@@ -1,0 +1,328 @@
+:root {
+    --primary: #0099FF;
+    --secondary: #4A0099;
+    --accent: #99005E;
+    --text: #FFFFFF;
+    --background: #1A1A1A;
+    --dark-background: #222222;
+    --purple: #8A2BE2;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@font-face {
+    font-family: 'Paragraph';
+    src: url(../fonts/Refrigerator-Deluxe-Bold.otf) format('opentype');
+}
+
+@font-face {
+    font-family: 'Header';
+    src: url();
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--background);
+    min-height: 100vh;
+    font-family: 'Paragraph', sans-serif;
+    color: var(--text);
+    animation: fadeInAnimation ease 1.8s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Barre de navigation */
+/* Espacement supplémentaire pour le contenu principal */
+nav {
+    background-color: var(--background);
+    border-bottom: var(--text) 1px solid;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 40px; /* Plus de padding horizontal */
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+.nav-left li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-right: 10em; 
+}
+
+.nav-left li:not(:last-child):after {
+    position: absolute;
+    right: 3em; 
+    font-size: 1em;
+    color: var(--text);
+}
+
+
+.nav-left li:first-child {
+    margin-right: 10em; 
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+nav a {
+    font-family: 'Paragraph', sans-serif;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Toggle switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #333;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--primary);
+}
+
+input:checked + .slider:before {
+    transform: translateX(30px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Main container */
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 60px);
+    padding: 20px;
+}
+
+.form-container {
+    display: flex;
+    width: 80%;
+    max-width: 1000px;
+    height: 600px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.form-section {
+    width: 60%;
+    background-color: var(--dark-background);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-logo {
+    margin-bottom: 10px;
+}
+
+.form-title {
+    font-family: 'Paragraph', sans-serif;
+    background-image: linear-gradient(var(--accent), var(--secondary));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid transparent; /* Bordure transparente pour laisser place au dégradé */
+    border-radius: 10px;
+    background-color: #111;
+    color: var(--text);
+    margin-top: 8px;
+    position: relative;
+    background-clip: padding-box; /* Empêche le fond de déborder sur la bordure */
+}
+
+.form-group input:focus {
+    outline: none;
+    border-image: linear-gradient(to right, var(--secondary), var(--accent)) 1;
+    border-radius: 10px;
+    border-image-slice: 1;
+    transition: border-image 0.3s ease;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+
+
+.password-container {
+    position: relative;
+    margin-top: 8px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text);
+    cursor: pointer;
+}
+
+/* Style du checkbox */
+.form-checkbox input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background-color: #111;
+    margin-right: 10px;
+    cursor: pointer;
+    position: relative;
+    outline: none; 
+}
+
+.form-checkbox input[type="checkbox"]:checked {
+    background-color: var(--accent); 
+}
+
+.form-checkbox input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: var(--text);
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-checkbox label {
+    cursor: pointer;
+}
+
+.form-button {
+    margin-bottom: 20px;
+}
+
+#btnSignUp {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--primary);
+    color: var(--text);
+    font-family: 'Paragraph', sans-serif;
+    font-weight: normal;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#btnSignUp:hover {
+    background-color: #007acc;
+}
+
+.form-link {
+    text-align: left;
+    font-size: 0.9em;
+}
+
+#connectez-vous {
+    font-family: 'Paragraph', sans-serif;
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.image-section {
+    width: 40%;
+    background-image: linear-gradient(180deg, var(--secondary), var(--accent));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.image-section img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+
