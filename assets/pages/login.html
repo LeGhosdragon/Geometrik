@@ -3,28 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Geometrik Connexion</title>
     <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
     <script src="../scripts/login.js"></script>
 </head>
 <body>
     <nav>
         <ul class="nav-left">
-            <li><img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik"></li>
-            <li><a href="#">Accueil</a></li>
+            <li>
+                <a href="index.html">
+                    <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
+                </a>
+            </li>
+            <li><a href="index.html">Accueil</a></li>
             <li><a href="#">À propos</a></li>
             <li><a href="#">Catalogue</a></li>
-            <li><a href="#">Jouer</a></li>
+            <li><a href="play.html">Jouer</a></li>
             <li><a href="#">Feedback</a></li>
         </ul>
         <ul class="nav-right">
-            <li class="toggle-container">
-                <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider round"></span>
+            <div class="toggle-switch">
+                <label class="switch-label">
+                  <input type="checkbox" class="checkbox">
+                  <span class="slider"></span>
                 </label>
-            </li>
-            <li><a href="#">Connexion</a></li>
+            </div>  
+            <div class="menu">
+                <div class="item">
+                  <a href="#" class="link">
+                    <span> Connexion </span>
+                    <svg viewBox="0 0 360 360" xml:space="preserve">
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          id="XMLID_225_"
+                          d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
+                        ></path>
+                      </g>
+                    </svg>
+                  </a>
+                  <div class="submenu">
+                    <div class="submenu-item">
+                      <a href="signup.html" class="submenu-link"> Se Connecter </a>
+                    </div>
+                    <div class="submenu-item">
+                      <a href="login.html" class="submenu-link"> S'inscrire </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
         </ul>
     </nav>
 
