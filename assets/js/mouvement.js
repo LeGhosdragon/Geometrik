@@ -172,13 +172,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
     }
     pause.press = () =>
     {
-        if(app.pause)
-        {
-            app.pause = false;
-        }
-        else{
-            app.pause = true;
-        }
+        app.pause = !app.pause;
     }
     lvlUp.press = () =>
     {
