@@ -1,42 +1,44 @@
 let r = 0, g = 0, b = 0, backColor = 0x000000;
 
-let vitesseCouleur = 0.00001; // Change this for faster/slower pulses
+let vitesseCouleur = 0.00001;
 
-export function drawGridBackground(app) {
+export function drawGridBackground(app, x, y) {
     const grid = new PIXI.Graphics();
-    grid.lineStyle(1, 0x00000, 0.3); // Line style: grey color, width of 1px
+    grid.lineStyle(1, 0x000000, 0.3);
 
-    // Determine the size of the grid based on the screen size and a large enough margin.
-    const gridSize = 1000000; // The grid's maximum size (way beyond the player's movement range)
-    const step = 40; // The step size for each grid line
+    const gridSize = 1000000;
+    const step = 100; 
 
-    // Draw vertical lines
-    for (let x = -gridSize; x < gridSize; x += step) {
-        grid.moveTo(x, -gridSize);
-        grid.lineTo(x, gridSize);
+    for (let i = - gridSize; i < gridSize; i += step) {
+        grid.moveTo(i, -gridSize);
+        grid.lineTo(i, gridSize);
     }
 
-    // Draw horizontal lines
-    for (let y = -gridSize; y < gridSize; y += step) {
-        grid.moveTo(-gridSize, y);
-        grid.lineTo(gridSize, y);
+    for (let j = - gridSize; j < gridSize; j += step) {
+        grid.moveTo(-gridSize, j);
+        grid.lineTo(gridSize, j);
     }
 
-    // Add the grid to the stage
+    grid.position.set(900, 400);
+
     app.stage.addChild(grid);
-    return grid; // Return the grid object so it can be manipulated later
+    return grid; 
 }
 
+
 // The function to update the background color to pulse through the rainbow
-export function updateBackgroundColor(app, mstr) {
-    // Update the RGB components using sine waves to cycle through colors
+export function updateBackgroundColor(app, mstr, grid) {
     if(app.pause)
     {
-       vitesseCouleur = 0;
+       vitesseCouleur = 0.001;
     }
-        r = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + 0) + 1) * 128); // Sinusoidal for red
-        g = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 2 / 3) + 1) * 128); // Sinusoidal for green
-        b = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 4 / 3) + 1) * 128); // Sinusoidal for blue
+    else
+    {
+        vitesseCouleur = 0.00001;
+    }
+        r = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + 0) + 1) * 128); 
+        g = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 2 / 3) + 1) * 128);
+        b = Math.floor((Math.sin(vitesseCouleur * app.ticker.lastTime + Math.PI * 4 / 3) + 1) * 128); 
     if(mstr.dedMilkMan)
     {
         r = 255;
@@ -81,4 +83,3 @@ function hexToRgb(hex) {
     const b = hex & 0xFF;
     return { r, g, b };
 }
-

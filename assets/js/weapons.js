@@ -73,11 +73,11 @@ export class Sword extends Weapon {
         return rectangle;
     }
 
-    updateTrail(offsets) {
+    updateTrail(delta, offsets) {
         if (!this.body.visible) {
             this.trail.forEach((particle, index) => {
                 if (particle.alpha > 0) {
-                    particle.alpha -= 0.02 * (index + 1);
+                    particle.alpha -= 0.02 * (index + 1) * alpha;
                 }
             });
         } else {
@@ -179,7 +179,7 @@ export class Sword extends Weapon {
         }
     }
 
-    playSwordSwing(cursorX, cursorY) {
+    playSwordSwing(delta, cursorX, cursorY) {
         if(this.hasSword)
         {
             //Ceci permet au premier swing d'aller dans la direction de la souris
@@ -212,7 +212,7 @@ export class Sword extends Weapon {
         }
         if(this.hasTrail)
         {
-            this.updateTrail([0, 0.1, 0.2]);
+            this.updateTrail(delta, [0, 0.1, 0.2]);
         }
         
         this.previousSwordPosition = { x: this.getX(), y: this.getY() };
@@ -223,7 +223,6 @@ export class Sword extends Weapon {
     }
 }
 
-
 export class Gun extends Weapon {
     static bullets = [];
 
@@ -233,6 +232,7 @@ export class Gun extends Weapon {
         this.pierce = pierce;
         this.isOnCooldown = false;
         this.color = 0x9966FF;
+        this.bulletSize = 6;
         this.wideness = 1.3;
         this.storedAngle = 0;
         this.isSwinging = false;
@@ -245,13 +245,12 @@ export class Gun extends Weapon {
         const gun = new PIXI.Graphics();
         gun.lineStyle(3, 0x000000, 1);
         gun.beginFill(this.color);
-        if(Weapon.mstr.dedMilkMan)
-        {
+        if (Weapon.mstr.dedMilkMan) {
             gun.beginFill(0xFFFFFF);
         }
-        gun.drawRect(0, 0, 10, 15); // Adjust gun size
+        gun.drawRect(0, 0, 10, 15);
         gun.endFill();
-        gun.pivot.set(5, 30);  
+        gun.pivot.set(5, 30);
         gun.x = Weapon.joueur.getX() + 15;
         gun.y = Weapon.joueur.getY() + 100;
         gun.zIndex = 1000;
@@ -267,95 +266,94 @@ export class Gun extends Weapon {
     shoot() {
         if (this.isOnCooldown || !this.hasGun) return;
         this.isOnCooldown = true;
-        
+
         const bullet = new PIXI.Graphics();
-        bullet.radius = 6;
-        bullet.lineStyle(3, 0x000000, 1);
-        bullet.beginFill(0xFF0000); // Bullet color
-        if(Weapon.mstr.dedMilkMan)
-        {
-            bullet.radius = 20;
-            bullet.lineStyle(3, 0xFFFFFF, 1);
-            bullet.beginFill(0xFFFFFF); // Bullet color
-        }
-        
-        
+        bullet.radius = Weapon.mstr.dedMilkMan ? 20 : this.bulletSize;
+        bullet.lineStyle(3, Weapon.mstr.dedMilkMan ? 0xFFFFFF : 0x000000, 1);
+        bullet.beginFill(Weapon.mstr.dedMilkMan ? 0xFFFFFF : 0xFF0000);
         bullet.drawCircle(0, 0, bullet.radius);
         bullet.endFill();
-
+        bullet.touches = [];
+        bullet.pierce = this.pierce;
         bullet.angle = this.storedAngle;
-        // Calculate bullet spawn position at gun barrel
-        const gunLength = 30; // Length of the gun shape
+        const gunLength = 30;
         bullet.x = this.body.x + Math.cos(this.storedAngle - Math.PI / 2) * gunLength;
         bullet.y = this.body.y + Math.sin(this.storedAngle - Math.PI / 2) * gunLength;
 
         Weapon.app.stage.addChild(bullet);
         Gun.bullets.push(bullet);
 
-        setTimeout(() => this.isOnCooldown = false, 1000 * this.cooldown);
+        setTimeout(() => (this.isOnCooldown = false), 1000 * this.cooldown);
     }
 
-    update(cursorX, cursorY, deltaX, deltaY) {
-        // Update gun position based on the player
-        this.body.x = Weapon.joueur.getX() + Weapon.joueur.getWidth() / 2- 1;
-        this.body.y = Weapon.joueur.getY() + Weapon.joueur.getHeight() / 2 -1; 
+    update(delta, cursorX, cursorY, deltaX, deltaY) {
+        this.body.x = Weapon.joueur.getX() + Weapon.joueur.getWidth() / 2 - 1;
+        this.body.y = Weapon.joueur.getY() + Weapon.joueur.getHeight() / 2 - 1;
 
-        // Calculate gun rotation to aim at the cursor
         let dx = cursorX - this.body.x;
         let dy = cursorY - this.body.y;
-        this.storedAngle = Math.atan2(dy, dx) + Math.PI / 2; // Store aiming angle
-        this.body.rotation = this.storedAngle; // Rotate gun
+        this.storedAngle = Math.atan2(dy, dx) + Math.PI / 2;
+        this.body.rotation = this.storedAngle;
 
-        // Update bullets
-        Gun.bullets.forEach((b, index) => {
-            b.x += Math.cos(b.angle - Math.PI / 2) * 10 + deltaX;
-            b.y += Math.sin(b.angle - Math.PI / 2) * 10 + deltaY;
+        // Iterate backwards when removing elements
+        for (let i = Gun.bullets.length - 1; i >= 0; i--) {
+            let b = Gun.bullets[i];
+            b.x += (Math.cos(b.angle - Math.PI / 2) * 10) * delta + deltaX;
+            b.y += (Math.sin(b.angle - Math.PI / 2) * 10) * delta + deltaY;
 
             // Remove bullets that go off-screen
-            if (b.x < 0 - b.radius || b.x > Weapon.app.view.width + b.radius ||
-                b.y < 0 - b.radius || b.y > Weapon.app.view.height + b.radius) {
+            if (
+                b.x < -b.radius || b.x > Weapon.app.view.width + b.radius ||
+                b.y < -b.radius || b.y > Weapon.app.view.height + b.radius
+            ) {
                 Weapon.app.stage.removeChild(b);
-                b.destroy();  // Destroy the bullet to prevent memory leak
-                Gun.bullets.splice(index, 1);  // Remove from bullets array
+                b.destroy({ children: true, texture: true, baseTexture: true });
+                Gun.bullets.splice(i, 1);
             }
-        });
+        }
     }
 
     isBulletCollidingWithMonster(monstre) {
-        if (!monstre || !monstre.body) return;  // Check if monstre or monstre.body is null
-    
-        Gun.bullets.forEach((bullet, index) => {
-            if (!bullet || !monstre.body) return;  // Check if bullet is valid
-    
+        if (!monstre || !monstre.body) return;
+
+        for (let i = Gun.bullets.length - 1; i >= 0; i--) {
+            let bullet = Gun.bullets[i];
+            if (!bullet || !monstre.body) continue;
+
             const bulletBounds = bullet.getBounds();
             const monstreBounds = monstre.body.getBounds();
-    
+
             if (
                 bulletBounds.x < monstreBounds.x + monstreBounds.width &&
                 bulletBounds.x + bulletBounds.width > monstreBounds.x &&
                 bulletBounds.y < monstreBounds.y + monstreBounds.height &&
                 bulletBounds.y + bulletBounds.height > monstreBounds.y
             ) {
-                this.onBulletHitEnemy(monstre);
-                Weapon.app.stage.removeChild(bullet);
-                bullet.destroy();  
-                Gun.bullets.splice(index, 1); 
+                this.onBulletHitEnemy(bullet, monstre);
+                if(bullet.pierce <= 0)
+                {
+                    Weapon.app.stage.removeChild(bullet);
+                    bullet.destroy({ children: true, texture: true, baseTexture: true });
+                    Gun.bullets.splice(i, 1);
+                }
+                else if(!bullet.touches.includes(monstre))
+                {
+                    bullet.pierce--;
+                }  
+                bullet.touches[bullet.touches.length] = monstre;
             }
-        });
+        }
     }
-    
-    
 
-    onBulletHitEnemy(monstre) {
-        if (!monstre.getBulletHit()) {
+    onBulletHitEnemy(bullet, monstre) {
+        if (!monstre.getBulletHit() && !bullet.touches.includes(monstre)) {
             monstre.setBulletHit(true);
             const dmg = this.gunDMG();
-
             monstre.endommagé(dmg, "gun");
-            monstre.setBulletHit(true);            
         }
     }
 }
+
 
 export class Explosion {
     static explosions = [];

@@ -1,9 +1,10 @@
 import { setupKeyboardControls } from './mouvement.js';
-import { Monstre, MonstreNormal, MonstreRunner, MonstreTank } from './monstre.js';
-import { drawGridBackground, updateBackgroundColor } from './background.js';
+import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp } from './monstre.js';
+import { drawGridBackground, updateBackgroundColor} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
 import { Exp } from './experience.js';
+import { Upgrade } from './upgrades.js';
 
 
 // Aliases
@@ -38,10 +39,10 @@ const Application = PIXI.Application,
 
 
 //noComeBacks makes it so the spawner stops to let in the ones that were lost tot the cleansing !
-let joueur, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, 
+let joueur, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, x = 0, y = 0,
 monstres = Monstre.monstres, explosions = Explosion.explosions, exps = Exp.exps, exp = Exp, explosion = Explosion, bullets = Gun.bullets,
-sword, gun, hasSword = false, noComeBacks = false, dedPos = 0, mstr = Monstre,
-cursorX, cursorY, hold = false;
+sword, gun, hasSword = false, noComeBacks = false, dedPos = 0,
+cursorX, cursorY, hold = false, tempVal = 0;
 
 const app = new Application({
     width: 900,
@@ -72,8 +73,9 @@ function setup() {
     app.stage.sortableChildren = true;
     Monstre.addApp(app);
     Weapon.addApp(app);
-    Weapon.addMonstres(mstr);
-    Joueur.addMonstre(mstr);
+    Weapon.addMonstres(Monstre);
+    Joueur.addMonstre(Monstre);
+    Joueur.addUpgrade(new Upgrade("gun"));
     joueur = new Joueur(app);
     resizeApp(joueur);
     joueur.updateExpBar();
@@ -83,63 +85,71 @@ function setup() {
     Exp.addApp(app);
     Monstre.addExp(exp);
     Monstre.addExplosion(explosion);
+    Upgrade.addApp(app);
+    Upgrade.addJoueur(joueur);
+    Upgrade.addMonstre(Monstre);
 
+    sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // Blue rectangle of 10x80
+    gun = new Gun(1, joueur.baseDMG, 0);
 
-    sword = new Sword(1, 15, 80, hasSword);  // Blue rectangle of 10x80
-    gun = new Gun(0,10);
+    Upgrade.addWeapons(Sword, Gun, sword, gun);
     
+    // let upgrades = gunUpg.choisirUpgrade(4);
+    // console.log(upgrades);
+    // gunUpg.upgradeChoisi(upgrades[0]);
+    // upgrades = gunUpg.choisirUpgrade(4);
+    // console.log(upgrades);
+    // gunUpg.upgradeChoisi(upgrades[0]);
  
-
     // Create monsters at regular intervals
     let i = 0;
     let j = 0;
     let k = 0;
     let l = 0;
-    setInterval(() => { 
-        if(!app.pause)
-        {
-            ajouterMONSTRE( 7, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));
-            i++;
-        }
-    }, 1000);
-    setInterval(() => { 
-        if(!app.pause)
-        {
-            ajouterMONSTRE( 20, "runner", 4);
-        }
-    }, 1000);
-    setInterval(() => { 
-        if(!app.pause)
-        {
-            ajouterMONSTRE( 10, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));
-            k++;
-        }
-    }, 1000);
+    // setInterval(() => { 
+    //     if(!app.pause)
+    //     {
+    //         ajouterMONSTRE( 7, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));
+    //         i++;
+    //     }
+    // }, 1000);
+    // setInterval(() => { 
+    //     if(!app.pause)
+    //     {
+    //         ajouterMONSTRE( 2, "runner", 4);
+    //     }
+    // }, 1000);
+    // setInterval(() => { 
+    //     if(!app.pause)
+    //     {
+    //         ajouterMONSTRE( 5, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));
+    //         k++;
+    //     }
+    // }, 1000);
+    // setInterval(() => { 
+    //     if(!app.pause)
+    //     {
+    //         ajouterMONSTRE( 1, "expBall", 3);
+    //     }
+    // }, 60000);
 
 
     
     
     // setInterval(() => { 
-    //     new Exp(joueur.getX(), joueur.getY(), 10);
-    // }, 1);
+    //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 10000000000);
+    // }, 10);
 
-    setInterval(() => {
-        Monstre.cleanup();
-    });
 
-    setupKeyboardControls(app, joueur, sword, mstr, gun, exps);
+    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps);
 
 
     // Set the game state
     state = play;
     
     // Start the game loop
-    app.ticker.add((delta) => gameLoop(delta));
+    app.ticker.add((delta) => play(delta));
     app.stage.addChild(debugText);
-}
-
-function gameLoop(delta) {
-    state(delta);
 }
 
 // Update cursor position on mouse move
@@ -158,31 +168,60 @@ document.addEventListener("mouseup", (event) =>
     hold = false;
 });
 document.addEventListener('contextmenu', (event) =>{
-    //event.preventDefault();
+    event.preventDefault();
 });
 
-function play() {
+function play(delta) {
     if(!app.pause)
     {
+        tempVal++%10    == 0 ? ajouterMONSTRE( 1, "normal", 3 ) :0;
+        tempVal%30      == 0 ? ajouterMONSTRE( 1, "runner", 4 ) :0;
+        tempVal%20      == 0 ? ajouterMONSTRE( 1, "tank", 6 ) :0;
+        tempVal%3600    == 0 ? ajouterMONSTRE( 1, "expBall", 3 ) :0;
+
+        //ajouterMONSTRE( 3, "runner", 6 );
         let xI = xF;
         let yI = yF;
         xF += joueur.getVX();
         yF += joueur.getVY();
 
-        const deltaX = -(xF - xI);
-        const deltaY = -(yF - yI);
+        const deltaX = -(xF - xI) * delta;
+        const deltaY = -(yF - yI) * delta;
+   
+        if(x > 100000)
+        {
+            grid.x += 10000;
+            x = 0;
+            //grid.position.set(0,0);
+        }
+        if(x < -10000)
+        {
+            grid.x -= 10000;
+            x = 0;
+        }
+        if(y > 10000)
+        {
+            grid.y += 10000;
+            y = 0;
+        }
+        if(y < -10000)
+        {
+            grid.y -= 10000;
+            y = 0;
+        }
 
-        grid.x -= joueur.getVX();
-        grid.y -= joueur.getVY();
-
+        grid.x -= joueur.getVX() * delta;
+        grid.y -= joueur.getVY() * delta;  
         
+        x += joueur.getVX() * delta;
+        y += joueur.getVY() * delta;
 
-        sword.playSwordSwing(cursorX, cursorY);
+        sword.playSwordSwing(delta, cursorX, cursorY);
         
-        gun.update(cursorX, cursorY, deltaX, deltaY);
+        gun.update(delta, cursorX, cursorY, deltaX, deltaY);
         
         monstres.forEach(monstre => {
-            monstre.bouger(joueur, deltaX, deltaY, ennemiColor);
+            monstre.bouger(joueur,delta, deltaX, deltaY, ennemiColor);
             if(sword.hasSword)
             {
                 if (sword.isSwordCollidingWithMonster(monstre)) {
@@ -200,7 +239,6 @@ function play() {
             gun.shoot();
         }
         
-        
         explosions.forEach(explosion => {
             explosion.updateExplosion(deltaX, deltaY);
             explosion.applyDamage(monstres);
@@ -208,7 +246,7 @@ function play() {
 
         exps.forEach(exp => {
             let index = exps.indexOf(exp);
-            if(mstr.dedEXP)
+            if(Monstre.dedEXP)
             {
                 exp.updatePos(deltaX, deltaY);
             }
@@ -228,14 +266,16 @@ function play() {
     else{
 
     }
-    ennemiColor = updateBackgroundColor(app, mstr);
-    afficherDebug();
+    ennemiColor = updateBackgroundColor(app, Monstre);
+    Monstre.cleanup();
+    Exp.cleanup(delta);
+    afficherDebug(delta);
 }
 
 
 function ajouterMONSTRE(amount = 1, type = "normal", sides = 3) {  
     
-    if((Monstre.cleanMonstres.length < 10 || noComeBacks) && Monstre.monstres.length < 500)
+    if((Monstre.cleanMonstres.length < 10 || noComeBacks) && Monstre.monstres.length < 1000)
     {
         if(type == "normal") { 
         for (let i = 0; i < amount; i++) {
@@ -255,6 +295,14 @@ function ajouterMONSTRE(amount = 1, type = "normal", sides = 3) {
             for (let i = 0; i < amount; i++) {
                 let rngPos = posRandomExterieur(app);
                 const monstre = new MonstreTank( rngPos[0], rngPos[1], sides);
+                app.stage.addChild(monstre.body);
+                monstres.push(monstre);
+            }
+        }
+        else if(type == "expBall") {
+            for (let i = 0; i < amount; i++) {
+                let rngPos = posRandomExterieur(app);
+                const monstre = new MonstreExp( rngPos[0], rngPos[1], sides);
                 app.stage.addChild(monstre.body);
                 monstres.push(monstre);
             }
@@ -336,17 +384,19 @@ function posRandomExterieur(app) {
     return [randomX, randomY];
 }
 
-function afficherDebug() {
+function afficherDebug(delta) {
     if (!joueur.debug) {
         debugText.text = "";
         return;
     }
 
     debugText.text = `
-        Joueur X: ${joueur.getX().toFixed(2)}
-        Joueur Y: ${joueur.getY().toFixed(2)}
-        Vitesse X: ${joueur.getVX().toFixed(2)}
-        Vitesse Y: ${joueur.getVY().toFixed(2)}
+        Joueur X : ${x}
+        Joueur Y : ${y}
+        baseGunDMG: ${gun.baseDMG}
+        Vitesse Joueur : ${joueur.vitesse}
+        Vitesse X : ${joueur.getVX().toFixed(2)}
+        Vitesse Y : ${joueur.getVY().toFixed(2)}
         HP : ${joueur.currentHP}
         Exp : ${joueur.exp} 
         ${joueur.getExpBar()}
@@ -354,12 +404,15 @@ function afficherDebug() {
         Storage Monsters : ${Monstre.cleanMonstres.length}
         Explosions: ${explosions.length}
         Bullets : ${bullets.length}
+        BulletPierce : ${gun.pierce}
         Exp orbs: ${exps.length}
+        ExpBuildup: ${Exp.expBuildUp}
         Epée Active: ${sword.hasSword ? "Oui" : "Non"}
         Gun Active: ${gun.hasGun ? "Oui" : "Non"}
-        MILK : ${mstr.dedMilkMan}
+        MILK : ${Monstre.dedMilkMan}
         Cursor X: ${cursorX}
         Cursor Y: ${cursorY}
+        FPS : ${app.ticker.FPS.toFixed(0)}
     `;
 }
 

@@ -1,11 +1,12 @@
 export class Joueur {
 
     static mstr = null;
+    static upgrade = null;
     static EXP_BAR = document.getElementById('expBar');
 
-    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0x9966FF, weapons = []) {
+    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0xFF0000, weapons = []) {
         this.lvl = 0;
-        this.expReq = 20 + this.lvl*this.lvl; 
+        this.expReq = 7 + this.lvl*this.lvl; 
         this.debug = false;
         this.exp = 0;
         this.distanceDattraction = 150;
@@ -21,6 +22,8 @@ export class Joueur {
         this.weapons = weapons;
         this.body = this.faireJoueur();
         this.hpText = this.createHPText();
+        this.healthBar = this.createHealthBar();
+        this.updateHealthBar();
     }
 
     // Function to create the player (joueur)
@@ -30,7 +33,7 @@ export class Joueur {
         joueur.beginFill(this.couleur);
         if(Joueur.mstr.dedMilkMan)
         {
-            joueur.beginFill(0xFFFFFF);
+            joueur.beginFill(0xFF0000);
         }
         
         joueur.drawCircle(this.size, this.size, this.size);
@@ -115,7 +118,7 @@ export class Joueur {
             fill: Joueur.mstr.dedMilkMan ? 0x000000 : 0xFFFFFF,
             align: 'center'
         });
-        text.zIndex = 100;
+        text.zIndex = 101;
         text.anchor.set(0.5);
         text.x = this.body.x + this.size;
         text.y = this.body.y + this.size;
@@ -139,26 +142,75 @@ export class Joueur {
         Joueur.EXP_BAR.style.height = `${expRatio * height}px`;
         Joueur.EXP_BAR.style.width = `${width}px`;
     }
-    
+    createHealthBar() {
+        const healthBar = new PIXI.Graphics();
+        healthBar.zIndex = 100;
+        this.app.stage.addChild(healthBar);
+        return healthBar;
+    }
 
-    // Update HP display
-    updateHP() {
-        if(this.currentHP <= 0)
+    updateHealthBar() {
+        this.healthBar.clear();
+    
+        // Calculate the health percentage
+        let healthPercent = this.currentHP / this.baseHP;
+        if (healthPercent < 0) healthPercent = 0;
+    
+        // Define pie chart parameters
+        let radius = this.size- 1;
+        let startAngle = -Math.PI / 2;  // Start from the top (12 o'clock position)
+        let endAngle = startAngle + (2 * Math.PI * healthPercent); // Fill proportionally
+    
+        // Draw pie chart
+
+
+        //4 principes
+        //RNF sécurité
+        
+        if(this.currentHP / this.baseHP != 1)
         {
-            this.setHP("");
+            this.healthBar.lineStyle(3, 0x000000, 1);
         }
-        this.hpText.text = this.currentHP;
+        
+        if(Joueur.mstr.dedMilkMan)
+        {
+            this.healthBar.beginFill(0xFFFFFF, 1);
+        }
+        else{this.healthBar.beginFill(0x9966FF, 1);}
+         // Red color for HP
+        this.healthBar.moveTo(this.getX() + this.size, this.getY() + this.size);
+        this.healthBar.arc(this.getX() + this.size, this.getY() + this.size, radius, startAngle, endAngle);
+        this.healthBar.lineTo(this.getX() + this.size, this.getY() + this.size);
+        this.healthBar.endFill();
+    }
+       
+    updateHP() {
+        this.hpText.text = this.currentHP > 0 ? this.currentHP : ""; // Keep the HP text
         this.hpText.x = this.getX() + this.size;
         this.hpText.y = this.getY() + this.size;
+    
+        this.updateHealthBar();  // Update the pie chart health bar
     }
+    
 
     updatelvl()
     {
         if(this.exp >= this.expReq)
         {
-            this.lvl+=1;
-            this.exp = 0;
-            this.expReq = 20 + this.lvl*this.lvl;
+            while(this.exp > this.expReq)
+            {
+                this.lvl+=1;
+                this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
+                this.expReq = 20 + this.lvl*this.lvl;
+                //functLvLUp();
+                let upgrades = Joueur.upgrade.choisirUpgrade(4);
+                //console.log(upgrades);
+                //setTimeout(() =>{}, 1000);
+                Joueur.upgrade.upgradeChoisi(upgrades[0]);
+                this.body.vx = 0;
+                this.body.vy = 0;
+
+            }
         }
     }
 
@@ -181,6 +233,10 @@ export class Joueur {
     static addMonstre(mstr)
     {
         Joueur.mstr = mstr;
+    }
+    static addUpgrade(upg)
+    {
+        Joueur.upgrade = upg;
     }
 
 
@@ -234,6 +290,14 @@ export class Joueur {
     setHeight(h)
     {
         this.body.height = h;
+    }
+    setVitesse(v)
+    {
+        this.vitesse = v;
+    }
+    getVitesse()
+    {
+        return this.vitesse;
     }
 
 

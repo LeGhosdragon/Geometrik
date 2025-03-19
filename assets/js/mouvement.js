@@ -46,7 +46,8 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         enableGun = keyboard(71),
         enableDebug = keyboard(186),
         milk = keyboard(77),
-        pause = keyboard(27);
+        pause = keyboard(27),
+        lvlUp = keyboard(76);
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -143,26 +144,30 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         {
             joueur.body.clear();
             joueur.body.lineStyle(3, 0x000000, 1);
-            joueur.body.beginFill(0x9966FF);
+            joueur.body.beginFill(0xFF0000);
             joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
             joueur.body.endFill();
             gun.body.lineStyle(3, 0x000000, 1);
             gun.body.beginFill(0x9966FF);
             gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
             gun.body.endFill();
+           
             mstr.dedMilkMan = false;
+            joueur.updateHealthBar();
         }
         else{
             joueur.body.clear();
             joueur.body.lineStyle(3, 0x000000, 1);
-            joueur.body.beginFill(0xFFFFFF);
+            joueur.body.beginFill(0xFF0000);
             joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
             joueur.body.endFill();
             gun.body.lineStyle(3, 0x000000, 1);
             gun.body.beginFill(0xFFFFFF);
             gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
             gun.body.endFill();
+            
             mstr.dedMilkMan = true;
+            joueur.updateHealthBar();
         }
     }
     pause.press = () =>
@@ -174,6 +179,11 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         else{
             app.pause = true;
         }
+    }
+    lvlUp.press = () =>
+    {
+        joueur.exp += joueur.expReq*10000 + 1; 
+        joueur.updatelvl();
     }
 
     // Arrow keys press and release

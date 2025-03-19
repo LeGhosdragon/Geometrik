@@ -1,4 +1,4 @@
-//import { Exp } from "./experience";
+
 export class Monstre {
     static monstres = [];
     static cleanMonstres = [];
@@ -10,7 +10,8 @@ export class Monstre {
     static dedEXP = true;
     static dedMilkMan = false;
 
-    constructor(x, y, sides, size, type, vitesse = 1, spinSpeed = 0.02, baseHP = 100, baseDMG = 1, couleur = 0xff0000) {
+    constructor(x, y, sides, size, type, vitesse = 1, spinSpeed = 0.02, baseHP = 100, exp = 1, baseDMG = 1, couleur = 0xff0000) {
+        this.exp = exp;
         this.isIn = true;
         this.showLife = Monstre.showLife;
         this.size = size;
@@ -61,10 +62,10 @@ export class Monstre {
         return { x: this.vitesse * dx / magnitude, y: this.vitesse * dy / magnitude };
     }
 
-    actualiserPolygone(ennemiColor) {
+    actualiserPolygone(delta, ennemiColor) {
         if (this.sides < 3) return;
         this.couleur = ennemiColor;
-        this.elapsedTime += 3;
+        this.elapsedTime += 3 * delta;
         let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
         this.body.clear();
         this.body.lineStyle(3, 0x000000, 1);
@@ -89,14 +90,14 @@ export class Monstre {
         this.updateHP();
     }
 
-    bouger(joueur, deltaX, deltaY, ennemiColor) {
+    bouger(joueur, delta, deltaX, deltaY, ennemiColor) {
         let moveVector = this.vecteurVersLeJoueur(joueur);
-        this.setX(this.getX() + moveVector.x + deltaX);
-        this.setY(this.getY() + moveVector.y + deltaY);
+        this.setX(this.getX() + (moveVector.x)*delta + deltaX);
+        this.setY(this.getY() + (moveVector.y)*delta + deltaY);
         
         this.spins ? this.body.rotation += this.spinSpeed : 0;
         this.avoidMonsterCollision();
-        this.actualiserPolygone(ennemiColor);
+        this.actualiserPolygone(delta, ennemiColor);
 
         if(this.showLife && this.currentHP > 0)
         {
@@ -139,7 +140,7 @@ export class Monstre {
 
     avoidMonsterCollision() {
         const minDistance = 85 * this.size;
-        const avoidFactor = 1;
+        const avoidFactor = 1.2;
 
         Monstre.monstres.forEach(otherMonstre => {
             if (this === otherMonstre) return;
@@ -182,7 +183,12 @@ export class Monstre {
                 new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
             }
             if (Monstre.dedEXP) {
-                new Monstre.Exp(this.getX(), this.getY(), 1);
+
+                new Monstre.Exp(this.getX(), this.getY(), this.exp);
+                if(this.type == "expBall")
+                {
+                    Monstre.Exp.expBuildUp = 0;
+                }
             }
     
             // Remove the monster from the array
@@ -301,7 +307,7 @@ export class Monstre {
             {
                 setTimeout(()=> {
                     this.setBulletHit(false);
-                }, 0);
+                }, 10);
             }
 
         this.updateHP();
@@ -407,4 +413,50 @@ export class MonstreTank extends Monstre {
     }
 }
 
+export class MonstreExp extends Monstre {
 
+    actualiserPolygone() {
+        if (this.sides < 3) return;
+        
+        // Generate a rainbow color using sine waves
+        const r = Math.floor(127.5 * (1 + Math.sin(this.elapsedTime * 0.1)));
+        const g = Math.floor(127.5 * (1 + Math.sin(this.elapsedTime * 0.1 + 2 * Math.PI / 3)));
+        const b = Math.floor(127.5 * (1 + Math.sin(this.elapsedTime * 0.1 + 4 * Math.PI / 3)));
+        const color = (r << 16) | (g << 8) | b;
+
+        this.couleur = color;
+        this.elapsedTime += 3;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        this.body.lineStyle(3, 0x000000, 1);
+        this.body.beginFill(color);
+    
+        const radius = newSize * 50;
+        const angleStep = (2 * Math.PI) / this.sides;
+    
+        this.body.moveTo(radius * Math.cos(0), radius * Math.sin(0));
+    
+        for (let i = 1; i <= this.sides; i++) {
+            let angle = i * angleStep;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+        this.exp = Monstre.Exp.expBuildUp;
+    
+        this.body.closePath();
+        this.body.endFill();
+    
+        // Ensure HP text stays updated
+        this.updateHP();
+    }
+    constructor(x, y, sides)
+    {
+        const type = "expBall";
+        const size = 0.5;
+        const speed = 0.2;
+        const spinSpeed = 0.003;
+        const baseHP = 250;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, 1, Monstre.Exp.expBuildUp);
+    }
+}
