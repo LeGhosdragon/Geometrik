@@ -39,15 +39,15 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         upArrow = keyboard(38),     // Up arrow
         rightArrow = keyboard(39), // Right arrow 
         downArrow = keyboard(40), // Down arrow
-        enableSword = keyboard(81),
-        enableText = keyboard(84),
-        enableDedBomb = keyboard(66),
-        enableDedExp = keyboard(89),
-        enableGun = keyboard(71),
-        enableDebug = keyboard(186),
-        milk = keyboard(77),
-        pause = keyboard(27),
-        lvlUp = keyboard(76);
+        enableSword = keyboard(81),     // 'Q' key
+        enableText = keyboard(84),     // 'T' key
+        enableDedBomb = keyboard(66), // 'B' key
+        enableDedExp = keyboard(89), // 'Y' key
+        enableGun = keyboard(71),       // 'G' key
+        enableDebug = keyboard(186),   // ';' key
+        milk = keyboard(77),          // 'M' key
+        pause = keyboard(27),        // 'Echap' key
+        lvlUp = keyboard(76);       // 'L' key
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -170,13 +170,10 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
             joueur.updateHealthBar();
         }
     }
-    pause.press = () =>
-    {
-        app.pause = !app.pause;
-    }
+
     lvlUp.press = () =>
     {
-        joueur.exp += joueur.expReq*10000 + 1; 
+        joueur.exp += joueur.expReq*10 + 1; 
         joueur.updatelvl();
     }
 

@@ -2,13 +2,15 @@ let r = 0, g = 0, b = 0, backColor = 0x000000;
 
 let vitesseCouleur = 0.00001;
 
-export function drawGridBackground(app, x, y) {
-    const grid = new PIXI.Graphics();
-    grid.lineStyle(1, 0x000000, 0.3);
+export class Grid{
 
+static grid = this.drawGridBackground(0.5);
+
+ static drawGridBackground(gridThickness) {
+    const grid = new PIXI.Graphics();
+    grid.lineStyle(gridThickness, getContrastingColor(hexToRgb(backColor)), 0.5);
     const gridSize = 1000000;
     const step = 100; 
-
     for (let i = - gridSize; i < gridSize; i += step) {
         grid.moveTo(i, -gridSize);
         grid.lineTo(i, gridSize);
@@ -20,9 +22,17 @@ export function drawGridBackground(app, x, y) {
     }
 
     grid.position.set(900, 400);
-
-    app.stage.addChild(grid);
     return grid; 
+}
+
+static pauseGrid(app)
+{
+    Grid.grid.clear();
+    app.stage.removeChild(Grid.grid);
+    Grid.grid = Grid.drawGridBackground(!app.pause ? 100 : 0.5);
+    app.stage.addChild(Grid.grid);
+}
+
 }
 
 

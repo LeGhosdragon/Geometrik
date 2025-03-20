@@ -1,6 +1,6 @@
 // weapons.js
 export class Weapon{
-    static mstr = null;
+    static Monstre = null;
     static monstres = null;
     static app = null;
     static joueur = null;
@@ -25,8 +25,8 @@ export class Weapon{
 
     static addMonstres(monstresInput)
     {
-        Weapon.mstr = monstresInput;
-        Weapon.monstres = Weapon.mstr.monstres;
+        Weapon.Monstre = monstresInput;
+        Weapon.monstres = Weapon.Monstre.monstres;
     }
     static addApp(appInput) {
         Weapon.app = appInput;
@@ -182,6 +182,12 @@ export class Sword extends Weapon {
     playSwordSwing(delta, cursorX, cursorY) {
         if(this.hasSword)
         {
+            this.body.clear(); // Efface l'ancienne épée
+            this.body.beginFill(this.color);
+            this.body.drawRect(0, 0, 10, this.length); // Met à jour avec la nouvelle longueur
+            this.body.endFill();
+            this.body.pivot.set(10 / 2, this.length + 30);
+
             //Ceci permet au premier swing d'aller dans la direction de la souris
             if(this.firstSwing)
             {
@@ -245,7 +251,7 @@ export class Gun extends Weapon {
         const gun = new PIXI.Graphics();
         gun.lineStyle(3, 0x000000, 1);
         gun.beginFill(this.color);
-        if (Weapon.mstr.dedMilkMan) {
+        if (Weapon.Monstre.dedMilkMan) {
             gun.beginFill(0xFFFFFF);
         }
         gun.drawRect(0, 0, 10, 15);
@@ -268,9 +274,9 @@ export class Gun extends Weapon {
         this.isOnCooldown = true;
 
         const bullet = new PIXI.Graphics();
-        bullet.radius = Weapon.mstr.dedMilkMan ? 20 : this.bulletSize;
-        bullet.lineStyle(3, Weapon.mstr.dedMilkMan ? 0xFFFFFF : 0x000000, 1);
-        bullet.beginFill(Weapon.mstr.dedMilkMan ? 0xFFFFFF : 0xFF0000);
+        bullet.radius = Weapon.Monstre.dedMilkMan ? 20 : this.bulletSize;
+        bullet.lineStyle(3, Weapon.Monstre.dedMilkMan ? 0xFFFFFF : 0x000000, 1);
+        bullet.beginFill(Weapon.Monstre.dedMilkMan ? 0xFFFFFF : 0xFF0000);
         bullet.drawCircle(0, 0, bullet.radius);
         bullet.endFill();
         bullet.touches = [];
@@ -361,7 +367,7 @@ export class Explosion {
     constructor(x, y, rayon, baseDMG, couleur) {
         this.rayon = rayon;
         this.baseDMG = baseDMG;
-        this.couleur = Weapon.mstr.dedMilkMan ? 0xFFFFFF : couleur;
+        this.couleur = Weapon.Monstre.dedMilkMan ? 0xFFFFFF : couleur;
         this.maxRayon = rayon;
         this.currentRayon = Math.max(1, rayon / 20); // Avoid 0 radius
 
@@ -401,7 +407,7 @@ export class Explosion {
             this.body.clear();
             this.body.beginFill(this.couleur);
             this.body.drawCircle(0, 0, this.currentRayon);
-            if(!Weapon.mstr.dedMilkMan)
+            if(!Weapon.Monstre.dedMilkMan)
             {
                 this.body.alpha -= 0.065;
             }

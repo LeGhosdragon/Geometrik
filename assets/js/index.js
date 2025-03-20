@@ -1,6 +1,6 @@
 import { setupKeyboardControls } from './mouvement.js';
 import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp } from './monstre.js';
-import { drawGridBackground, updateBackgroundColor} from './background.js';
+import { Grid, updateBackgroundColor} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
 import { Exp } from './experience.js';
@@ -27,7 +27,7 @@ const Application = PIXI.Application,
 // la touche G active ou désactive gun
 // la touche M active MILK_MODE
 // la touche "échap" pause la partie
-//
+// la touche L active un très GRAND nombre de lvlUps
 //
 //
 //
@@ -41,7 +41,7 @@ const Application = PIXI.Application,
 //noComeBacks makes it so the spawner stops to let in the ones that were lost tot the cleansing !
 let joueur, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, x = 0, y = 0,
 monstres = Monstre.monstres, explosions = Explosion.explosions, exps = Exp.exps, exp = Exp, explosion = Explosion, bullets = Gun.bullets,
-sword, gun, hasSword = false, noComeBacks = false, dedPos = 0,
+sword, gun, hasSword = false, noComeBacks = false, dedPos = 0, elapsedTime = 0, min = 0, hour = 0,
 cursorX, cursorY, hold = false, tempVal = 0;
 
 const app = new Application({
@@ -68,14 +68,12 @@ debugText.zIndex = 1000;
 
 
 function setup() {
-    
-    
     app.stage.sortableChildren = true;
     Monstre.addApp(app);
     Weapon.addApp(app);
     Weapon.addMonstres(Monstre);
     Joueur.addMonstre(Monstre);
-    Joueur.addUpgrade(new Upgrade("gun"));
+    Joueur.addUpgrade(new Upgrade("sword"));
     joueur = new Joueur(app);
     resizeApp(joueur);
     joueur.updateExpBar();
@@ -88,58 +86,17 @@ function setup() {
     Upgrade.addApp(app);
     Upgrade.addJoueur(joueur);
     Upgrade.addMonstre(Monstre);
+    Upgrade.addGrid(Grid);
 
     sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // Blue rectangle of 10x80
     gun = new Gun(1, joueur.baseDMG, 0);
 
     Upgrade.addWeapons(Sword, Gun, sword, gun);
     
-    // let upgrades = gunUpg.choisirUpgrade(4);
-    // console.log(upgrades);
-    // gunUpg.upgradeChoisi(upgrades[0]);
-    // upgrades = gunUpg.choisirUpgrade(4);
-    // console.log(upgrades);
-    // gunUpg.upgradeChoisi(upgrades[0]);
- 
-    // Create monsters at regular intervals
-    let i = 0;
-    let j = 0;
-    let k = 0;
-    let l = 0;
-    // setInterval(() => { 
-    //     if(!app.pause)
-    //     {
-    //         ajouterMONSTRE( 7, "normal", 3 + (i % 60 == 0 ? j++ : j - 1));
-    //         i++;
-    //     }
-    // }, 1000);
-    // setInterval(() => { 
-    //     if(!app.pause)
-    //     {
-    //         ajouterMONSTRE( 2, "runner", 4);
-    //     }
-    // }, 1000);
-    // setInterval(() => { 
-    //     if(!app.pause)
-    //     {
-    //         ajouterMONSTRE( 5, "tank", 6 + (k % 60 == 0 ? l++ : l - 1));
-    //         k++;
-    //     }
-    // }, 1000);
-    // setInterval(() => { 
-    //     if(!app.pause)
-    //     {
-    //         ajouterMONSTRE( 1, "expBall", 3);
-    //     }
-    // }, 60000);
 
-
-    
-    
     // setInterval(() => { 
-    //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 10000000000);
+    //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
     // }, 10);
-
 
     setupKeyboardControls(app, joueur, sword, Monstre, gun, exps);
 
@@ -171,13 +128,41 @@ document.addEventListener('contextmenu', (event) =>{
     event.preventDefault();
 });
 
+document.addEventListener('keydown', event =>
+{
+    if(event.key == 'Escape')
+    {
+        
+        if(!app.upg)
+        {
+            Grid.pauseGrid(app);
+            app.pause = !app.pause;
+        }
+        //afficherMenu();
+    }
+    //console.log(event.key);
+});
+
 function play(delta) {
+    resizeApp(joueur);
     if(!app.pause)
     {
-        tempVal++%10    == 0 ? ajouterMONSTRE( 1, "normal", 3 ) :0;
-        tempVal%30      == 0 ? ajouterMONSTRE( 1, "runner", 4 ) :0;
-        tempVal%20      == 0 ? ajouterMONSTRE( 1, "tank", 6 ) :0;
-        tempVal%3600    == 0 ? ajouterMONSTRE( 1, "expBall", 3 ) :0;
+        joueur.addExp(0);
+        elapsedTime += delta / 60;
+        if(elapsedTime >= 60) 
+        { 
+            elapsedTime -= 60;
+            min += 1;
+        }
+        if(min >= 60)
+        {
+            min -= 60;
+            hour += 1;
+        }    
+        tempVal++%10    == 0 ? ajouterMONSTRE( Math.round(1*delta), "normal", 3 ) :0;
+        tempVal%30      == 0 ? ajouterMONSTRE( Math.round(1*delta), "runner", 4 ) :0;
+        tempVal%20      == 0 ? ajouterMONSTRE( Math.round(1*delta), "tank", 6 ) :0;
+        tempVal%3600    == 0 ? ajouterMONSTRE( Math.round(1*delta), "expBall", 3 ) :0;
 
         //ajouterMONSTRE( 3, "runner", 6 );
         let xI = xF;
@@ -190,28 +175,28 @@ function play(delta) {
    
         if(x > 100000)
         {
-            grid.x += 10000;
+            Grid.grid.x += 10000;
             x = 0;
             //grid.position.set(0,0);
         }
         if(x < -10000)
         {
-            grid.x -= 10000;
+            Grid.grid.x -= 10000;
             x = 0;
         }
         if(y > 10000)
         {
-            grid.y += 10000;
+            Grid.grid.y += 10000;
             y = 0;
         }
         if(y < -10000)
         {
-            grid.y -= 10000;
+            Grid.grid.y -= 10000;
             y = 0;
         }
 
-        grid.x -= joueur.getVX() * delta;
-        grid.y -= joueur.getVY() * delta;  
+        Grid.grid.x -= joueur.getVX() * delta;
+        Grid.grid.y -= joueur.getVY() * delta;  
         
         x += joueur.getVX() * delta;
         y += joueur.getVY() * delta;
@@ -271,6 +256,8 @@ function play(delta) {
     Exp.cleanup(delta);
     afficherDebug(delta);
 }
+
+
 
 
 function ajouterMONSTRE(amount = 1, type = "normal", sides = 3) {  
@@ -412,18 +399,20 @@ function afficherDebug(delta) {
         MILK : ${Monstre.dedMilkMan}
         Cursor X: ${cursorX}
         Cursor Y: ${cursorY}
+        Elapsed time: ${hour<=0?"":hour + "h"}${min<=0?"":min+ "m"}${elapsedTime.toFixed(2)}s
         FPS : ${app.ticker.FPS.toFixed(0)}
     `;
 }
 
 // Draw the grid background
-let grid = drawGridBackground(app);
+// let grid = Grid.drawGridBackground(0.5);
+app.stage.addChild(Grid.grid);
 
 window.addEventListener('resize', () => {
-    app.stage.removeChild(grid);
+    app.stage.removeChild(Grid.grid);
     app.renderer.resize(window.innerWidth, window.innerHeight);
-    grid = drawGridBackground(app); 
-    grid.zIndex = 0;
+    Grid.grid = Grid.drawGridBackground(app); 
+    Grid.grid.zIndex = 0;
 });
 const EXP_BAR = document.getElementById('expBar');
 
@@ -442,7 +431,8 @@ function resizeApp(joueur) {
     let height = window.innerHeight;
     app.renderer.resize(width * 0.98, height * 0.98);
     app.view.style.position = "absolute"; // Ensure positioning works
-    
+    joueur.body.x = width/2;
+    joueur.body.y = height/2;
     app.view.style.bottom = "0";
     app.view.style.transform = "translateX(0.5%)";
     updateExpBar(joueur);

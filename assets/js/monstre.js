@@ -95,7 +95,7 @@ export class Monstre {
         this.setX(this.getX() + (moveVector.x)*delta + deltaX);
         this.setY(this.getY() + (moveVector.y)*delta + deltaY);
         
-        this.spins ? this.body.rotation += this.spinSpeed : 0;
+        this.spins ? this.body.rotation += this.spinSpeed * delta : 0;
         this.avoidMonsterCollision();
         this.actualiserPolygone(delta, ennemiColor);
 

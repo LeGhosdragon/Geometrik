@@ -2,6 +2,7 @@ export class Joueur {
 
     static mstr = null;
     static upgrade = null;
+
     static EXP_BAR = document.getElementById('expBar');
 
     constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0xFF0000, weapons = []) {
@@ -162,11 +163,6 @@ export class Joueur {
         let endAngle = startAngle + (2 * Math.PI * healthPercent); // Fill proportionally
     
         // Draw pie chart
-
-
-        //4 principes
-        //RNF sécurité
-        
         if(this.currentHP / this.baseHP != 1)
         {
             this.healthBar.lineStyle(3, 0x000000, 1);
@@ -197,26 +193,23 @@ export class Joueur {
     {
         if(this.exp >= this.expReq)
         {
-            while(this.exp > this.expReq)
-            {
-                this.lvl+=1;
-                this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
-                this.expReq = 20 + this.lvl*this.lvl;
-                //functLvLUp();
-                let upgrades = Joueur.upgrade.choisirUpgrade(4);
-                //console.log(upgrades);
-                //setTimeout(() =>{}, 1000);
-                Joueur.upgrade.upgradeChoisi(upgrades[0]);
-                this.body.vx = 0;
-                this.body.vy = 0;
 
-            }
+            this.lvl+=1;
+            this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
+            this.expReq = 20 + this.lvl*this.lvl;
+            //functLvLUp();
+            let upgrades = Joueur.upgrade.choisirUpgrade(5);
+            Joueur.upgrade.montrerUpgrades(upgrades);
+            //Joueur.upgrade.upgradeChoisi(upgrades[0]);
+            this.body.vx = 0;
+            this.body.vy = 0;
+            
         }
     }
 
     getExpBar(width = 20) {
-        let progress = Math.floor((this.exp / this.expReq) * width);
-        let bar = "[" + "#".repeat(progress) + "-".repeat(width - progress) + "]";
+        let progress = Math.floor((this.exp / this.expReq) * 20);
+        let bar = "[" + "#".repeat(progress) + "-".repeat(Math.abs(width - progress)) + "]";
         return `Lvl ${this.lvl} ${bar} ${this.exp}/${this.expReq}`;
     }
 
