@@ -736,17 +736,18 @@ nav {
     }
 }
 
-button {
+/* btn-main {
     padding: 20px 60px;
     background-color: var(--background);
     border: none;
     font-size: 18px;
     position: relative;
-    /* overflow: hidden; */
+    /* overflow: hidden; 
     transition: 500ms;
-  }
+  } 
+  */
   
-  button span {
+  /* button span {
     color: gray;
     position: relative;
     transition: 400ms;
@@ -779,9 +780,9 @@ button {
     position: absolute;
     background-color: var(--primary);
     box-shadow: 0 0 15px var(--primary), 0 0 30px var(--primary), 0 0 50px var(--primary);
-  }
+  } */
   
-  button .top {
+  /* button .top {
     width: 15px;
     height: 2px;
     top: 0;
@@ -812,10 +813,10 @@ button {
   button:hover {
     color: var(--text);
     cursor: pointer;
-  }
+  } */
 
   
-  button:hover span {
+  /* button:hover span {
     color: var(--text);
     cursor: pointer;
   }
@@ -837,4 +838,4 @@ button {
   button:hover .left,
   button:hover .right {
     height: 100%;
-  }
+  } */
