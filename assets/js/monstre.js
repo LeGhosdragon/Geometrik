@@ -44,14 +44,26 @@ export class Monstre {
     }
 
     createShape(x = 0, y = 0) {
-        const shape = new PIXI.Graphics();
+        if (this.type == "runner") {
+            const shape = new PIXI.Graphics();
+            shape.x = x;
+            shape.y = y;
+            shape.sides = this.sides;
+            shape.zIndex = 1;
+            shape.pivot.set(0, 0);
+            return shape;
+        } else {
+            const shape = new PIXI.Graphics();
+            shape.x = x;
+            shape.y = y;
+            shape.sides = this.sides;
+            shape.zIndex = 1;
+            shape.pivot.set(0, 0);
+            return shape;
+        }
         
-        shape.x = x;
-        shape.y = y;
-        shape.sides = this.sides;
-        shape.zIndex = 1;
-        shape.pivot.set(0, 0);
-        return shape;
+        
+
     }
 
     vecteurVersLeJoueur(joueur) {
@@ -95,7 +107,7 @@ export class Monstre {
         this.setX(this.getX() + (moveVector.x)*delta + deltaX);
         this.setY(this.getY() + (moveVector.y)*delta + deltaY);
         
-        this.spins ? this.body.rotation += this.spinSpeed : 0;
+        this.spins ? this.body.rotation += this.spinSpeed * delta : 0;
         this.avoidMonsterCollision();
         this.actualiserPolygone(delta, ennemiColor);
 
@@ -394,10 +406,28 @@ export class MonstreRunner extends Monstre {
     constructor(x, y, sides) {
         const type = "runner";
         const size = 0.25;
-        const speed = 3;
-        const spinSpeed = 0.5;
+        const speed = 2.5;
+        const spinSpeed = 0.04;
         const baseHP = 15;
         super(x, y, sides, size, type, speed, spinSpeed, baseHP);
+    }
+    
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        this.body.lineStyle(2, 0x000000, 1);
+        this.body.beginFill(ennemiColor);
+
+        const size = newSize * 50;
+        const points = this.sides;
+        this.body.drawStar(0, 0, points, size, size*0.6); // Draw a star
+        this.body.endFill();
+
+        // Ensure HP text stays updated
+        this.updateHP();
     }
 }
 export class MonstreTank extends Monstre {

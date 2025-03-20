@@ -167,16 +167,17 @@ document.addEventListener("mouseup", (event) =>
 {
     hold = false;
 });
-document.addEventListener('contextmenu', (event) =>{
+/*document.addEventListener('contextmenu', (event) =>{
     event.preventDefault();
-});
+});*/
 
 function play(delta) {
     if(!app.pause)
     {
-        tempVal++%10    == 0 ? ajouterMONSTRE( 1, "normal", 3 ) :0;
-        tempVal%30      == 0 ? ajouterMONSTRE( 1, "runner", 4 ) :0;
-        tempVal%20      == 0 ? ajouterMONSTRE( 1, "tank", 6 ) :0;
+        const sidesIncrementing = Math.floor(tempVal/3600) + 3;
+        tempVal++%10    == 0 ? ajouterMONSTRE( 1, "normal", sidesIncrementing ) :0;
+        tempVal%30      == 0 ? ajouterMONSTRE( Math.round(3*delta), "runner", sidesIncrementing+1 ) :0;
+        tempVal%20      == 0 ? ajouterMONSTRE( 1, "tank", sidesIncrementing ) :0;
         tempVal%3600    == 0 ? ajouterMONSTRE( 1, "expBall", 3 ) :0;
 
         //ajouterMONSTRE( 3, "runner", 6 );
@@ -275,7 +276,7 @@ function play(delta) {
 
 function ajouterMONSTRE(amount = 1, type = "normal", sides = 3) {  
     
-    if((Monstre.cleanMonstres.length < 10 || noComeBacks) && Monstre.monstres.length < 1000)
+    if((Monstre.cleanMonstres.length < 10 || noComeBacks) && Monstre.monstres.length < 2000)
     {
         if(type == "normal") { 
         for (let i = 0; i < amount; i++) {
