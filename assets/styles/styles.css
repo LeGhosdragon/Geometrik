@@ -867,3 +867,112 @@ nav {
 #test:hover:before {
     transform: translateX(15em);
 }
+
+/* Palmares specific styles */
+.palmares-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--primary);
+}
+
+#palmares-container {
+    background-color: var(--background);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    min-height: 300px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+    padding: 2rem;
+}
+
+.error-message {
+    color: #e74c3c;
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 2rem;
+}
+
+.empty-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+    padding: 3rem;
+    background-color: var(--background);
+    border-radius: 6px;
+}
+
+
+.palmares-table th {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+    text-align: left;
+    padding: 1rem;
+    position: relative;
+}
+
+.palmares-table td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.palmares-table tbody tr:nth-child(even) {
+    background-color: var(--dark-background);
+}
+
+.palmares-table tbody tr:nth-child(odd) {
+    background-color: rgba(26, 26, 26, 0.7);
+}
+
+.palmares-table tbody tr:hover {
+    background-color: rgba(0, 153, 255, 0.1); 
+}
+
+
+.palmares-table tbody tr:first-child {
+    background-color: rgba(153, 0, 94, 0.2); 
+}
+
+.palmares-table tbody tr:first-child td:first-child {
+    position: relative;
+}
+
+.palmares-table tbody tr:first-child td:first-child::before {
+    content: "🏆";
+    margin-right: 0.5rem;
+}
+
+.palmares-table tbody tr:nth-child(2) td:first-child::before {
+    content: "🥈";
+    margin-right: 0.5rem;
+}
+
+.palmares-table tbody tr:nth-child(3) td:first-child::before {
+    content: "🥉";
+    margin-right: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    .palmares-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .palmares-container {
+        padding: 1rem;
+    }
+}
