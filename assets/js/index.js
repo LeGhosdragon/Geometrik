@@ -74,7 +74,7 @@ function setup() {
     Weapon.addMonstres(Monstre);
     Joueur.addMonstre(Monstre);
     Joueur.addExplosion(Explosion);
-    Joueur.addUpgrade(new Upgrade("sword"));
+    Joueur.addUpgrade(new Upgrade("gun"));
     joueur = new Joueur(app);
     resizeApp(joueur);
     joueur.updateExpBar();
@@ -266,6 +266,7 @@ function afficherDebug(delta) {
         Cursor X: ${cursorX}
         Cursor Y: ${cursorY}
         Elapsed time: ${hour<=0?"":hour + "h"}${min<=0?"":min+ "m"}${elapsedTime.toFixed(2)}s
+        Event : ${Event.currentEvent}
         FPS : ${app.ticker.FPS.toFixed(0)}
     `;
 }

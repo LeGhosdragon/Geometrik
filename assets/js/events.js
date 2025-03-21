@@ -10,7 +10,7 @@ export class Event{
     static app = null;
     static joueur = null;
     static difficultyDegree = 1;
-
+    static currentEvent = "normal";
     static eventNameList = ["normal", "horde", "ambush", "fort", "guns"];
 
 
@@ -80,6 +80,7 @@ export class Event{
     {
         let name = Event.eventNameList[Math.floor(Math.random() * Event.eventNameList.length)];
         console.log(name);
+        Event.currentEvent = name;
         return name;
     }
 
