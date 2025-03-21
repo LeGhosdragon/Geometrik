@@ -1,5 +1,5 @@
 import { setupKeyboardControls } from './mouvement.js';
-import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp } from './monstre.js';
+import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner } from './monstre.js';
 import { Grid, updateBackgroundColor} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
@@ -73,7 +73,8 @@ function setup() {
     Weapon.addApp(app);
     Weapon.addMonstres(Monstre);
     Joueur.addMonstre(Monstre);
-    Joueur.addUpgrade(new Upgrade("gun"));
+    Joueur.addExplosion(Explosion);
+    Joueur.addUpgrade(new Upgrade("sword"));
     joueur = new Joueur(app);
     resizeApp(joueur);
     joueur.updateExpBar();
@@ -82,20 +83,22 @@ function setup() {
     Exp.addJoueur(joueur);
     Exp.addApp(app);
     Monstre.addExp(exp);
+    Monstre.addJoueur(joueur);
     Monstre.addExplosion(explosion);
+    Weapon.addMonstreGunner(MonstreGunner);
     Upgrade.addApp(app);
     Upgrade.addJoueur(joueur);
     Upgrade.addMonstre(Monstre);
     Upgrade.addGrid(Grid);
     Event.addApp(app);
-    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp);
+    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner);
 
     new Event("normal");
     //new Event("ambush");
     new Event(" ");
 
     sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // Blue rectangle of 10x80
-    gun = new Gun(1, joueur.baseDMG, 0);
+    gun = new Gun(1, joueur.baseDMG, 1);
     Upgrade.addWeapons(Sword, Gun, sword, gun);
     
 
@@ -174,13 +177,14 @@ function play(delta) {
         sword.playSwordSwing(delta, cursorX, cursorY);
         
         gun.update(delta, cursorX, cursorY, deltaX, deltaY);
-        
+
+        MonstreGunner.updateBullets(delta, deltaX, deltaY, joueur);
+
         monstres.forEach(monstre => {
             monstre.bouger(joueur,delta, deltaX, deltaY, ennemiColor);
             if(sword.hasSword)
             {
                 if (sword.isSwordCollidingWithMonster(monstre)) {
-                    //new Explosion(monstre.getX(), monstre.getY(), monstre.body.width*6, 15, 0xFF0000);
                     sword.onSwordHitEnemy(monstre);             
                 }
             }
@@ -189,6 +193,12 @@ function play(delta) {
                 gun.onBulletHitEnemy(monstre);
             }
         });
+        MonstreGunner.bullets.forEach(bullet => {
+            if(sword.isSwordCollidingWithBullet(bullet))
+            {
+                sword.onSwordHitEnemyBullet(bullet);
+            }
+        })
         if(hold)
         {
             gun.shoot();
@@ -213,7 +223,6 @@ function play(delta) {
                     exps.splice(index, 1);
                 }
             }
-            
         });
         
         joueur.onPlayerCollision(monstres);
@@ -260,9 +269,6 @@ function afficherDebug(delta) {
         FPS : ${app.ticker.FPS.toFixed(0)}
     `;
 }
-
-
-
 
 window.addEventListener('resize', () => {
     app.stage.removeChild(Grid.grid);

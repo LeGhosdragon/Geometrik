@@ -38,20 +38,27 @@ export class Upgrade
         ],
         [   // Bullet size
             new Upg(() => Upgrade.gun.bulletSize, (val) => Upgrade.gun.bulletSize = val, 
-                "x",1.1, 
+                "+",3, 
                 "Bullet Size","Description","../images/bulletSize.gif",
+                true
+            )//, insert more
+        ],
+        [   // Gun knockback
+            new Upg(() => Upgrade.gun.knockback, (val) => Upgrade.gun.knockback = val, 
+                "+",2, 
+                "Bullet Knockback","Description","../images/Knockback.gif",
                 true
             )//, insert more
         ]
                         
     ];
     boiteSword = [
-        [   //Bullet pierce
-            new Upg(() => Upgrade.sword.pierce,(val) => Upgrade.sword.pierce = val,
-                "+",1,
-                "IDK YET","Description","../images/Pierce.gif",
+        [   //Sword width
+            new Upg(() => Upgrade.sword.wideness,(val) => Upgrade.sword.wideness = val,
+                "x",1.2,
+                "Cleave Width","Description","../images/SwordWidth.gif",
                 true
-            )//, insert more
+            ),//, insert more
         ],
         [   // Sword damage
             new Upg(() => Upgrade.sword.baseDMG, (val) => Upgrade.sword.baseDMG = val, 
@@ -73,6 +80,13 @@ export class Upgrade
                 "Sword Length","Description","../images/bulletSize.gif",
                 true
             )//, insert more
+        ],
+        [   // Sword knockback
+            new Upg(() => Upgrade.sword.knockback, (val) => Upgrade.sword.knockback = val, 
+                "+",2, 
+                "Sword Knockback","Description","../images/Knockback.gif",
+                true
+            )//, insert more
         ]
     ];
     boiteJoueur = [
@@ -82,7 +96,48 @@ export class Upgrade
                 "Player speed","Description","../images/MovementSpeed.gif",
                 true
             )//, insert more
-        ]
+        ],
+        [   //Player collection area
+            new Upg(() => Upgrade.joueur.distanceDattraction ,(val) => Upgrade.joueur.distanceDattraction = val,
+                "x",1.5, 
+                "Attraction Area","Description","../images/Magnet.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.distanceDattraction ,(val) => Upgrade.joueur.distanceDattraction = val,
+                "x",1.5, 
+                "Attraction Area","Description","../images/Magnet.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.distanceDattraction ,(val) => Upgrade.joueur.distanceDattraction = val,
+                "x",1.5, 
+                "Attraction Area","Description","../images/Magnet.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.distanceDattraction ,(val) => Upgrade.joueur.distanceDattraction = val,
+                "x",1.5, 
+                "Attraction Area","Description","../images/Magnet.gif",
+                false
+            )//, insert more
+        ],
+        [   //Player health
+            new Upg(() => Upgrade.joueur.baseHP,(val) => {Upgrade.joueur.currentHP = val; Upgrade.joueur.baseHP = val;},
+                "x",1.5, 
+                "Player Health","Description","../images/Health.gif",
+                true
+            )//, insert more
+        ],
+        [   //Player Explosion
+            new Upg(() => Upgrade.joueur.upgExplosion,(val) => Upgrade.joueur.upgExplosion = val,
+                "bool",true, 
+                "Player Explosion","Description","../images/PlayerBoom.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.explRadius,(val) => Upgrade.joueur.explRadius = val,
+                "x",1.3, 
+                "Player Explosion","Description","../images/PlayerBoom.gif",
+                true
+            )
+        ],
     ];
     boite = [];
 
@@ -97,32 +152,38 @@ export class Upgrade
     }
 
 
-//plusieurs catégories, chaque cat a un niv qui spécifie sont niv prochain
+    //plusieurs catégories, chaque cat a un niv qui spécifie sont niv prochain
 
-//so list de liste, si tu prend la liste tu prends le upgrade, pis tu remove l'upgrade utilisé pour accèder au prochain.
+    //so list de liste, si tu prend la liste tu prends le upgrade, pis tu remove l'upgrade utilisé pour accèder au prochain.
 
-
-    choisirUpgrade(nbChoix)
-    {
+    choisirUpgrade(nbChoix) {
         let upgrades = [];
-        let numList = [];
-        for(let i = 0; i < nbChoix && numList.length <= this.boite.length; i++)
-        {
-            let num = Math.floor(Math.random() * this.boite.length);
-            numList.includes(num) ? i-- : numList[numList.length] = num;
+        let availableUpgrades = this.boite.filter(category => category.length > 0); // Only keep non-empty categories
+
+        if (availableUpgrades.length === 0) return upgrades; // No upgrades left
+
+        while (upgrades.length < nbChoix && availableUpgrades.length > 0) {
+            let num = Math.floor(Math.random() * availableUpgrades.length);
+            let chosenUpgrade = availableUpgrades[num][0]; // Get first available upgrade from the chosen category
+
+            if (!upgrades.includes(chosenUpgrade)) {
+                upgrades.push(chosenUpgrade);
+            } else {
+                continue; // If duplicate, try again
+            }
+
+            // Remove empty categories from consideration
+            availableUpgrades = availableUpgrades.filter(category => category.length > 0);
         }
-        let numLength = numList.length;
-        while(upgrades.length < numLength)
-        {
-            upgrades[upgrades.length] = this.boite[numList.shift()][0];
-        }
+
         Upgrade.Grid.pauseGrid(Upgrade.app);
         Upgrade.app.pause = true;
         Upgrade.app.upg = true;
-        //console.log(Upgrade.Grid);
-        
+
         return upgrades;
     }
+
+
 
     upgradeChoisi(upgrade) {
         let index = -1;
@@ -253,6 +314,10 @@ class Upg {
             currentValue -= this.augment;
         } else if (this.type == "x") {
             currentValue *= this.augment;
+        }
+        else if(this.type == "bool")
+        {
+            currentValue = this.augment;
         }
         console.log(this.description + " :", this.getParam() + " => " +  this.setParam(currentValue));  
          

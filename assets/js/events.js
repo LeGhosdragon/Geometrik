@@ -5,10 +5,13 @@ export class Event{
     static MonstreRunner = null;
     static MonstreTank = null;
     static MonstreExp = null;
+    static MonstreGunner = null;
     static monstres = null;
     static app = null;
     static joueur = null;
     static difficultyDegree = 1;
+
+    static eventNameList = ["normal", "horde", "ambush", "fort"];
 
 
     constructor(type)
@@ -24,32 +27,33 @@ export class Event{
     {
 
         Event.events.forEach(event => {   
-            event.timeElapsed += 1;      
-            if(event.type == "normal") // ennemies are spawning at a regular interval without anything special
-            {
-                event.timeElapsed%Math.round(60/Event.difficultyDegree)   == 0 ? event.ajouterMONSTRE( Math.round(delta), "normal",   3 + Event.difficultyDegree) :0;
-                event.timeElapsed%Math.round(50/Event.difficultyDegree)   == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner",   5 + Event.difficultyDegree) :0;
-                event.timeElapsed%Math.round(30/Event.difficultyDegree)   == 0 ? event.ajouterMONSTRE( Math.round(delta), "tank",     6 + Event.difficultyDegree) :0;
-                event.state = !(event.timeElapsed >= 3600);
-            }
-            if(event.type == "ambush") // runner ennemies start circling the player for short while
-            {
-                event.timeElapsed%Math.round(20/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 5 + Event.difficultyDegree ) :0;
-                event.state = !(event.timeElapsed >= 1800);
-            }
-            if(event.type == "fort")// ennemies of a same type appear in a direction and move past the player, ie they move in a straight line
-            {
-                event.timeElapsed%Math.round(20/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "tank", 5+ Event.difficultyDegree ) :0;
-                event.state = !(event.timeElapsed >= 1800);
-            }
-            if(event.type == " ")// ennemies start circling the player for short while
+            event.timeElapsed += 1;     
+            if(event.type == " ")// Ajoute le monstre Exp et incrémente la rapidité du spawning des ennemis
             {
                 event.timeElapsed%3600 == 0 ? event.ajouterMONSTRE( Math.round(delta), "expBall",  3 ) :0;
                 event.timeElapsed%7200 == 0 ? Event.updateDifficultee() : "";
-            }
-            if(event.type == "")// ennemies start circling the player for short while
+            } 
+            if(event.type == "normal") // ennemies are spawning at a regular interval without anything special
             {
-
+                event.timeElapsed%Math.round(60/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "gunner", 2 + Event.difficultyDegree) :0;
+                Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(50/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 4 + Event.difficultyDegree) :0 : 0;
+                Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(30/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "tank",   5 + Event.difficultyDegree) :0 : 0;
+                event.state = !(event.timeElapsed >= 3600);
+            }
+            if(event.type == "horde") // normal ennemies start circling the player for short while
+            {
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "normal", 2 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
+            }
+            if(event.type == "ambush")// runner ennemies start circling the player for short while
+            {
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 3 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
+            }
+            if(event.type == "fort") // tank ennemies start circling the player for short while
+            {
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta),  "tank",  4 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
             }
             if(event.type == "boss")// milkMan?
             {
@@ -60,9 +64,18 @@ export class Event{
                 if (index > -1) {
                     Event.events.splice(index, 1);
                 }
+
+                new Event(Event.getNewEvent());
             }
             
         });
+    }
+
+    static getNewEvent()
+    {
+        let name = Event.eventNameList[Math.floor(Math.random() * Event.eventNameList.length)];
+        console.log(name);
+        return name;
     }
 
 
@@ -89,6 +102,10 @@ export class Event{
                     monstre = new Event.MonstreTank( rngPos[0], rngPos[1], sides);}
                 else if(type == "expBall") {
                     monstre = new Event.MonstreExp( rngPos[0], rngPos[1], sides);}
+                else if(type == "gunner")
+                {
+                    monstre = new Event.MonstreGunner( rngPos[0], rngPos[1], sides);
+                }
                 Event.app.stage.addChild(monstre.body);
                 Event.monstres.push(monstre);
             }
@@ -169,7 +186,7 @@ export class Event{
         return [randomX, randomY];
     }
 
-    static addMonstres(monstresInput,m2,m3,m4,m5)
+    static addMonstres(monstresInput,m2,m3,m4,m5,m6)
     {
         Event.Monstre = monstresInput;
         Event.monstres = Event.Monstre.monstres;
@@ -177,6 +194,7 @@ export class Event{
         Event.MonstreRunner = m3;
         Event.MonstreTank = m4;
         Event.MonstreExp = m5;
+        Event.MonstreGunner = m6;
     }
     static addApp(appInput) {
         Event.app = appInput;

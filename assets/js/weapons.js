@@ -2,6 +2,7 @@
 export class Weapon{
     static Monstre = null;
     static monstres = null;
+    static MonstreGunner = null;
     static app = null;
     static joueur = null;
 
@@ -14,6 +15,7 @@ export class Weapon{
         this.type = type;
         this.baseDMG = baseDMG;
         this.currentDMG = this.baseDMG;
+        this.knockback = 0;
     }
 
     getX() { return this.body.x; }
@@ -34,6 +36,9 @@ export class Weapon{
     static addJoueur(joueurInput) {
         Weapon.joueur = joueurInput;
     }
+    static addMonstreGunner(MonstreGunner) {
+        Weapon.MonstreGunner = MonstreGunner;
+    }
 }
 
 
@@ -48,11 +53,12 @@ export class Sword extends Weapon {
         this.length = length;
         this.trail = [];
         this.swingSpeed = 7;
-        this.wideness = 1.3;
+        this.wideness = 0.8;
         this.swingDirection = 1; // 1 for normal, -1 for inverted
         this.swingTime = 0;
         this.swingDuration = 100;
         this.storedAngle = 0;
+        this.knockback = 2;
         this.isSwinging = false;
         this.baseAngle = 0;
         this.setBody(this.createSword());
@@ -168,15 +174,36 @@ export class Sword extends Weapon {
                return bool;
     }
 
+    isSwordCollidingWithBullet(bullet) {
+        if (!this.body.visible) {
+            return false;
+        }
+        const swordBounds =  this.body.getBounds();
+        const bulletBounds = bullet.getBounds();
+    
+        let bool = swordBounds.x < bulletBounds.x + bulletBounds.width &&
+               swordBounds.x + swordBounds.width > bulletBounds.x &&
+               swordBounds.y < bulletBounds.y + bulletBounds.height &&
+               swordBounds.y + swordBounds.height > bulletBounds.y;
+               return bool;
+    }
+
     onSwordHitEnemy(monstre) {
         if(!monstre.getSwordHit())
         {
             monstre.setSwordHit(true);
             const dmg = this.swordDMG();
 
-            monstre.endommagé(dmg, "sword");
+            monstre.endommagé(dmg, this);
             monstre.setSwordHit(true);            
         }
+    }
+
+    onSwordHitEnemyBullet(bullet) {
+        let i = Weapon.MonstreGunner.bullets.indexOf(bullet);
+        Weapon.Monstre.app.stage.removeChild(bullet);
+        bullet.destroy({ children: true, texture: true, baseTexture: true });
+        Weapon.MonstreGunner.bullets.splice(i, 1);
     }
 
     playSwordSwing(delta, cursorX, cursorY) {
@@ -233,12 +260,13 @@ export class Gun extends Weapon {
     static bullets = [];
 
     constructor(cooldown, baseDMG, pierce) {
-        super("Gun", cooldown, baseDMG, new PIXI.Graphics());
+        super("gun", cooldown, baseDMG, new PIXI.Graphics());
         this.hasGun = false;
         this.pierce = pierce;
         this.isOnCooldown = false;
         this.color = 0x9966FF;
         this.bulletSize = 6;
+        this.knockback = 5;
         this.wideness = 1.3;
         this.storedAngle = 0;
         this.isSwinging = false;
@@ -336,16 +364,18 @@ export class Gun extends Weapon {
                 bulletBounds.y + bulletBounds.height > monstreBounds.y
             ) {
                 this.onBulletHitEnemy(bullet, monstre);
+                if(!bullet.touches.includes(monstre))
+                {
+                    bullet.pierce--;
+                } 
+
                 if(bullet.pierce <= 0)
                 {
                     Weapon.app.stage.removeChild(bullet);
                     bullet.destroy({ children: true, texture: true, baseTexture: true });
                     Gun.bullets.splice(i, 1);
                 }
-                else if(!bullet.touches.includes(monstre))
-                {
-                    bullet.pierce--;
-                }  
+                 
                 bullet.touches[bullet.touches.length] = monstre;
             }
         }
@@ -355,21 +385,23 @@ export class Gun extends Weapon {
         if (!monstre.getBulletHit() && !bullet.touches.includes(monstre)) {
             monstre.setBulletHit(true);
             const dmg = this.gunDMG();
-            monstre.endommagé(dmg, "gun");
+            monstre.endommagé(dmg, this);
         }
     }
 }
 
 
-export class Explosion {
+export class Explosion extends Weapon {
     static explosions = [];
 
     constructor(x, y, rayon, baseDMG, couleur) {
+        super("explosion", 10, 10, new PIXI.Graphics());
         this.rayon = rayon;
         this.baseDMG = baseDMG;
         this.couleur = Weapon.Monstre.dedMilkMan ? 0xFFFFFF : couleur;
         this.maxRayon = rayon;
         this.currentRayon = Math.max(1, rayon / 20); // Avoid 0 radius
+        this.knockback = 10;
 
         this.body = this.createExplosion(x, y);
 
@@ -426,10 +458,9 @@ export class Explosion {
         monstres.forEach(monstre => {
             if (!monstre.getExplosionHit()) {
                 const distance = Math.hypot(this.body.x - monstre.getX(), this.body.y - monstre.getY());
-
                 if (distance <= this.currentRayon) {
                     monstre.setExplosionHit(true);
-                    monstre.endommagé(this.baseDMG, "explosion");
+                    monstre.endommagé(this.baseDMG, this);
                 }
             }
         });
@@ -449,6 +480,3 @@ export class Explosion {
         this.body = null;
     }
 }
-
-
-

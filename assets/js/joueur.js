@@ -1,11 +1,11 @@
 export class Joueur {
 
-    static mstr = null;
+    static Monstre = null;
     static upgrade = null;
-
+    static Explosion = null;
     static EXP_BAR = document.getElementById('expBar');
 
-    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0xFF0000, weapons = []) {
+    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 15, elapsedTime = 0, couleur = 0xFF0000, weapons = []) {
         this.lvl = 0;
         this.expReq = 7 + this.lvl*this.lvl; 
         this.debug = false;
@@ -17,10 +17,13 @@ export class Joueur {
         this.vitesse = vitesse;
         this.baseHP = baseHP;
         this.currentHP = currentHP;
+        this.explRadius = 1;
+        this.upgExplosion = false;
         this.baseDMG = baseDMG;
         this.elapsedTime = elapsedTime;
         this.couleur = couleur;
         this.weapons = weapons;
+        this.bulletHit = false;
         this.body = this.faireJoueur();
         this.hpText = this.createHPText();
         this.healthBar = this.createHealthBar();
@@ -32,7 +35,7 @@ export class Joueur {
         const joueur = new PIXI.Graphics();
         joueur.lineStyle(3, 0x000000, 1);
         joueur.beginFill(this.couleur);
-        if(Joueur.mstr.dedMilkMan)
+        if(Joueur.Monstre.dedMilkMan)
         {
             joueur.beginFill(0xFF0000);
         }
@@ -116,7 +119,7 @@ export class Joueur {
         const text = new PIXI.Text(this.currentHP, {
             fontFamily: 'Arial',
             fontSize: 12,
-            fill: Joueur.mstr.dedMilkMan ? 0x000000 : 0xFFFFFF,
+            fill: Joueur.Monstre.dedMilkMan ? 0x000000 : 0xFFFFFF,
             align: 'center'
         });
         text.zIndex = 101;
@@ -168,7 +171,7 @@ export class Joueur {
             this.healthBar.lineStyle(3, 0x000000, 1);
         }
         
-        if(Joueur.mstr.dedMilkMan)
+        if(Joueur.Monstre.dedMilkMan)
         {
             this.healthBar.beginFill(0xFFFFFF, 1);
         }
@@ -196,7 +199,7 @@ export class Joueur {
 
             this.lvl+=1;
             this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
-            this.expReq = 20 + this.lvl*this.lvl;
+            this.expReq = 7 + Math.round(this.lvl**1.9);
             //functLvLUp();
             let upgrades = Joueur.upgrade.choisirUpgrade(5);
             Joueur.upgrade.montrerUpgrades(upgrades);
@@ -209,12 +212,16 @@ export class Joueur {
 
     getExpBar(width = 20) {
         let progress = Math.floor((this.exp / this.expReq) * 20);
-        let bar = "[" + "#".repeat(progress) + "-".repeat(Math.abs(width - progress)) + "]";
+        let bar = "[" + "#".repeat(progress < 20 ? progress : 20) + "-".repeat(Math.abs(width - progress) < 20 ? Math.abs(width - progress) : 20) + "]";
         return `Lvl ${this.lvl} ${bar} ${this.exp}/${this.expReq}`;
     }
 
     endommagé(dmg)
     {
+        if(this.upgExplosion)
+        {
+            new Joueur.Explosion(this.getX() + this.size, this.getY()+ this.size, this.body.width * 6 * this.explRadius, this.baseDMG/3, 0xFF0000);
+        }
         this.setHP(this.getHP() - dmg);
         this.updateHP();
     }
@@ -223,14 +230,19 @@ export class Joueur {
     {
         return this.distanceDattraction;
     }
-    static addMonstre(mstr)
+    static addMonstre(Monstre)
     {
-        Joueur.mstr = mstr;
+        Joueur.Monstre = Monstre;
     }
     static addUpgrade(upg)
     {
         Joueur.upgrade = upg;
     }
+    static addExplosion(expl)
+    {
+        Joueur.Explosion = expl;
+    }
+
 
 
     setHP(hp)
