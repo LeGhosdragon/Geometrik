@@ -11,7 +11,7 @@ export class Event{
     static joueur = null;
     static difficultyDegree = 1;
 
-    static eventNameList = ["normal", "horde", "ambush", "fort"];
+    static eventNameList = ["normal", "horde", "ambush", "fort", "guns"];
 
 
     constructor(type)
@@ -35,7 +35,7 @@ export class Event{
             } 
             if(event.type == "normal") // ennemies are spawning at a regular interval without anything special
             {
-                event.timeElapsed%Math.round(60/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "gunner", 2 + Event.difficultyDegree) :0;
+                event.timeElapsed%Math.round(60/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "normal", 2 + Event.difficultyDegree) :0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(50/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 4 + Event.difficultyDegree) :0 : 0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(30/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "tank",   5 + Event.difficultyDegree) :0 : 0;
                 event.state = !(event.timeElapsed >= 3600);
@@ -53,6 +53,11 @@ export class Event{
             if(event.type == "fort") // tank ennemies start circling the player for short while
             {
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta),  "tank",  4 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
+            }
+            if(event.type == "guns") // tank ennemies start circling the player for short while
+            {
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta),  "gunner",  4 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800);
             }
             if(event.type == "boss")// milkMan?
@@ -102,10 +107,8 @@ export class Event{
                     monstre = new Event.MonstreTank( rngPos[0], rngPos[1], sides);}
                 else if(type == "expBall") {
                     monstre = new Event.MonstreExp( rngPos[0], rngPos[1], sides);}
-                else if(type == "gunner")
-                {
-                    monstre = new Event.MonstreGunner( rngPos[0], rngPos[1], sides);
-                }
+                else if(type == "gunner"){
+                    monstre = new Event.MonstreGunner( rngPos[0], rngPos[1], sides);}
                 Event.app.stage.addChild(monstre.body);
                 Event.monstres.push(monstre);
             }
