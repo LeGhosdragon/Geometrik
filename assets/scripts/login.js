@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function(){
             formData.append('passe', password);
             
             // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            let response = await fetch('/Geometrik/Geometrik/api/api.php/connexion', {
+            let response = await fetch('https://nexbit.ca/geometrik/api2.php/connexion', {
                 method: 'POST',
                 body: formData
             });
