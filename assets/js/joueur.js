@@ -201,8 +201,8 @@ export class Joueur {
             let upgrades = Joueur.upgrade.choisirUpgrade(5);
             Joueur.upgrade.montrerUpgrades(upgrades);
             //Joueur.upgrade.upgradeChoisi(upgrades[0]);
-            this.body.vx = 0;
-            this.body.vy = 0;
+            // this.body.vx = 0;
+            // this.body.vy = 0;
             
         }
     }

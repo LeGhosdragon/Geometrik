@@ -24,21 +24,21 @@ export class Upgrade
         ],
         [   // Gun damage
             new Upg(() => Upgrade.gun.baseDMG, (val) => Upgrade.gun.baseDMG = val, 
-                "x",1.1, 
+                "x",1.2, 
                 "DMG","Description","../images/Dmg.gif",
                 true
             )//, insert more
         ],
         [   // Gun cooldown
             new Upg(() => Upgrade.gun.cooldown, (val) => Upgrade.gun.cooldown = val, 
-                "x", 0.5, 
+                "x", 0.8, 
                 "Cooldown","Description","../images/Cooldown.gif",
                 true
             )//, insert more 
         ],
         [   // Bullet size
             new Upg(() => Upgrade.gun.bulletSize, (val) => Upgrade.gun.bulletSize = val, 
-                "+",1, 
+                "x",1.1, 
                 "Bullet Size","Description","../images/bulletSize.gif",
                 true
             )//, insert more

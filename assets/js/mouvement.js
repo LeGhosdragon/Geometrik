@@ -173,7 +173,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
 
     lvlUp.press = () =>
     {
-        joueur.exp += joueur.expReq*10 + 1; 
+        joueur.exp += joueur.expReq*1000 + 1; 
         joueur.updatelvl();
     }
 
