@@ -47,7 +47,8 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         enableDebug = keyboard(186),   // ';' key
         milk = keyboard(77),          // 'M' key
         pause = keyboard(27),        // 'Echap' key
-        lvlUp = keyboard(76);       // 'L' key
+        lvlUp = keyboard(76),       // 'L' key
+        autoAttack = keyboard(67); // 'C' key
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -58,26 +59,32 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
     let moveX = 0, moveY = 0;
     const speed = 3;
 
+    let lastMoveX = 0, lastMoveY = 0;
+
     function updateVelocity() {
+        if (moveX === lastMoveX && moveY === lastMoveY) return;  // Skip if no change
         if (moveX !== 0 && moveY !== 0) {
-            joueur.setVX( (moveX / Math.sqrt(2)) * speed);
-            joueur.setVY(  (moveY / Math.sqrt(2)) * speed);
+            joueur.setVX((moveX / Math.sqrt(2)) * speed);
+            joueur.setVY((moveY / Math.sqrt(2)) * speed);
         } else {
-            joueur.setVX( moveX * speed);
-            joueur.setVY( moveY * speed);
+            joueur.setVX(moveX * speed);
+            joueur.setVY(moveY * speed);
         }
+        lastMoveX = moveX;
+        lastMoveY = moveY;
     }
+    
 
     enableSword.press = () => {
-        if(sword.hasSword)
+        if(joueur.hasSword)
         {
-            sword.hasSword = false;
+            joueur.hasSword = false;
 
-            sword.body.visible = false;
+            //sword.body.visible = false;
         }
         else{
-            sword.hasSword = true;
-            sword.body.visible = true;
+            joueur.hasSword = true;
+            //sword.body.visible = true;
         }
     }
 
@@ -174,7 +181,21 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
     lvlUp.press = () =>
     {
         joueur.exp += joueur.expReq*1 + 1; 
-        joueur.updatelvl();
+    }
+
+    autoAttack.press = () =>
+    {
+        if(joueur.clickLock)
+        {
+            joueur.hold = false;
+            joueur.clickLock = false;
+        }
+        else
+        {
+            joueur.hold = true;
+            joueur.clickLock = true;
+        }
+
     }
 
     // Arrow keys press and release

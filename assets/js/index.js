@@ -41,8 +41,8 @@ const Application = PIXI.Application,
 //noComeBacks makes it so the spawner stops to let in the ones that were lost tot the cleansing !
 let joueur, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, x = 0, y = 0,
 monstres = Monstre.monstres, explosions = Explosion.explosions, exps = Exp.exps, exp = Exp, explosion = Explosion, bullets = Gun.bullets,
-sword, gun, hasSword = false,  dedPos = 0, elapsedTime = 0, min = 0, hour = 0, event,
-cursorX, cursorY, hold = false;
+sword, gun, hasSword = false,  dedPos = 0, elapsedTime = 0, min = 0, hour = 0, event, swinging = 0,
+cursorX, cursorY;
 
 const app = new Application({
     width: 900,
@@ -74,7 +74,7 @@ function setup() {
     Weapon.addMonstres(Monstre);
     Joueur.addMonstre(Monstre);
     Joueur.addExplosion(Explosion);
-    Joueur.addUpgrade(new Upgrade("gun"));
+
     joueur = new Joueur(app);
     resizeApp(joueur);
     joueur.updateExpBar();
@@ -99,9 +99,11 @@ function setup() {
 
     sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // Blue rectangle of 10x80
     gun = new Gun(1, joueur.baseDMG, 1);
-    Upgrade.addWeapons(Sword, Gun, sword, gun);
-    
+    Upgrade.addWeapons(Sword, Gun, Explosion, sword, gun);
+    Joueur.addUpgrade(new Upgrade("gun"));
 
+    //joueur.hasSword = true;
+    //joueur.hasGun = true;
     // setInterval(() => { 
     //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
     // }, 10);
@@ -123,7 +125,7 @@ function play(delta) {
     resizeApp(joueur);
     if(!app.pause)
     {
-        joueur.addExp(0);
+        joueur.updatelvl();
         elapsedTime += delta / 60;
         if(elapsedTime >= 60) 
         { 
@@ -135,7 +137,7 @@ function play(delta) {
             min -= 60;
             hour += 1;
         }    
-
+        //console.log('current cooldown:', gun.isOnCooldown);
         Event.updateEvents(delta);
         
         let xI = xF;
@@ -174,8 +176,41 @@ function play(delta) {
         x += joueur.getVX() * delta;
         y += joueur.getVY() * delta;
 
-        sword.playSwordSwing(delta, cursorX, cursorY);
+        //console.log(sword.cooldown);
+        if((joueur.hold && joueur.hasSword) || swinging > 0 || (joueur.clickLock && joueur.hasSword))
+        {
+            if(swinging == 0){
+                console.log(1/sword.swingSpeed)
+                swinging = sword.cooldown > 1/sword.swingSpeed ? sword.cooldown : (sword.swingSpeed++) * 0 + sword.cooldown; 
+                if(sword.cooldown < 10) {sword.cooldown = 10;}
+                sword.body.visible = true;
+                sword.hasSword = true;
+                monstres.forEach(otherMonstre => {
+                    otherMonstre.setSwordHit(false);
+                });
+                sword.isSwinging = true;
+                sword.firstSwing = true;
+            }
+
+            swinging = (swinging - delta) < 0 ? 0 : swinging - delta;
+            if(swinging == 0){
+                sword.hasSword = false;
+                sword.body.visible = false;
+            }   
+            //console.log(swinging);
+            sword.playSwordSwing(delta, cursorX, cursorY);
+        }
         
+        (gun.cooldownTimeLeft-=delta) <= 0 ? gun.isOnCooldown = false : gun.isOnCooldown = true;
+        if(joueur.hold && !gun.isOnCooldown || joueur.clickLock && !gun.isOnCooldown)
+        {
+            gun.shoot();
+        }
+        if(sword.hasTrail)
+        {
+            sword.updateTrail(delta, [0, 0.1, 0.2,0.05, 0.15, 0.25 ,-0.05], deltaX, deltaY);
+        }
+
         gun.update(delta, cursorX, cursorY, deltaX, deltaY);
 
         MonstreGunner.updateBullets(delta, deltaX, deltaY, joueur);
@@ -199,10 +234,7 @@ function play(delta) {
                 sword.onSwordHitEnemyBullet(bullet);
             }
         })
-        if(hold)
-        {
-            gun.shoot();
-        }
+
         
         explosions.forEach(explosion => {
             explosion.updateExplosion(deltaX, deltaY);
@@ -246,6 +278,9 @@ function afficherDebug(delta) {
         Joueur X : ${x}
         Joueur Y : ${y}
         baseGunDMG: ${gun.baseDMG}
+        baseSwordDMG: ${sword.baseDMG}
+        Crit chance : ${joueur.critChance}%
+        Crit DMG : ${joueur.critDMG}x
         Vitesse Joueur : ${joueur.vitesse}
         Vitesse X : ${joueur.getVX().toFixed(2)}
         Vitesse Y : ${joueur.getVY().toFixed(2)}
@@ -275,7 +310,11 @@ window.addEventListener('resize', () => {
     app.stage.removeChild(Grid.grid);
     app.renderer.resize(window.innerWidth, window.innerHeight);
     Grid.grid = Grid.drawGridBackground(app); 
-    Grid.grid.zIndex = 0;
+    //Grid.grid.zIndex = 0;
+    Grid.pauseGrid(app);
+            app.pause = !app.pause;
+            Grid.pauseGrid(app);
+            app.pause = !app.pause;
 });
 const EXP_BAR = document.getElementById('expBar');
 
@@ -308,12 +347,14 @@ document.addEventListener("mousemove", (event) => {
 
 document.addEventListener("mousedown", (event) =>
 {
-    hold = true;
+    joueur.hold = true;
 });
-
 document.addEventListener("mouseup", (event) =>
 {
-    hold = false;
+    if(!joueur.clickLock)
+    {
+        joueur.hold = false;
+    }
 });
 document.addEventListener('contextmenu', (event) =>{
     event.preventDefault();

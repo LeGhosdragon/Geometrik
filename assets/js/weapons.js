@@ -11,7 +11,7 @@ export class Weapon{
 
         //this.AOE = areaOfAffect;
         this.body = body;
-        this.cooldown = cooldown;
+        this.cooldown = cooldown*60;
         this.type = type;
         this.baseDMG = baseDMG;
         this.currentDMG = this.baseDMG;
@@ -79,7 +79,7 @@ export class Sword extends Weapon {
         return rectangle;
     }
 
-    updateTrail(delta, offsets) {
+    updateTrail(delta, offsets, deltaX, deltaY) {
         if (!this.body.visible) {
             this.trail.forEach((particle, index) => {
                 if (particle.alpha > 0) {
@@ -124,6 +124,8 @@ export class Sword extends Weapon {
             if (particle.alpha > 0) {
                 trailData.age++;
                 particle.alpha -= 0.012 * trailData.age;
+                particle.x += deltaX;
+                particle.y += deltaY;
             }
         });
     
@@ -143,21 +145,6 @@ export class Sword extends Weapon {
 
     hideSwordAndParticles() {
         this.body.visible = false;
-
-        if(this.hasSword)
-        {
-            setTimeout(() => {
-                if(this.hasSword)
-                {
-                    this.body.visible = true;                    
-                }
-                this.isSwinging = true;
-                this.swingTime = 0;
-                Weapon.monstres.forEach(otherMonstre => {
-                    otherMonstre.setSwordHit(false);
-                });
-            }, 1000/this.cooldown);
-        }
     }
 
     isSwordCollidingWithMonster(monstre) {
@@ -194,7 +181,7 @@ export class Sword extends Weapon {
             monstre.setSwordHit(true);
             const dmg = this.swordDMG();
 
-            monstre.endommagé(dmg, this);
+            monstre.endommagé(dmg, this, Math.random() * 100 < Weapon.joueur.critChance);
             monstre.setSwordHit(true);            
         }
     }
@@ -218,41 +205,42 @@ export class Sword extends Weapon {
             //Ceci permet au premier swing d'aller dans la direction de la souris
             if(this.firstSwing)
             {
+                //console.log(1);
                 let dx = cursorX - (Weapon.joueur.getX() + Weapon.app.view.offsetLeft);
                 let dy = cursorY - (Weapon.joueur.getY() + Weapon.app.view.offsetTop);
                 this.storedAngle = Math.atan2(dy, dx);
                 this.baseAngle = this.storedAngle;
                 this.firstSwing = false;
                 this.isSwinging = true;
+                this.body.visible = true;
             }
             if (!this.isSwinging) {
+                //console.log(2);
                 let dx = cursorX - (Weapon.joueur.getX() + Weapon.app.view.offsetLeft);
                 let dy = cursorY - (Weapon.joueur.getY() + Weapon.app.view.offsetTop);
                 this.storedAngle = Math.atan2(dy, dx);
                 this.baseAngle = this.storedAngle;
             }
-            
+             
             if (this.isSwinging) {
+                
                 this.swingTime += this.swingSpeed;
                 let swingOffset = Math.cos(this.swingTime / this.swingDuration * Math.PI) * this.wideness * this.swingDirection;
                 this.body.rotation = this.baseAngle + swingOffset + Math.PI / 2;
-        
+                //console.log(swingOffset);
                 if (this.swingTime >= this.swingDuration) {
                     this.isSwinging = false;
+                    this.swingTime = 0;
                     this.hideSwordAndParticles();
                 }
             }
-        }
-        if(this.hasTrail)
-        {
-            this.updateTrail(delta, [0, 0.1, 0.2]);
         }
         
         this.previousSwordPosition = { x: this.getX(), y: this.getY() };
     }
 
     swordDMG() {
-        return Math.round(this.baseDMG + Math.random() * 15);
+        return Math.round(this.baseDMG + Math.random() * this.baseDMG/5);
     }
 }
 
@@ -264,6 +252,7 @@ export class Gun extends Weapon {
         this.hasGun = false;
         this.pierce = pierce;
         this.isOnCooldown = false;
+        this.cooldownTimeLeft = 0;
         this.color = 0x9966FF;
         this.bulletSize = 6;
         this.knockback = 5;
@@ -294,12 +283,11 @@ export class Gun extends Weapon {
     }
 
     gunDMG() {
-        return Math.round(this.baseDMG + Math.random() * 15);
+        return Math.round(this.baseDMG + Math.random() * this.baseDMG/5);
     }
 
     shoot() {
         if (this.isOnCooldown || !this.hasGun) return;
-        this.isOnCooldown = true;
 
         const bullet = new PIXI.Graphics();
         bullet.radius = Weapon.Monstre.dedMilkMan ? 20 : this.bulletSize;
@@ -313,19 +301,20 @@ export class Gun extends Weapon {
         const gunLength = 30;
         bullet.x = this.body.x + Math.cos(this.storedAngle - Math.PI / 2) * gunLength;
         bullet.y = this.body.y + Math.sin(this.storedAngle - Math.PI / 2) * gunLength;
-
+    
         Weapon.app.stage.addChild(bullet);
-        Gun.bullets.push(bullet);
-
-        setTimeout(() => (this.isOnCooldown = false), 1000 * this.cooldown);
+        Gun.bullets.push(bullet); 
+        this.cooldownTimeLeft = this.cooldown;
+        
     }
+    
 
     update(delta, cursorX, cursorY, deltaX, deltaY) {
         this.body.x = Weapon.joueur.getX() + Weapon.joueur.getWidth() / 2 - 1;
         this.body.y = Weapon.joueur.getY() + Weapon.joueur.getHeight() / 2 - 1;
 
-        let dx = cursorX - this.body.x;
-        let dy = cursorY - this.body.y;
+        let dx = cursorX - 10 - this.body.x;
+        let dy = cursorY - 10 - this.body.y;
         this.storedAngle = Math.atan2(dy, dx) + Math.PI / 2;
         this.body.rotation = this.storedAngle;
 
@@ -385,7 +374,7 @@ export class Gun extends Weapon {
         if (!monstre.getBulletHit() && !bullet.touches.includes(monstre)) {
             monstre.setBulletHit(true);
             const dmg = this.gunDMG();
-            monstre.endommagé(dmg, this);
+            monstre.endommagé(dmg, this, Math.random() * 100 < Weapon.joueur.critChance);
         }
     }
 }
@@ -393,6 +382,7 @@ export class Gun extends Weapon {
 
 export class Explosion extends Weapon {
     static explosions = [];
+    static bodyKnockback = 10;
 
     constructor(x, y, rayon, baseDMG, couleur) {
         super("explosion", 10, 10, new PIXI.Graphics());
@@ -401,7 +391,7 @@ export class Explosion extends Weapon {
         this.couleur = Weapon.Monstre.dedMilkMan ? 0xFFFFFF : couleur;
         this.maxRayon = rayon;
         this.currentRayon = Math.max(1, rayon / 20); // Avoid 0 radius
-        this.knockback = 10;
+        this.knockback = Explosion.bodyKnockback;
 
         this.body = this.createExplosion(x, y);
 
@@ -460,7 +450,7 @@ export class Explosion extends Weapon {
                 const distance = Math.hypot(this.body.x - monstre.getX(), this.body.y - monstre.getY());
                 if (distance <= this.currentRayon) {
                     monstre.setExplosionHit(true);
-                    monstre.endommagé(this.baseDMG, this);
+                    monstre.endommagé(this.baseDMG, this, Math.random() * 100 < Weapon.joueur.critChance);
                 }
             }
         });

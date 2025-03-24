@@ -6,6 +6,8 @@ export class Joueur {
     static EXP_BAR = document.getElementById('expBar');
 
     constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 15, elapsedTime = 0, couleur = 0xFF0000, weapons = []) {
+        this.hold = false;
+        this.clickLock = false;
         this.lvl = 0;
         this.expReq = 7 + this.lvl*this.lvl; 
         this.debug = false;
@@ -17,12 +19,17 @@ export class Joueur {
         this.vitesse = vitesse;
         this.baseHP = baseHP;
         this.currentHP = currentHP;
+        this.hasGun = false;
+        this.hasSword = false;
         this.explRadius = 1;
+        this.critChance = 5;
+        this.critDMG = 2;
         this.upgExplosion = false;
         this.baseDMG = baseDMG;
         this.elapsedTime = elapsedTime;
         this.couleur = couleur;
         this.weapons = weapons;
+        this.numChoix = 3;
         this.bulletHit = false;
         this.body = this.faireJoueur();
         this.hpText = this.createHPText();
@@ -135,7 +142,7 @@ export class Joueur {
         this.exp += qty;
         this.updateHP();
         this.updatelvl();
-        this.updateExpBar()
+        this.updateExpBar();
     }
 
     updateExpBar() {
@@ -157,7 +164,7 @@ export class Joueur {
         this.healthBar.clear();
     
         // Calculate the health percentage
-        let healthPercent = this.currentHP / this.baseHP;
+        let healthPercent =this.currentHP / this.baseHP;
         if (healthPercent < 0) healthPercent = 0;
     
         // Define pie chart parameters
@@ -184,7 +191,7 @@ export class Joueur {
     }
        
     updateHP() {
-        this.hpText.text = this.currentHP > 0 ? this.currentHP : ""; // Keep the HP text
+        this.hpText.text = this.currentHP > 0 ?  Math.round(this.currentHP) : ""; // Keep the HP text
         this.hpText.x = this.getX() + this.size;
         this.hpText.y = this.getY() + this.size;
     
@@ -200,12 +207,8 @@ export class Joueur {
             this.lvl+=1;
             this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
             this.expReq = 7 + Math.round(this.lvl**1.9);
-            //functLvLUp();
-            let upgrades = Joueur.upgrade.choisirUpgrade(5);
+            let upgrades = Joueur.upgrade.choisirUpgrade(this.numChoix);
             Joueur.upgrade.montrerUpgrades(upgrades);
-            //Joueur.upgrade.upgradeChoisi(upgrades[0]);
-            // this.body.vx = 0;
-            // this.body.vy = 0;
             
         }
     }
@@ -220,7 +223,7 @@ export class Joueur {
     {
         if(this.upgExplosion)
         {
-            new Joueur.Explosion(this.getX() + this.size, this.getY()+ this.size, this.body.width * 6 * this.explRadius, this.baseDMG/3, 0xFF0000);
+            new Joueur.Explosion(this.getX() + this.size, this.getY()+ this.size, this.body.width * 6 * this.explRadius, this.baseDMG/3, 0xFF0000);    
         }
         this.setHP(this.getHP() - dmg);
         this.updateHP();

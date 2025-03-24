@@ -11,6 +11,7 @@ export class Event{
     static joueur = null;
     static difficultyDegree = 1;
     static currentEvent = "normal";
+    static ennemiDifficultee = 1;
     static eventNameList = ["normal", "horde", "ambush", "fort", "guns"];
 
 
@@ -35,7 +36,7 @@ export class Event{
             } 
             if(event.type == "normal") // ennemies are spawning at a regular interval without anything special
             {
-                event.timeElapsed%Math.round(60/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "normal", 2 + Event.difficultyDegree) :0;
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "normal", 2 + Event.difficultyDegree) :0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(50/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 4 + Event.difficultyDegree) :0 : 0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(30/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "tank",   5 + Event.difficultyDegree) :0 : 0;
                 event.state = !(event.timeElapsed >= 3600);
@@ -69,7 +70,7 @@ export class Event{
                 if (index > -1) {
                     Event.events.splice(index, 1);
                 }
-
+                Event.ennemiDifficultee *= 1.1;
                 new Event(Event.getNewEvent());
             }
             
@@ -101,15 +102,15 @@ export class Event{
 
                 let monstre;
                 if(type == "normal") { 
-                    monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides);}            
+                    monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}            
                 else if(type == "runner") {
-                    monstre = new Event.MonstreRunner( rngPos[0], rngPos[1], sides);}
+                    monstre = new Event.MonstreRunner( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
                 else if(type == "tank") {
-                    monstre = new Event.MonstreTank( rngPos[0], rngPos[1], sides);}
+                    monstre = new Event.MonstreTank( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
                 else if(type == "expBall") {
-                    monstre = new Event.MonstreExp( rngPos[0], rngPos[1], sides);}
+                    monstre = new Event.MonstreExp( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
                 else if(type == "gunner"){
-                    monstre = new Event.MonstreGunner( rngPos[0], rngPos[1], sides);}
+                    monstre = new Event.MonstreGunner( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
                 Event.app.stage.addChild(monstre.body);
                 Event.monstres.push(monstre);
             }

@@ -367,9 +367,10 @@ export class Monstre {
         Monstre.app.ticker.add(updateParticles);
     }
     
-    endommagé(dmg, weapon) {
+    endommagé(dmg, weapon, crit) {
+        crit ? dmg *= Monstre.joueur.critDMG : 0;
         this.setHP(this.getHP() - dmg);
-        this.createHitEffect(this, dmg);
+        this.createHitEffect(this, dmg, crit);
         
         if(weapon.type == "sword")
         {
@@ -396,12 +397,14 @@ export class Monstre {
         this.updateHP();
     }
 
-    createHitEffect(monstre, damage) {
+    createHitEffect(monstre, damage, crit) {
         // Create the damage text
+        let color = crit ? 0xFF0000 : 0xFFFFFF;
+
         const damageText = new PIXI.Text(damage, {
             fontFamily: 'Arial',
             fontSize: 24,
-            fill: 0xFF0000,
+            fill: color,
             stroke: 0x000000,      // Black outline
             strokeThickness: 4, 
             align: 'center',
@@ -428,7 +431,7 @@ export class Monstre {
     
     damageText(damageText, updateFn) {
         damageText.y -= 2; 
-        damageText.alpha -= 0.02;  
+        damageText.alpha -= 0.05;  
         damageText.scale.x -= 0.01;
         damageText.scale.y -= 0.01;
     
@@ -465,28 +468,28 @@ export class Monstre {
 }
 
 export class MonstreNormal extends Monstre {
-    constructor(x, y, sides) {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "normal";
         const size = 0.3;
         const speed = 1;
         const spinSpeed = 0.02;
-        const baseHP = 25;
-        const exp = 2;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp);
+        const baseHP = Math.round(25 * ennemiDifficultee);
+        const exp = Math.round(2 * ennemiDifficultee);
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
-
-    
 }
 
 export class MonstreRunner extends Monstre {
-    constructor(x, y, sides) {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "runner";
         const size = 0.25;
         const speed = 2.5;
         const spinSpeed = 0.04;
-        const baseHP = 15;
-        const exp = 1;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp);
+        const baseHP = Math.round(15 * ennemiDifficultee);
+        const exp = Math.round(1 * ennemiDifficultee);
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
     
     actualiserPolygone(delta, ennemiColor) {
@@ -510,19 +513,28 @@ export class MonstreRunner extends Monstre {
 export class MonstreTank extends Monstre {
 
 
-    constructor(x, y, sides) {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "tank";
         const size = 0.45;
         const speed = 0.4;
         const spinSpeed = 0.005;
-        const baseHP = 50;
-        const exp = 4;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp);
+        const baseHP = Math.round(50 * ennemiDifficultee);
+        const exp = Math.round(4 * ennemiDifficultee);
+        const baseDMG = Math.round(2 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
 }
 
 export class MonstreExp extends Monstre {
-
+    constructor(x, y, sides, ennemiDifficultee)
+    {
+        const type = "expBall";
+        const size = 0.5;
+        const speed = 0.2;
+        const spinSpeed = 0.003;
+        const baseHP = Math.round(250 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, 1, Monstre.Exp.expBuildUp);
+    }
     actualiserPolygone() {
         if (this.sides < 3) return;
         
@@ -558,34 +570,25 @@ export class MonstreExp extends Monstre {
         // Ensure HP text stays updated
         this.updateHP();
     }
-    constructor(x, y, sides)
-    {
-        const type = "expBall";
-        const size = 0.5;
-        const speed = 0.2;
-        const spinSpeed = 0.003;
-        const baseHP = 250;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, 1, Monstre.Exp.expBuildUp);
-    }
+
 }
 export class MonstreGunner extends Monstre {
     static bullets = [];
     
-    constructor(x, y, sides) {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "gunner";
         const size = 0.2;
         const speed = 1;
         const spinSpeed = 0.005;
-        const baseHP = 15;
-        const exp = 4;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp);
-
-        this.shootInterval = 250;  // 1 second cooldown for shooting
+        const baseHP = Math.round(15 * ennemiDifficultee);
+        const exp = Math.round(4 * ennemiDifficultee);
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        this.shootInterval = 250;  
         this.lastShotTime = 0;
         this.currentTime = 0;
         this.isOnCooldown = false;
         this.bulletSize = 10;
-        this.pierce = 1;
     }
 
     bouger(joueur, delta, deltaX, deltaY, ennemiColor) {
