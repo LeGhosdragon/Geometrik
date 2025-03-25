@@ -2,9 +2,9 @@
  * La classe Monstre gére leurs propriétés, leurs affichages, 
  * leurs déplacements et leurs interactions avec le joueur.
  */
-
 export class Monstre {
     static monstres = [];
+    static joueur = null;
     static cleanMonstres = [];
     static Explosion = null;
     static Exp = null;
@@ -170,6 +170,164 @@ export class Monstre {
         });
     }
 
+    knockback(force, angle) {
+        if (!this.body) {
+            console.warn("Knockback failed: body is null");
+            return;
+        }
+    
+        this.knockbackX = Math.cos(angle) * force;
+        this.knockbackY = Math.sin(angle) * force;
+    
+        let decayRate = 0.92;
+        let duration = 10; // Frames
+    
+        let frames = 0;
+        const applyKnockback = () => {
+            if (frames >= duration || !this.body) {
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            // Ensure values are valid before setting
+            if (typeof this.getX !== "function" || typeof this.getY !== "function") {
+                console.error("Error: getX or getY is not a function.");
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            this.setX(this.getX() + this.knockbackX);
+            this.setY(this.getY() + this.knockbackY);
+    
+            // Decay the knockback force over time
+            this.knockbackX *= decayRate;
+            this.knockbackY *= decayRate;
+    
+            frames++;
+        };
+    
+        Monstre.app.ticker.add(applyKnockback);
+    }
+    knockback(force, angle) {
+        if (!this.body) {
+            console.warn("Knockback failed: body is null");
+            return;
+        }
+    
+        this.knockbackX = Math.cos(angle) * force;
+        this.knockbackY = Math.sin(angle) * force;
+    
+        let decayRate = 0.92;
+        let duration = 10; // Frames
+    
+        let frames = 0;
+        const applyKnockback = () => {
+            if (frames >= duration || !this.body) {
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            // Ensure values are valid before setting
+            if (typeof this.getX !== "function" || typeof this.getY !== "function") {
+                console.error("Error: getX or getY is not a function.");
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            this.setX(this.getX() + this.knockbackX);
+            this.setY(this.getY() + this.knockbackY);
+    
+            // Decay the knockback force over time
+            this.knockbackX *= decayRate;
+            this.knockbackY *= decayRate;
+    
+            frames++;
+        };
+    
+        Monstre.app.ticker.add(applyKnockback);
+    }
+        
+    
+
+    knockback(force, angle) {
+        if (!this.body) {
+            console.warn("Knockback failed: body is null");
+            return;
+        }
+    
+        this.knockbackX = Math.cos(angle) * force;
+        this.knockbackY = Math.sin(angle) * force;
+    
+        let decayRate = 0.92;
+        let duration = 10; // Frames
+    
+        let frames = 0;
+        const applyKnockback = () => {
+            if (frames >= duration || !this.body) {
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            // Ensure values are valid before setting
+            if (typeof this.getX !== "function" || typeof this.getY !== "function") {
+                console.error("Error: getX or getY is not a function.");
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            this.setX(this.getX() + this.knockbackX);
+            this.setY(this.getY() + this.knockbackY);
+    
+            // Decay the knockback force over time
+            this.knockbackX *= decayRate;
+            this.knockbackY *= decayRate;
+    
+            frames++;
+        };
+    
+        Monstre.app.ticker.add(applyKnockback);
+    }
+    knockback(force, angle) {
+        if (!this.body) {
+            console.warn("Knockback failed: body is null");
+            return;
+        }
+    
+        this.knockbackX = Math.cos(angle) * force;
+        this.knockbackY = Math.sin(angle) * force;
+    
+        let decayRate = 0.92;
+        let duration = 10; // Frames
+    
+        let frames = 0;
+        const applyKnockback = () => {
+            if (frames >= duration || !this.body) {
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            // Ensure values are valid before setting
+            if (typeof this.getX !== "function" || typeof this.getY !== "function") {
+                console.error("Error: getX or getY is not a function.");
+                Monstre.app.ticker.remove(applyKnockback);
+                return;
+            }
+    
+            this.setX(this.getX() + this.knockbackX);
+            this.setY(this.getY() + this.knockbackY);
+    
+            // Decay the knockback force over time
+            this.knockbackX *= decayRate;
+            this.knockbackY *= decayRate;
+    
+            frames++;
+        };
+    
+        Monstre.app.ticker.add(applyKnockback);
+    }
+        
+    
+
     // Création du texte affichant les points de vie du monstre et l'ajoute au PIXI
     createHPText() {
         const text = new PIXI.Text(this.currentHP, {
@@ -304,38 +462,45 @@ export class Monstre {
     }
     
     // Gestion de la perte de HP par le monstre selon le type de d'arme utilisé
-    endommagé(dmg, type) {
+    endommagé(dmg, weapon, crit) {
+        crit ? dmg *= Monstre.joueur.critDMG : 0;
         this.setHP(this.getHP() - dmg);
-        this.createHitEffect(this, dmg);
-        if(type == "sword")
+        this.createHitEffect(this, dmg, crit);
+        
+        if(weapon.type == "sword")
         {
+            this.knockback(weapon.knockback, Math.atan2(this.getY() - (Monstre.joueur.getY() + Monstre.joueur.size), this.getX() - (Monstre.joueur.getX() + Monstre.joueur.size)));
             setTimeout(()=> {
                 this.setSwordHit(false);
             }, 300);
         }
-        if(type == "explosion")
+        if(weapon.type == "explosion")
         {
+            this.knockback(weapon.knockback, Math.atan2(this.getY() - (Monstre.joueur.getY() + Monstre.joueur.size), this.getX() - (Monstre.joueur.getX() + Monstre.joueur.size)));
             setTimeout(()=> {
                 this.setExplosionHit(false);
             }, 300);
         }
-        if(type == "gun")
-            {
-                setTimeout(()=> {
-                    this.setBulletHit(false);
-                }, 10);
-            }
-
+        if(weapon.type == "gun")
+        {
+            this.knockback(weapon.knockback, Math.atan2(this.getY() - (Monstre.joueur.getY() + Monstre.joueur.size), this.getX() - (Monstre.joueur.getX() + Monstre.joueur.size)));
+            setTimeout(()=> {
+                this.setBulletHit(false);
+            }, 10);
+        }
+        
         this.updateHP();
     }
 
     // Gestion de l'effet visuel lorsqu'un monstre subit des dégâts
-    createHitEffect(monstre, damage) {
+    createHitEffect(monstre, damage, crit) {
         // Creation du texte de 
+        let color = crit ? 0xFF0000 : 0xFFFFFF;
+
         const damageText = new PIXI.Text(damage, {
             fontFamily: 'Arial',
             fontSize: 24,
-            fill: 0xFF0000,
+            fill: color,
             stroke: 0x000000,      // Black outline
             strokeThickness: 4, 
             align: 'center',
@@ -363,7 +528,7 @@ export class Monstre {
     // Méthode appelé a chque frame pour animer le texte de dégâts
     damageText(damageText, updateFn) {
         damageText.y -= 2; 
-        damageText.alpha -= 0.02;  
+        damageText.alpha -= 0.05;  
         damageText.scale.x -= 0.01;
         damageText.scale.y -= 0.01;
     
@@ -375,7 +540,12 @@ export class Monstre {
         }
     }
     
-    // Getters et Setters
+    static addJoueur(joueurInput) {
+        Monstre.joueur = joueurInput;
+    }
+    
+        // Getters et Setters    
+
     getX() { return this.body.x; }
     setX(x) { this.body.x = x; }
     getY() { return this.body.y; }
@@ -402,42 +572,74 @@ export class Monstre {
  */
 
 export class MonstreNormal extends Monstre {
-    constructor(x, y, sides) {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "normal";
         const size = 0.3;
         const speed = 1;
         const spinSpeed = 0.02;
-        const baseHP = 25;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP);
+        const baseHP = Math.round(25 * ennemiDifficultee);
+        const exp = Math.round(2 * ennemiDifficultee);
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
 }
 
 export class MonstreRunner extends Monstre {
-    constructor(x, y, sides) {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "runner";
         const size = 0.25;
-        const speed = 3;
-        const spinSpeed = 0.5;
-        const baseHP = 15;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP);
+        const speed = 2.5;
+        const spinSpeed = 0.04;
+        const baseHP = Math.round(15 * ennemiDifficultee);
+        const exp = Math.round(1 * ennemiDifficultee);
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+    }
+    
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        this.body.lineStyle(2, 0x000000, 1);
+        this.body.beginFill(ennemiColor);
+
+        const size = newSize * 50;
+        const points = this.sides;
+        this.body.drawStar(0, 0, points, size, size*0.6); // Draw a star
+        this.body.endFill();
+
+        // Ensure HP text stays updated
+        this.updateHP();
     }
 }
 
 export class MonstreTank extends Monstre {
 
 
-    constructor(x, y, sides) {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "tank";
         const size = 0.45;
         const speed = 0.4;
         const spinSpeed = 0.005;
-        const baseHP = 50;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP);
+        const baseHP = Math.round(50 * ennemiDifficultee);
+        const exp = Math.round(4 * ennemiDifficultee);
+        const baseDMG = Math.round(2 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
 }
 
 export class MonstreExp extends Monstre {
-
+    constructor(x, y, sides, ennemiDifficultee)
+    {
+        const type = "expBall";
+        const size = 0.5;
+        const speed = 0.2;
+        const spinSpeed = 0.003;
+        const baseHP = Math.round(250 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, 1, Monstre.Exp.expBuildUp);
+    }
     actualiserPolygone() {
         if (this.sides < 3) return;
         
@@ -473,13 +675,136 @@ export class MonstreExp extends Monstre {
         // S'aasure que le HP reste à jour
         this.updateHP();
     }
-    constructor(x, y, sides)
-    {
-        const type = "expBall";
-        const size = 0.5;
-        const speed = 0.2;
-        const spinSpeed = 0.003;
-        const baseHP = 250;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, 1, Monstre.Exp.expBuildUp);
+
+}
+export class MonstreGunner extends Monstre {
+    static bullets = [];
+    
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "gunner";
+        const size = 0.2;
+        const speed = 1;
+        const spinSpeed = 0.005;
+        const baseHP = Math.round(15 * ennemiDifficultee);
+        const exp = Math.round(4 * ennemiDifficultee);
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        this.shootInterval = 250;  
+        this.lastShotTime = 0;
+        this.currentTime = 0;
+        this.isOnCooldown = false;
+        this.bulletSize = 10;
+    }
+
+    bouger(joueur, delta, deltaX, deltaY, ennemiColor) {
+        this.currentTime++;
+        const screenHeight = Monstre.app.view.height;
+        let moveVector = this.vecteurVersLeJoueur(joueur);
+
+        // Stop moving if monster is too close to player
+        if (screenHeight / 3 < Math.sqrt((joueur.getX() - this.getX()) ** 2 + (joueur.getY() - this.getY()) ** 2)) {
+            this.setX(this.getX() + (moveVector.x) * delta + deltaX);
+            this.setY(this.getY() + (moveVector.y) * delta + deltaY);
+        } else {
+            this.setX(this.getX() + deltaX);
+            this.setY(this.getY() + deltaY);
+
+            if (this.currentTime - this.lastShotTime >= this.shootInterval && !this.isOnCooldown) {
+                this.shoot(joueur, delta, deltaX, deltaY);
+                this.lastShotTime = this.currentTime;
+                this.isOnCooldown = true;
+
+                // Reset cooldown after the interval
+                setTimeout(() => { this.isOnCooldown = false }, this.shootInterval);
+            }
+        }
+
+        this.spins ? this.body.rotation += this.spinSpeed * delta : 0;
+        this.avoidMonsterCollision();
+        this.actualiserPolygone(delta, ennemiColor);
+
+        if (this.showLife && this.currentHP > 0) {
+            // Update HP text position
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+            this.hpText.text = this.currentHP;
+        }
+    }
+
+    shoot(joueur) {
+        if (this.isOnCooldown) return;
+        this.isOnCooldown = true;
+
+        // Calculate the angle towards the player
+        const angleToPlayer = Math.atan2((joueur.getY() + joueur.size) - this.getY(), (joueur.getX() + joueur.size) - this.getX());
+
+        // Create bullet and initialize its properties
+        const bullet = new PIXI.Graphics();
+        bullet.radius = this.bulletSize;
+        bullet.lineStyle(3, 0xFF0000, 1);
+        bullet.beginFill(0xFF0000);
+        bullet.drawCircle(0, 0, bullet.radius);
+        bullet.endFill();
+        
+        const gunLength = 30;
+        bullet.x = this.getX() + Math.cos(angleToPlayer) * gunLength;
+        bullet.y = this.getY() + Math.sin(angleToPlayer) * gunLength;
+
+        // Set bullet's initial angle and movement direction
+        bullet.angle = angleToPlayer;
+        bullet.speed = 3;
+
+        Monstre.app.stage.addChild(bullet);
+        MonstreGunner.bullets.push(bullet);
+
+        setTimeout(() => (this.isOnCooldown = false), 1000 * this.shootInterval);
+    }
+
+    static updateBullets(delta, deltaX, deltaY, joueur) {
+        for (let i = MonstreGunner.bullets.length - 1; i >= 0; i--) {
+            let b = MonstreGunner.bullets[i];
+
+            // Update bullet position based on its angle
+            b.x += Math.cos(b.angle) * b.speed * delta + deltaX;
+            b.y += Math.sin(b.angle) * b.speed * delta + deltaY;
+
+            // Remove bullets that go off-screen
+            if (b.x < -b.radius || b.x > Monstre.app.view.width + b.radius ||
+                b.y < -b.radius || b.y > Monstre.app.view.height + b.radius || MonstreGunner.isBulletCollidingWithJoueur(joueur)) {
+                Monstre.app.stage.removeChild(b);
+                b.destroy({ children: true, texture: true, baseTexture: true });
+                MonstreGunner.bullets.splice(i, 1);
+            }
+        }
+    }
+
+    static isBulletCollidingWithJoueur(joueur) {
+        for (let i = MonstreGunner.bullets.length - 1; i >= 0; i--) {
+            let bullet = MonstreGunner.bullets[i];
+            if (!bullet) continue;
+
+            const bulletBounds = bullet.getBounds();
+            const joueurBounds = joueur.body.getBounds();
+            if (
+                bulletBounds.x < joueurBounds.x + joueurBounds.width &&
+                bulletBounds.x + bulletBounds.width > joueurBounds.x &&
+                bulletBounds.y < joueurBounds.y + joueurBounds.height &&
+                bulletBounds.y + bulletBounds.height > joueurBounds.y
+            ) {
+                MonstreGunner.onBulletHitPlayer(joueur);
+                Monstre.app.stage.removeChild(bullet);
+                bullet.destroy({ children: true, texture: true, baseTexture: true });
+                MonstreGunner.bullets.splice(i, 1);
+            }
+        }
+    }
+    
+    static onBulletHitPlayer(joueur) {
+        if(!joueur.isImmune)
+        {
+            joueur.endommagé(1);
+            joueur.isImmune = true;
+            setTimeout(() => {joueur.isImmune = false;}, 750);
+        }
     }
 }
