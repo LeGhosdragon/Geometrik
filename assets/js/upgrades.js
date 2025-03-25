@@ -1,3 +1,7 @@
+/**
+ * La classe Upgrade permet de gérer tous les upgrades des dispoinible 
+ * dans le jeu (armes, vitesse, Health etc.) 
+ */
 export class Upgrade
 {
 
@@ -22,14 +26,14 @@ export class Upgrade
                 "+", 1,
                 "Pierce", () => `Bullets pierce one more enemy! Piercing: ${Upgrade.gun.pierce - 1} => ${Upgrade.gun.pierce}`, "../images/Pierce.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Gun damage
             new Upg(() => Upgrade.gun.baseDMG, (val) => Upgrade.gun.baseDMG = val,
                 "x", 1.2,
                 "Gun Damage", () => `More bullet damage! DMG: ${(Upgrade.gun.baseDMG).toFixed(2)}dmg => ${(Upgrade.gun.baseDMG * 1.2).toFixed(2)}dmg`, "../images/Dmg.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Gun cooldown
             new Upg(() => Upgrade.gun.cooldown, (val) => Upgrade.gun.cooldown = val,
@@ -50,7 +54,7 @@ export class Upgrade
                 "+", 2,
                 "Bullet Knockback", () => `More knockback! Force: ${(Upgrade.gun.knockback).toFixed(2)} N => ${(Upgrade.gun.knockback + 2).toFixed(2)} N`, "../images/Knockback.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ]
     ];
     
@@ -60,35 +64,35 @@ export class Upgrade
                 "x", 1.1,
                 "Cleave Width", () => `Increase sword cleave width! ${Upgrade.sword.wideness.toFixed(2)} => ${(Upgrade.sword.wideness*1.1).toFixed}`, "../images/SwordWidth.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Sword damage
             new Upg(() => Upgrade.sword.baseDMG, (val) => Upgrade.sword.baseDMG = val,
                 "x", 1.2,
                 "Sword Damage", () => `Increase sword damage! DMG: ${(Upgrade.sword.baseDMG).toFixed(2)}dmg => ${(Upgrade.sword.baseDMG * 1.2).toFixed(2)}dmg`, "../images/Dmg.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Sword cooldown
             new Upg(() => Upgrade.sword.cooldown, (val) => Upgrade.sword.cooldown = val,
                 "x", 0.5,
                 "Cooldown", () => `Reduce sword cooldown! ${(Upgrade.gun.cooldown / 60).toFixed(2)}s => ${(Upgrade.gun.cooldown * 0.8 / 60).toFixed(2)}s`, "../images/Cooldown.gif",
                 true
-            )//, insert more 
+            )//, insérer plus
         ],
         [   // Sword length
             new Upg(() => Upgrade.sword.length, (val) => Upgrade.sword.length = val,
                 "+", 30,
                 "Sword Length", () => `Increase sword length for greater reach! ${Upgrade.sword.length}px => ${Upgrade.sword.length + 30}px`, "../images/bulletSize.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Sword knockback
             new Upg(() => Upgrade.sword.knockback, (val) => Upgrade.sword.knockback = val,
                 "+", 2,
                 "Sword Knockback", () => `More knockback! Force: ${(Upgrade.gun.knockback).toFixed(2)}N => ${(Upgrade.gun.knockback + 2).toFixed(2)}N`, "../images/Knockback.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ]
     ];
     
@@ -98,7 +102,7 @@ export class Upgrade
                 "+", 0.2,
                 "Player Speed", () => `Move faster to avoid enemies! ${Upgrade.joueur.vitesse.toFixed(2)}m/s => ${(Upgrade.joueur.vitesse + 0.2).toFixed(2)}m/s`, "../images/MovementSpeed.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Player collection area
             new Upg(() => Upgrade.joueur.distanceDattraction, (val) => Upgrade.joueur.distanceDattraction = val,
@@ -120,14 +124,14 @@ export class Upgrade
                 "x", 1.3,
                 "Attraction Area", () => `Increase area to collect items! ${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
                 false
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Player health
             new Upg(() => Upgrade.joueur.baseHP, (val) => { Upgrade.joueur.currentHP += val; Upgrade.joueur.baseHP += val; Upgrade.joueur.updateHP();},
                 "x", 0.2,
                 "Player Health", () => `Increase player's max health! HP : ${Upgrade.joueur.currentHP.toFixed(2)} => ${(Upgrade.joueur.currentHP+Upgrade.joueur.baseHP*0.2).toFixed(2)}`, "../images/Health.gif",
                 true
-            )//, insert more
+            )//, insérer plus
         ],
         [   // Player explosion
             new Upg(() => Upgrade.joueur.upgExplosion, (val) => Upgrade.joueur.upgExplosion = val,
@@ -149,7 +153,7 @@ export class Upgrade
                 "x", 2,
                 "Explosion Impact", () => `Increase explosion impact for greater impact! ${Upgrade.Explosion.bodyKnockback.toFixed(2)} => ${(Upgrade.Explosion.bodyKnockback*2).toFixed(2)}`, "../images/PlayerBoom.gif",
                 false
-            )//, insert more
+            )//, insérer plus
         ],
     ];
     
@@ -161,6 +165,8 @@ export class Upgrade
         this.boite = this.weapon == "gun" ? this.boiteGun.concat(this.boiteJoueur) :  this.boiteSword.concat(this.boiteJoueur);
     }
 
+    // Méthode pour sélectionner un nb d'upgrades aléatoires
+    // Ces upgrades sont ensuite proposés au joueur pour faire son choix
     choisirUpgrade(nbChoix) {
         let upgrades = [];
         let availableUpgrades = this.boite.filter(category => category.length > 0); // Only keep non-empty categories
@@ -174,10 +180,10 @@ export class Upgrade
             if (!upgrades.includes(chosenUpgrade)) {
                 upgrades.push(chosenUpgrade);
             } else {
-                continue; // If duplicate, try again
+                continue; // Si dupliqué, réessayer
             }
 
-            // Remove empty categories from consideration
+            // Enlever les catégories vides des considérations
             availableUpgrades = availableUpgrades.filter(category => category.length > 0);
         }
 
@@ -189,14 +195,14 @@ export class Upgrade
     }
 
 
-
+    // gestion de l'upgrade choisi
     upgradeChoisi(upgrade) {
         let index = -1;
         let foundIn = -1; 
     
         upgrade.apply();
         
-        // Find the upgrade in the list and remove it if necessary
+        // Trouver l'upgrade dans la liste et enlever si nécessaire
         for (let i = 0; i < this.boite.length; i++) {
             index = this.boite[i].indexOf(upgrade);
             if (index > -1) {
@@ -208,18 +214,19 @@ export class Upgrade
             this.boite[foundIn].splice(index, 1); 
         }
     
-        // Remove the upgrade UI container from the DOM
+        // Enlever le upgrade UI container du DOM
         const container = document.getElementById("upgrade-container");
         if (container) {
             container.remove();
         }
     
-        // Resume the game
+        // Resumer le jeu
         Upgrade.Grid.pauseGrid(Upgrade.app);
         Upgrade.app.upg = false;
         Upgrade.app.pause = false;
     }
     
+    // Gestion des upgrades des monstres 
     montrerUpgrades(upgrades) {
         const container = document.createElement("div");
         container.id = "upgrade-container";
@@ -304,6 +311,11 @@ export class Upgrade
         Upgrade.gun = instGun;
     }
 }
+
+/**
+ * Sous-classe pour définir les propritété de chaque upgrade individuellement (effet,
+ * type, titre, description et son icône)
+ */
 
 class Upg {
     constructor(getParam, setParam, type, augment, title, description, icon, exponentiel) {

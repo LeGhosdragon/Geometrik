@@ -1,4 +1,7 @@
-// weapons.js
+/**
+ * Cette classe permet de créer, mettre à jour et gérer les interactions
+ * des armes du joueur avec les monstres et l'environnement.
+ */
 export class Weapon{
     static Monstre = null;
     static monstres = null;
@@ -244,6 +247,9 @@ export class Sword extends Weapon {
     }
 }
 
+/**
+ * Sous-classe de Weapon pour gérer le Gun.
+ */
 export class Gun extends Weapon {
     static bullets = [];
 
@@ -264,6 +270,7 @@ export class Gun extends Weapon {
         this.body.visible = this.hasGun;
     }
 
+    // Méthode pour créer le Gun en tant que graphique PIXI 
     createGun() {
         const gun = new PIXI.Graphics();
         gun.lineStyle(3, 0x000000, 1);
@@ -282,10 +289,12 @@ export class Gun extends Weapon {
         return gun;
     }
 
+    // Méthode pour calculer le damage infligés par le Gun
     gunDMG() {
         return Math.round(this.baseDMG + Math.random() * this.baseDMG/5);
     }
 
+    // Tire une balle
     shoot() {
         if (this.isOnCooldown || !this.hasGun) return;
 
@@ -308,7 +317,7 @@ export class Gun extends Weapon {
         
     }
     
-
+    // Mise a jour de la position du gun et des balles
     update(delta, cursorX, cursorY, deltaX, deltaY) {
         this.body.x = Weapon.joueur.getX() + Weapon.joueur.getWidth() / 2 - 1;
         this.body.y = Weapon.joueur.getY() + Weapon.joueur.getHeight() / 2 - 1;
@@ -318,13 +327,14 @@ export class Gun extends Weapon {
         this.storedAngle = Math.atan2(dy, dx) + Math.PI / 2;
         this.body.rotation = this.storedAngle;
 
-        // Iterate backwards when removing elements
+
+        // Iteration backwards quand on enleve des elements
         for (let i = Gun.bullets.length - 1; i >= 0; i--) {
             let b = Gun.bullets[i];
             b.x += (Math.cos(b.angle - Math.PI / 2) * 10) * delta + deltaX;
             b.y += (Math.sin(b.angle - Math.PI / 2) * 10) * delta + deltaY;
 
-            // Remove bullets that go off-screen
+            // Enlever les balles qui sortent de l'écran
             if (
                 b.x < -b.radius || b.x > Weapon.app.view.width + b.radius ||
                 b.y < -b.radius || b.y > Weapon.app.view.height + b.radius
@@ -336,6 +346,7 @@ export class Gun extends Weapon {
         }
     }
 
+    // Méthode qui vérifie une balle entre en collision avec un monstre
     isBulletCollidingWithMonster(monstre) {
         if (!monstre || !monstre.body) return;
 
@@ -370,6 +381,7 @@ export class Gun extends Weapon {
         }
     }
 
+    // Gestion des effet lorsqu'une balle touche un monstre
     onBulletHitEnemy(bullet, monstre) {
         if (!monstre.getBulletHit() && !bullet.touches.includes(monstre)) {
             monstre.setBulletHit(true);
@@ -379,7 +391,9 @@ export class Gun extends Weapon {
     }
 }
 
-
+/**
+ * Sous-classe de Weapon pour représenter les explosions.
+ */
 export class Explosion extends Weapon {
     static explosions = [];
     static bodyKnockback = 10;
@@ -390,12 +404,12 @@ export class Explosion extends Weapon {
         this.baseDMG = baseDMG;
         this.couleur = Weapon.Monstre.dedMilkMan ? 0xFFFFFF : couleur;
         this.maxRayon = rayon;
-        this.currentRayon = Math.max(1, rayon / 20); // Avoid 0 radius
+        this.currentRayon = Math.max(1, rayon / 20); // Éviter un rayon de 0
         this.knockback = Explosion.bodyKnockback;
 
         this.body = this.createExplosion(x, y);
 
-        // Ensure body has valid x, y immediately
+        // S'assuer que body a x,y valides immédiatement
         if (!this.body) {
             console.error("Explosion creation failed.");
             return;
@@ -410,7 +424,7 @@ export class Explosion extends Weapon {
         cercle.drawCircle(0, 0, this.currentRayon);
         cercle.endFill();
         
-        // Set position BEFORE adding to stage
+        // Initialise sa position avant la mise sur la scène
         cercle.x = x;
         cercle.y = y;
         
@@ -442,6 +456,7 @@ export class Explosion extends Weapon {
         }
     }
 
+    // Applique du damage aux monstres dans la rayon d'explosion
     applyDamage(monstres) {
         if (!this.body) return;
 
@@ -456,6 +471,7 @@ export class Explosion extends Weapon {
         });
     }
 
+    // Détruit l'explosion et la supprime de la scène 
     destroy() {
         if (!this.body) return;
 

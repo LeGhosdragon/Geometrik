@@ -1,5 +1,5 @@
 
-
+// Fonctions pour la gestion des controles clavier lors du mouvements
 export function keyboard(keyCode) {
     const key = {};
     key.code = keyCode;
@@ -31,6 +31,7 @@ export function keyboard(keyCode) {
     return key;
 }
 
+
 export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
     console.log("this is working");
     
@@ -61,8 +62,9 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
 
     let lastMoveX = 0, lastMoveY = 0;
 
+    // Mise a jour de la vitesse du joueur en fonction des directions de déplacement
     function updateVelocity() {
-        if (moveX === lastMoveX && moveY === lastMoveY) return;  // Skip if no change
+        if (moveX === lastMoveX && moveY === lastMoveY) return;  // Skip si pas de changement
         if (moveX !== 0 && moveY !== 0) {
             joueur.setVX((moveX / Math.sqrt(2)) * speed);
             joueur.setVY((moveY / Math.sqrt(2)) * speed);
@@ -75,6 +77,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
     }
     
 
+    // Gestion du sword 
     enableSword.press = () => {
         if(joueur.hasSword)
         {
@@ -88,6 +91,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         }
     }
 
+    // Affichage du HP text
     enableText.press = () => {
         mstr.showLife = mstr.showLife ?  false : true;
         mstr.monstres.forEach(monstre => {
@@ -102,6 +106,8 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
             }
         });
     }
+
+    // Affichage des points de vie des monstres
     enableDedExp.press = () => {
         if(mstr.dedEXP)
         {
@@ -115,6 +121,8 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
             mstr.dedEXP = true;
         }
     }
+    
+    // Activer les explosions a la mort des monstres
     enableDedBomb.press = () => {
         if(mstr.dedExpl)
         {
@@ -124,6 +132,8 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
             mstr.dedExpl = true;
         }
     }
+
+    // Activer le gun
     enableGun.press = () => {
         if(gun.hasGun)
         {
@@ -136,6 +146,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         }
     }
 
+    // Activer le mode debug
     enableDebug.press = () => {
         if(joueur.debug)
         {
@@ -156,7 +167,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
             joueur.body.endFill();
             gun.body.lineStyle(3, 0x000000, 1);
             gun.body.beginFill(0x9966FF);
-            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.drawRect(0, 0, 10, 15); // Ajuster la taille du gun
             gun.body.endFill();
            
             mstr.dedMilkMan = false;
@@ -178,6 +189,8 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         }
     }
 
+    // Forcer le joureur a monter de niveau avec la touche L, ajoute assez
+    // d'EXP pour dépasser le seuil requis pour le prochain niveau
     lvlUp.press = () =>
     {
         joueur.exp += joueur.expReq*1 + 1; 
