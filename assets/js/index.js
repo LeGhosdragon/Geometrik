@@ -1,6 +1,6 @@
 import { setupKeyboardControls } from './mouvement.js';
 import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner } from './monstre.js';
-import { Grid, updateBackgroundColor} from './background.js';
+import { Grid, updateBackgroundColor, Shape3D} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
 import { Exp } from './experience.js';
@@ -28,8 +28,8 @@ const Application = PIXI.Application,
 // la touche M active MILK_MODE
 // la touche "échap" pause la partie
 // la touche L active un très GRAND nombre de lvlUps
-//
-//
+// la touche C active ou désactive l'auto-attaque
+// la touche P active ou désactive le mode space 
 //
 //
 //
@@ -39,7 +39,7 @@ const Application = PIXI.Application,
 
 
 //noComeBacks makes it so the spawner stops to let in the ones that were lost tot the cleansing !
-let joueur, state, ennemiColor = 0x0000ff, xF = 0, yF = 0, x = 0, y = 0,
+let joueur, state,  xF = 0, yF = 0, x = 0, y = 0, x2 = 0, y2 = 0,
 monstres = Monstre.monstres, explosions = Explosion.explosions, exps = Exp.exps, exp = Exp, explosion = Explosion, bullets = Gun.bullets,
 sword, gun, hasSword = false,  dedPos = 0, elapsedTime = 0, min = 0, hour = 0, event, swinging = 0,
 cursorX, cursorY;
@@ -53,7 +53,10 @@ const app = new Application({
     backgroundColor: 0x000000,
     x: 200
 });
+app.ennemiColor = 0x0000ff
+app.backColor = 0x000000;
 app.pause = false;
+app.space = false;
 
 let debugText = new Text('', {
     fontFamily: 'Arial',
@@ -74,8 +77,10 @@ function setup() {
     Weapon.addMonstres(Monstre);
     Joueur.addMonstre(Monstre);
     Joueur.addExplosion(Explosion);
-
+    Joueur.addGrid(Grid);
     joueur = new Joueur(app);
+    
+    Joueur.addUpgrade(Upgrade);
     resizeApp(joueur);
     joueur.updateExpBar();
     Weapon.addJoueur(joueur);
@@ -100,19 +105,25 @@ function setup() {
     sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // Blue rectangle of 10x80
     gun = new Gun(1, joueur.baseDMG, 1);
     Upgrade.addWeapons(Sword, Gun, Explosion, sword, gun);
-    Joueur.addUpgrade(new Upgrade("gun"));
+    joueur.chooseClass();
+;
 
-    //joueur.hasSword = true;
-    //joueur.hasGun = true;
+
+
+
     // setInterval(() => { 
     //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
     // }, 10);
 
-    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps);
+    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur);
 
 
     // Set the game state
     state = play;
+
+    Grid.pauseGrid(app);
+    app.pause = true;
+ 
     
     // Start the game loop
     app.ticker.add((delta) => play(delta));
@@ -125,8 +136,14 @@ function play(delta) {
     resizeApp(joueur);
     if(!app.pause)
     {
+        if(joueur.currentHP <= Event.ennemiDifficultee*2)
+        {
+            joueur.triggerDamageEffect();
+        }
         joueur.updatelvl();
+        joueur.updateHP();
         elapsedTime += delta / 60;
+        joueur.statistics.timePlayed += (delta / 60 )*1000;
         if(elapsedTime >= 60) 
         { 
             elapsedTime -= 60;
@@ -148,11 +165,10 @@ function play(delta) {
         const deltaX = -(xF - xI) * delta;
         const deltaY = -(yF - yI) * delta;
    
-        if(x > 100000)
+        if(x > 10000)
         {
             Grid.grid.x += 10000;
             x = 0;
-            //grid.position.set(0,0);
         }
         if(x < -10000)
         {
@@ -169,18 +185,39 @@ function play(delta) {
             Grid.grid.y -= 10000;
             y = 0;
         }
+        
+        if(x2 > 100 || x2 < -100)
+        {
+            x2 = 0;
+            Shape3D.spawnShapes(Event,app);
+        }
+        if(y2 > 100 || y2 < -100)
+        {
+            y2 = 0;
+            Shape3D.spawnShapes(Event,app);
+        }
+
 
         Grid.grid.x -= joueur.getVX() * delta;
         Grid.grid.y -= joueur.getVY() * delta;  
         
         x += joueur.getVX() * delta;
         y += joueur.getVY() * delta;
+        x2 += joueur.getVX() * delta;
+        y2 += joueur.getVY() * delta;
 
+        for (let shape of Shape3D.shapes) {
+            shape.updatePosition(deltaX,deltaY);//Math.sin(Date.now() / 1000) * 2, Math.cos(Date.now() / 1000) * 2); // Example movement
+            shape.draw();
+        }
+        // for (let shape of shapes) {
+        //     shape.move(deltax, deltay, deltaZ);  // Update position
+        //     shape.draw();  // Draw shape at updated position
+        // }
         //console.log(sword.cooldown);
         if((joueur.hold && joueur.hasSword) || swinging > 0 || (joueur.clickLock && joueur.hasSword))
         {
             if(swinging == 0){
-                console.log(1/sword.swingSpeed)
                 swinging = sword.cooldown > 1/sword.swingSpeed ? sword.cooldown : (sword.swingSpeed++) * 0 + sword.cooldown; 
                 if(sword.cooldown < 10) {sword.cooldown = 10;}
                 sword.body.visible = true;
@@ -216,7 +253,7 @@ function play(delta) {
         MonstreGunner.updateBullets(delta, deltaX, deltaY, joueur);
 
         monstres.forEach(monstre => {
-            monstre.bouger(joueur,delta, deltaX, deltaY, ennemiColor);
+            monstre.bouger(joueur,delta, deltaX, deltaY, app.ennemiColor);
             if(sword.hasSword)
             {
                 if (sword.isSwordCollidingWithMonster(monstre)) {
@@ -262,7 +299,10 @@ function play(delta) {
     else{
 
     }
-    ennemiColor = updateBackgroundColor(app, Monstre);
+    app.ennemiColor = updateBackgroundColor(app, Monstre);
+    Shape3D.shapes.forEach(shape => {
+        shape.draw();
+    });
     Monstre.cleanup();
     Exp.cleanup(delta);
     afficherDebug(delta);
@@ -288,11 +328,12 @@ function afficherDebug(delta) {
         Exp : ${joueur.exp} 
         ${joueur.getExpBar()}
         Difficulty degree : ${Event.difficultyDegree}
+        MonsterDiff : ${Event.ennemiDifficultee} 
         Monstres: ${monstres.length}
         Storage Monsters : ${Monstre.cleanMonstres.length}
         Explosions: ${explosions.length}
         Bullets : ${bullets.length}
-        BulletPierce : ${gun.pierce}
+        BulletPierce : ${gun.pierce-1}
         Exp orbs: ${exps.length}
         ExpBuildup: ${Exp.expBuildUp}
         Epée Active: ${sword.hasSword ? "Oui" : "Non"}
@@ -304,12 +345,13 @@ function afficherDebug(delta) {
         Event : ${Event.currentEvent}
         FPS : ${app.ticker.FPS.toFixed(0)}
     `;
+    debugText.style.fill = app.ennemiColor;
 }
 
 window.addEventListener('resize', () => {
     app.stage.removeChild(Grid.grid);
     app.renderer.resize(window.innerWidth, window.innerHeight);
-    Grid.grid = Grid.drawGridBackground(app); 
+    Grid.grid = Grid.drawGridBackground(0.5, app); 
     //Grid.grid.zIndex = 0;
     Grid.pauseGrid(app);
             app.pause = !app.pause;
@@ -333,8 +375,8 @@ function resizeApp(joueur) {
     let height = window.innerHeight;
     app.renderer.resize(width * 0.98, height * 0.98);
     app.view.style.position = "absolute"; // Ensure positioning works
-    joueur.body.x = width/2;
-    joueur.body.y = height/2;
+    joueur.body.x = width/2.08;
+    joueur.body.y = height/2.145;
     app.view.style.bottom = "0";
     app.view.style.transform = "translateX(0.5%)";
     updateExpBar(joueur);
@@ -377,3 +419,5 @@ document.addEventListener('keydown', event =>
 // Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 loader.add("index.html").load(setup);
+
+

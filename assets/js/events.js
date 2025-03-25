@@ -98,7 +98,7 @@ export class Event{
         {
             for (let i = 0; i < amount; i++) {
 
-                let rngPos = this.posRandomExterieur();
+                let rngPos = Event.posRandomExterieur();
 
                 let monstre;
                 if(type == "normal") { 
@@ -135,7 +135,7 @@ export class Event{
                     Event.Monstre.cleanMonstres.splice(index, 1);
                 }
             }        
-            let rngPos = this.posRandomExterieur();
+            let rngPos = Event.posRandomExterieur();
 
             monstre.setX(rngPos[0]);
             monstre.setY(rngPos[1]);
@@ -143,8 +143,8 @@ export class Event{
     }
 
 
-    posRandomExterieur() {
-        let margin = Math.min(Event.app.view.width, Event.app.view.height) * 0.1; // Thin area around the screen
+    static posRandomExterieur() {
+        let margin = Math.min(Event.app.view.width, Event.app.view.height) * 0.2; // Thin area around the screen
         let randomX, randomY;
 
         let side = Math.random();
