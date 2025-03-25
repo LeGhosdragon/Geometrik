@@ -1,8 +1,11 @@
+/**
+ * La classe Joueur gère ses propriétés, son affichage, so progression et ses interactions
+ * avec les monstres.
+ */
 export class Joueur {
 
     static mstr = null;
     static upgrade = null;
-
     static EXP_BAR = document.getElementById('expBar');
 
     constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 10, elapsedTime = 0, couleur = 0xFF0000, weapons = []) {
@@ -27,7 +30,7 @@ export class Joueur {
         this.updateHealthBar();
     }
 
-    // Function to create the player (joueur)
+    // Fonction pour créer le joueur
     faireJoueur() {
         const joueur = new PIXI.Graphics();
         joueur.lineStyle(3, 0x000000, 1);
@@ -50,17 +53,18 @@ export class Joueur {
     }
 
 
+    // Gestion des collisions entre le joueur et les monstres
     onPlayerCollision(monstres) {
         let collidedMonstres = [];
     
         monstres.forEach(monstre => {
-            // Check for collision between player and each monster
+            // Vérifier la collision entre le joueur et chaque monstre
             if (this.hitTestCircle(monstre)) {
-                collidedMonstres.push(monstre); // Store the collided monster
+                collidedMonstres.push(monstre); // Stcoker les monstres qui sont rentrés en collision
             }
         });
             
-        // Remove collided monsters from the main array
+        // Enlever les monstres qui sont rentrés en collision du main array
         collidedMonstres.forEach(monstre => {
             if(!this.isImmune)
             {
@@ -69,7 +73,7 @@ export class Joueur {
                 setTimeout(() => {this.isImmune = false;}, 750);
             }
 
-            // Now resolve overlap by pushing the monster apart (player stays immovable)
+            // Maintenant résoudre le chevauchement en poussant le monstre (le joueur reste immobile)
             let dx = this.getX() + this.getWidth()/2  - monstre.getX() - monstre.size / 2;
             let dy = this.getY() + this.getHeight()/2 - monstre.getY() - monstre.size / 2;
 
@@ -77,14 +81,14 @@ export class Joueur {
             const minDistance = this.getWidth()/2.5 + monstre.getWidth() / 2; // Minimum distance to avoid overlap
 
             if (distance < minDistance) {
-                let overlap = minDistance - distance; // Calculate the overlap distance
-                let angle = Math.atan2(dy, dx); // Get angle of collision
+                let overlap = minDistance - distance; // Calcul la distance de chevauchement
+                let angle = Math.atan2(dy, dx); // Ovtenir l'angle de collision
 
-                // Push the monster apart from the player along the collision vector
+                // Pousser le monstre du joueur le long du vecteur de collision
                 let pushX = Math.cos(angle) * overlap;
                 let pushY = Math.sin(angle) * overlap;
 
-                // Move the monster away from the player
+                // Déplacer le monstre loin du joueur
                 monstre.setX(monstre.getX() - pushX);
                 monstre.setY(monstre.getY() - pushY);
             }
@@ -92,26 +96,27 @@ export class Joueur {
     }
     
     
-    // Collision detection based on circle (using radius)
+    // Detection de la collision selon un cercle (en utilisant le rayon)
     hitTestCircle(autreCercle) {
-        // Define the distance between the centers of the two objects
+        // Définir la distance entre les centres des deux objets
         let dx = this.getX() + this.getWidth()/2.3 - autreCercle.getX();
         let dy = this.getY() + this.getHeight()/2.3 - autreCercle.getY();
     
-        // Calculate the distance between the centers
+        // Calcul de la distance entre les centres
         let distance = Math.sqrt(dx * dx*0.9 + dy * dy*0.9);
     
-        // Get the radius of the joueur and the box (consider box as circle for collision)
+        // Obtenir le rayon entre le joueur et le box (considérer le box comme un cercle pour la collision)
         let thisRadius = this.getWidth() / 2;
         let autreCercleRadius = autreCercle.getWidth() / 2;
     
-        // Check for a collision
+        // Vérifier si il y a eu une collision
         if (distance < thisRadius + autreCercleRadius) {
-            return true; // There's a collision
+            return true; // Il y a collision
         }
-        return false; // No collision
+        return false; // Pas de collision
     }
 
+    // Fonction pour créer le texte pour les Health Points
     createHPText() {
         const text = new PIXI.Text(this.currentHP, {
             fontFamily: 'Arial',
@@ -127,6 +132,7 @@ export class Joueur {
         return text;
     }
 
+    // Ajoute un quantité l'EXP au joueur
     addExp(qty)
     {
         this.exp += qty;
@@ -134,7 +140,7 @@ export class Joueur {
         this.updatelvl();
         this.updateExpBar()
     }
-
+    // Vérifie si le joueur a accumulé assez d'EXP
     updateExpBar() {
         let height = window.innerHeight;
         let width = window.innerWidth;
@@ -143,6 +149,8 @@ export class Joueur {
         Joueur.EXP_BAR.style.height = `${expRatio * height}px`;
         Joueur.EXP_BAR.style.width = `${width}px`;
     }
+
+    // Création d'un cercle de health bar qui est affiché sur le joueur lui-même
     createHealthBar() {
         const healthBar = new PIXI.Graphics();
         healthBar.zIndex = 100;
@@ -153,16 +161,21 @@ export class Joueur {
     updateHealthBar() {
         this.healthBar.clear();
     
-        // Calculate the health percentage
+        // Calcule du pourcentage de health
         let healthPercent = this.currentHP / this.baseHP;
         if (healthPercent < 0) healthPercent = 0;
     
         // Define pie chart parameters
         let radius = this.size- 1;
-        let startAngle = -Math.PI / 2;  // Start from the top (12 o'clock position)
+        let startAngle = -Math.PI / 2;  // Commence à partir du haut (position 12 heures)
         let endAngle = startAngle + (2 * Math.PI * healthPercent); // Fill proportionally
     
-        // Draw pie chart
+        // Déssiner le pir chart
+
+
+        //4 principes
+        //RNF sécurité
+        
         if(this.currentHP / this.baseHP != 1)
         {
             this.healthBar.lineStyle(3, 0x000000, 1);
@@ -180,6 +193,7 @@ export class Joueur {
         this.healthBar.endFill();
     }
        
+    // Gestion des Healt Points
     updateHP() {
         this.hpText.text = this.currentHP > 0 ? this.currentHP : ""; // Keep the HP text
         this.hpText.x = this.getX() + this.size;
@@ -188,41 +202,53 @@ export class Joueur {
         this.updateHealthBar();  // Update the pie chart health bar
     }
     
-
+ 
+    // Gestion de la progression du joueur
+    // 1. vérifie si le joueur a accumulé assez d'EXP pour monter de niveau
+    // 2. augmente le niveau du joueur
+    // 3. propose des upgrades au joueur
     updatelvl()
     {
         if(this.exp >= this.expReq)
         {
+            while(this.exp > this.expReq)
+            {
+                this.lvl+=1;
+                this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
+                this.expReq = 20 + this.lvl*this.lvl;
+                //functLvLUp();
+                let upgrades = Joueur.upgrade.choisirUpgrade(4);
+                //console.log(upgrades);
+                //setTimeout(() =>{}, 1000);
+                Joueur.upgrade.upgradeChoisi(upgrades[0]);
+                this.body.vx = 0;
+                this.body.vy = 0;
 
-            this.lvl+=1;
-            this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
-            this.expReq = 20 + this.lvl*this.lvl;
-            //functLvLUp();
-            let upgrades = Joueur.upgrade.choisirUpgrade(5);
-            Joueur.upgrade.montrerUpgrades(upgrades);
-            //Joueur.upgrade.upgradeChoisi(upgrades[0]);
-            this.body.vx = 0;
-            this.body.vy = 0;
-            
+            }
         }
     }
 
+    // Gestion de la barre d'EXP
     getExpBar(width = 20) {
-        let progress = Math.floor((this.exp / this.expReq) * 20);
-        let bar = "[" + "#".repeat(progress) + "-".repeat(Math.abs(width - progress)) + "]";
+        let progress = Math.floor((this.exp / this.expReq) * width);
+        let bar = "[" + "#".repeat(progress) + "-".repeat(width - progress) + "]";
         return `Lvl ${this.lvl} ${bar} ${this.exp}/${this.expReq}`;
     }
 
+    // Gestion des dégats subis par le joueur
     endommagé(dmg)
     {
         this.setHP(this.getHP() - dmg);
         this.updateHP();
     }
 
+    // get la distance d'attraction du joueur
     getMagDist()
     {
         return this.distanceDattraction;
     }
+
+    // association des objets externes mstr et upg avec la classe joueur
     static addMonstre(mstr)
     {
         Joueur.mstr = mstr;
@@ -232,7 +258,7 @@ export class Joueur {
         Joueur.upgrade = upg;
     }
 
-
+    // Getters et Setters
     setHP(hp)
     {
         this.currentHP = hp;

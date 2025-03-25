@@ -1,3 +1,8 @@
+/**
+ * La classe Exp permet de créer, mettre à jour et gérer les intération
+ * entre les sphères d'expérience et le joueur.
+*/ 
+
 export class Exp {
     static exps = [];
     static app = null;
@@ -11,12 +16,14 @@ export class Exp {
         this.size = Math.max(qty / (Exp.joueur?.lvl * Exp.joueur?.lvl + 20), 5);
         this.isIn = true;
         
-        this.vx = 0; // Velocity in X direction
-        this.vy = 0; // Velocity in Y direction
+        this.vx = 0; // vitesse dans la direction des X 
+        this.vy = 0; // vitesse dans la direction des Y 
 
         Exp.exps.push(this);
     }
 
+
+    // Création du EXP
     createEXP(x = 0, y = 0) {
         const EXP = new PIXI.Graphics();
         EXP.x = x;
@@ -32,6 +39,7 @@ export class Exp {
         return EXP;
     }
 
+    // Mise a jour de la position de chaque sphere EXP
     updatePos(deltaX, deltaY) {
         if (!Exp.joueur || !this.body) return;
 
@@ -43,20 +51,20 @@ export class Exp {
         let dy = playerY - this.body.y;
         let distance = Math.hypot(dx, dy);
 
-        // Apply attraction force towards the player
+        // Application de la force d'attraction vers le joueur
         if (distance < Exp.joueur.distanceDattraction + this.size) {
             let attraction = 0.5 / Math.max(distance, 10); // Higher force for closer distances
             this.vx += dx * attraction;
             this.vy += dy * attraction;
         }
 
-        // Apply velocity with damping
+        // Application de la velocité avec damping
         this.vx *= 0.95;
         this.vy *= 0.95;
         this.body.x += this.vx;
         this.body.y += this.vy;
 
-        // Change color dynamically (pulsing rainbow effect)
+        // Changer la couleur dynamiquement (effet arc-en-ciel pulsant)
         const time = Date.now() / 100;
         const red = Math.sin(time) * 127 + 128;
         const green = Math.sin(time + 2) * 127 + 128;
@@ -73,6 +81,7 @@ export class Exp {
         }
     }
 
+    // Fonction qui gère les interactions entre les spheres EX
     static cleanup(delta) {
         Exp.exps.forEach((exp1, i) => {
             Exp.exps.forEach((exp2, j) => {
@@ -82,7 +91,7 @@ export class Exp {
                 let dy = exp2.getY() - exp1.getY();
                 let distance = Math.hypot(dx, dy);
 
-                if (distance < 100) { // Attraction between EXPs
+                if (distance < 100) { // Attraction entre les EXPs
                     let attraction = 0.2 / Math.max(distance, 10);
                     exp1.vx += dx * attraction * delta;
                     exp1.vy += dy * attraction * delta;
@@ -99,7 +108,7 @@ export class Exp {
                     Exp.exps.splice(j, 1);
                 }
             });
-            // Remove orbs that leave the screen + 40%
+            // Supprime les sphères EXP qui sortent de l'écran + 40%
             let screenWidth = Exp.app.renderer.width;
             let screenHeight = Exp.app.renderer.height;
             let marginX = screenWidth * 0.4;
@@ -121,6 +130,7 @@ export class Exp {
         });
     }
 
+    // Fonction qui gère la collecte des spheres EXP
     collect() {
         if (!this.body) return;
         let index = Exp.exps.indexOf(this);
@@ -133,9 +143,11 @@ export class Exp {
         this.body = null;
     }
 
+    // retourne la position X et Y de la sphere EXP
     getX() { return this.body?.x ?? 0; }
     getY() { return this.body?.y ?? 0; }
 
+    // Configuration de l'application pixi
     static addApp(appInput) {
         Exp.app = appInput;
     }

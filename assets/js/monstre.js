@@ -1,3 +1,7 @@
+/**
+ * La classe Monstre gére leurs propriétés, leurs affichages, 
+ * leurs déplacements et leurs interactions avec le joueur.
+ */
 
 export class Monstre {
     static monstres = [];
@@ -33,6 +37,8 @@ export class Monstre {
         this.hasBulletHit = false;
     }
 
+    // Méthodes statiques pour configurer les réf globals pour l'app pixi,
+    // les sphères d'expérience et l'explosion 
     static addApp(appInput) {
         Monstre.app = appInput;
     }
@@ -43,6 +49,7 @@ export class Monstre {
         Monstre.Explosion = explInput;
     }
 
+    // Fonction pour créer la forme du monstre
     createShape(x = 0, y = 0) {
         const shape = new PIXI.Graphics();
         
@@ -54,6 +61,7 @@ export class Monstre {
         return shape;
     }
 
+    // Calcul du vecteur directionnel pour déplacer le monstre vers le joueur
     vecteurVersLeJoueur(joueur) {
         let dx = joueur.getX() + joueur.getWidth() / 2 - this.getX();
         let dy = joueur.getY() + joueur.getHeight() / 2 - this.getY();
@@ -62,6 +70,7 @@ export class Monstre {
         return { x: this.vitesse * dx / magnitude, y: this.vitesse * dy / magnitude };
     }
 
+    // mise a jour de l'apparence des monstre
     actualiserPolygone(delta, ennemiColor) {
         if (this.sides < 3) return;
         this.couleur = ennemiColor;
@@ -86,10 +95,11 @@ export class Monstre {
         this.body.closePath();
         this.body.endFill();
 
-        // Ensure HP text stays updated
+        // S'assurer que le HP reste à jour
         this.updateHP();
     }
 
+    // Fonction pour déplacer le monstre vers le joueur
     bouger(joueur, delta, deltaX, deltaY, ennemiColor) {
         let moveVector = this.vecteurVersLeJoueur(joueur);
         this.setX(this.getX() + (moveVector.x)*delta + deltaX);
@@ -108,11 +118,12 @@ export class Monstre {
         }
     }
 
+    // Gérer les monstres qui sont sortis de l'écran
     static cleanup() {
         const screenWidth = Monstre.app.view.width;
         const screenHeight = Monstre.app.view.height;
     
-        // Extend boundary by 1/5 of the screen size
+        // Étendre la limite de 1/5 de la taille de l'écran
         const extraWidth = screenWidth * 1;
         const extraHeight = screenHeight * 1;
     
@@ -138,6 +149,7 @@ export class Monstre {
     }
     
 
+    // éviter les collisions entre les monstres
     avoidMonsterCollision() {
         const minDistance = 85 * this.size;
         const avoidFactor = 1.2;
@@ -158,6 +170,7 @@ export class Monstre {
         });
     }
 
+    // Création du texte affichant les points de vie du monstre et l'ajoute au PIXI
     createHPText() {
         const text = new PIXI.Text(this.currentHP, {
             fontFamily: 'Arial',
@@ -174,9 +187,11 @@ export class Monstre {
         Monstre.app.stage.addChild(text);
         return text;
     }
+    
+    // Mise a jour des points de vie du monstre
     updateHP() {
         if (this.currentHP <= 0) {
-            // Trigger death animation before removal
+            // Trigger l'animation de mort avant de le supprimer du jeu
             this.disintegrationAnimation();
     
             if (Monstre.dedExpl) {
@@ -191,23 +206,23 @@ export class Monstre {
                 }
             }
     
-            // Remove the monster from the array
+            // Supprimer le monstre de l'array 
             let index = Monstre.monstres.indexOf(this);
             if (index !== -1) {
                 Monstre.monstres.splice(index, 1);
             }
     
-            // Remove all graphics from the stage
+            // Supprimer les graphiques du stage
             Monstre.app.stage.removeChild(this.hpText);
             Monstre.app.stage.removeChild(this.body);
     
-            // Stop any running ticker-based animations
+            // Arrêt de toute animation ticker-based
             if (this.updateFn) {
                 Monstre.app.ticker.remove(this.updateFn);
                 this.updateFn = null; 
             }
     
-            // Clean up references for garbage collection
+            // Clean up des références pour le garbage collection
             this.hpText.destroy({ children: true });
             this.body.destroy({ children: true });
             this.hpText = null;
@@ -216,7 +231,7 @@ export class Monstre {
             return;
         }
     
-        // Update HP display if still alive
+        // Mise a jour ud texte HP si le joueur est encore en vie
         if (this.showLife) {
             this.hpText.text = this.currentHP;
             this.hpText.x = this.getX();
@@ -226,14 +241,15 @@ export class Monstre {
         }
     }
     
-    
+    // Animation de mort du monstre
+    // Génère des particules qui se dispersent et disparaissent progressivement.
     disintegrationAnimation() {
-        const particleCount = 2; // Number of particles
+        const particleCount = 2;
         const particles = [];
-        const gravity = 0.05; // Gravity force pulling particles downward
-        const drag = 0.98; // Drag to slow down particles over time
+        const gravity = 0.05; // force de gravité attire les particules vers le bas
+        const drag = 0.98; // Drag pour les ralentir avec le temps
     
-        // Create particles
+        // Creation des particles
         for (let i = 0; i < particleCount; i++) {
             const particle = new PIXI.Graphics();
             particle.beginFill(this.couleur);
@@ -243,7 +259,7 @@ export class Monstre {
             particle.y = this.getY();
             particle.alpha = 1;
     
-            // Random initial velocity
+            // Vitesse initiales aléatoires
             const angle = Math.random() * 2 * Math.PI;
             const speed = Math.random() * 2 + 1;
             particle.vx = Math.cos(angle) * speed;
@@ -253,24 +269,23 @@ export class Monstre {
             particles.push(particle);
         }
     
-        // Function to update particles
+        // Mise a jour des particules
         const updateParticles = () => {
             for (let i = particles.length - 1; i >= 0; i--) {
                 let particle = particles[i];
     
-                // Apply gravity and drag
                 particle.vy += gravity;
                 particle.vx *= drag;
                 particle.vy *= drag;
     
-                // Move particle
+                // Déplacer la particle
                 particle.x += particle.vx;
                 particle.y += particle.vy;
     
                 // Fade out
                 particle.alpha -= 0.03;
     
-                // Remove fully faded particles
+                // Suprrimer les particules déja disparues
                 if (particle.alpha <= 0 || particle.y > Monstre.app.view.height) {
                     Monstre.app.stage.removeChild(particle);
                     particle.destroy({ children: true }); // Ensures PIXI fully cleans it up
@@ -278,7 +293,7 @@ export class Monstre {
                 }
             }
     
-            // Stop animation when no particles are left
+            // On arrête l'animation quand il reste plus de particules
             if (particles.length === 0) {
                 Monstre.app.ticker.remove(updateParticles);
             }
@@ -288,6 +303,7 @@ export class Monstre {
         Monstre.app.ticker.add(updateParticles);
     }
     
+    // Gestion de la perte de HP par le monstre selon le type de d'arme utilisé
     endommagé(dmg, type) {
         this.setHP(this.getHP() - dmg);
         this.createHitEffect(this, dmg);
@@ -313,8 +329,9 @@ export class Monstre {
         this.updateHP();
     }
 
+    // Gestion de l'effet visuel lorsqu'un monstre subit des dégâts
     createHitEffect(monstre, damage) {
-        // Create the damage text
+        // Creation du texte de 
         const damageText = new PIXI.Text(damage, {
             fontFamily: 'Arial',
             fontSize: 24,
@@ -325,24 +342,25 @@ export class Monstre {
             fontWeight: 'bold'
         });
         damageText.zIndex = 101;
-        // Set initial position based on monster's position
+        // Set position initiale selon la position du monstre
         damageText.x = monstre.getX();
         damageText.y = monstre.getY();
     
-        // Add the damage text to the stage
+        // Ajouter le texte de dégâts au stage
         Monstre.app.stage.addChild(damageText);
     
-        // Set the initial scale and alpha
+        // Set l'échelle initail et l'alpha
         damageText.scale.set(1);
         damageText.alpha = 1;
     
-        // Store a reference to the update function
+        // Stocker la référence de la fonction de mise à jour
         const updateFn = (delta) => this.damageText(damageText, updateFn);
     
-        // Add the function to the ticker
+        // Ajouter la fontion au ticker
         Monstre.app.ticker.add(updateFn);
     }
     
+    // Méthode appelé a chque frame pour animer le texte de dégâts
     damageText(damageText, updateFn) {
         damageText.y -= 2; 
         damageText.alpha -= 0.02;  
@@ -357,7 +375,7 @@ export class Monstre {
         }
     }
     
-
+    // Getters et Setters
     getX() { return this.body.x; }
     setX(x) { this.body.x = x; }
     getY() { return this.body.y; }
@@ -378,6 +396,10 @@ export class Monstre {
     setBulletHit(bool){this.hasBulletHit = bool;}
     getBulletHit(){return this.hasBulletHit;}
 }
+
+/**
+ * Les sous-classes de Monstre
+ */
 
 export class MonstreNormal extends Monstre {
     constructor(x, y, sides) {
@@ -400,6 +422,7 @@ export class MonstreRunner extends Monstre {
         super(x, y, sides, size, type, speed, spinSpeed, baseHP);
     }
 }
+
 export class MonstreTank extends Monstre {
 
 
@@ -418,7 +441,7 @@ export class MonstreExp extends Monstre {
     actualiserPolygone() {
         if (this.sides < 3) return;
         
-        // Generate a rainbow color using sine waves
+        // Generer les couleurs rainbow avec sine waves
         const r = Math.floor(127.5 * (1 + Math.sin(this.elapsedTime * 0.1)));
         const g = Math.floor(127.5 * (1 + Math.sin(this.elapsedTime * 0.1 + 2 * Math.PI / 3)));
         const b = Math.floor(127.5 * (1 + Math.sin(this.elapsedTime * 0.1 + 4 * Math.PI / 3)));
@@ -447,7 +470,7 @@ export class MonstreExp extends Monstre {
         this.body.closePath();
         this.body.endFill();
     
-        // Ensure HP text stays updated
+        // S'aasure que le HP reste à jour
         this.updateHP();
     }
     constructor(x, y, sides)

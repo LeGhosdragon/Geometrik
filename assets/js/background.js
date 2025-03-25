@@ -1,3 +1,7 @@
+/**
+ * Bakcground.js gère l'affichage du fond de la scène dans une
+ * application utilisant PIXI.js.
+ */
 let r = 0, g = 0, b = 0, backColor = 0x000000;
 
 let vitesseCouleur = 0.00001;
@@ -36,7 +40,7 @@ static pauseGrid(app)
 }
 
 
-// The function to update the background color to pulse through the rainbow
+// La fonction pour mettre a jour la couleur de fond pour pulser a travers l'arc-en-ciel
 export function updateBackgroundColor(app, mstr, grid) {
     if(app.pause)
     {
@@ -56,13 +60,13 @@ export function updateBackgroundColor(app, mstr, grid) {
         b = 255;
     }
   
-    // Recombine the RGB components into a hex color code
+    // Recombiner les compoosantes du RBG dams un code hex
     backColor = (r << 16) | (g << 8) | b;
 
-    // Apply the new background color to the renderer
+    // Application de la nouvelle couleur sur le renderer
     app.renderer.backgroundColor = backColor;
 
-    // Get the RGB components from the backColor
+    // Obtenir les composantes RGB du backcolor
     let { r: bgR, g: bgG, b: bgB } = hexToRgb(backColor);
     if(mstr.dedMilkMan)
     {
@@ -72,21 +76,21 @@ export function updateBackgroundColor(app, mstr, grid) {
     }
 
 
-    // Get the contrasting color
+    // Obtenir la couleur de contraste
     const { r: contrastR, g: contrastG, b: contrastB } = getContrastingColor(bgR, bgG, bgB);
     return (contrastR << 16) | (contrastG << 8) | contrastB;
 }
-// Function to get the contrasting (complementary) color
+// Fonction pour obtenir la couleur de contraste (complémentaire)
 function getContrastingColor(r, g, b) {
-    // Simply invert the RGB values for a contrasting color
+    // Simplement inverser des valeurs RBG pour avoir une coleur contraste 
     const contrastR = 255 - r;
     const contrastG = 255 - g;
     const contrastB = 255 - b;
 
-    // Return the RGB color for the contrasting color
+    // Retourner la couleur RGB pour la couleur contraste
     return { r: contrastR, g: contrastG, b: contrastB };
 }
-// Function to extract RGB from a hex color code
+// Fonction pour extraire le RGB d'un code couleur hex
 function hexToRgb(hex) {
     const r = (hex >> 16) & 0xFF;
     const g = (hex >> 8) & 0xFF;
