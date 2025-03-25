@@ -189,7 +189,7 @@ export class Monstre {
                 return;
             }
     
-            // Ensure values are valid before setting
+            // S'assurer que les valeurs sont valides avant de les définir
             if (typeof this.getX !== "function" || typeof this.getY !== "function") {
                 console.error("Error: getX or getY is not a function.");
                 Monstre.app.ticker.remove(applyKnockback);
@@ -227,7 +227,7 @@ export class Monstre {
                 return;
             }
     
-            // Ensure values are valid before setting
+            // S'assurer que les valeurs sont valides avant de les définir
             if (typeof this.getX !== "function" || typeof this.getY !== "function") {
                 console.error("Error: getX or getY is not a function.");
                 Monstre.app.ticker.remove(applyKnockback);
@@ -268,7 +268,7 @@ export class Monstre {
                 return;
             }
     
-            // Ensure values are valid before setting
+            // S'assurer que les valeurs sont valides avant de les définir
             if (typeof this.getX !== "function" || typeof this.getY !== "function") {
                 console.error("Error: getX or getY is not a function.");
                 Monstre.app.ticker.remove(applyKnockback);
@@ -306,7 +306,7 @@ export class Monstre {
                 return;
             }
     
-            // Ensure values are valid before setting
+            // S'assurer que les valeurs sont valides avant de les définir
             if (typeof this.getX !== "function" || typeof this.getY !== "function") {
                 console.error("Error: getX or getY is not a function.");
                 Monstre.app.ticker.remove(applyKnockback);
@@ -610,7 +610,7 @@ export class MonstreRunner extends Monstre {
         this.body.drawStar(0, 0, points, size, size*0.6); // Draw a star
         this.body.endFill();
 
-        // Ensure HP text stays updated
+        // S'assurer que HP text reste à jour
         this.updateHP();
     }
 }
@@ -701,7 +701,7 @@ export class MonstreGunner extends Monstre {
         const screenHeight = Monstre.app.view.height;
         let moveVector = this.vecteurVersLeJoueur(joueur);
 
-        // Stop moving if monster is too close to player
+        // Arrête de bouger si le monstre est trop proche du joueur
         if (screenHeight / 3 < Math.sqrt((joueur.getX() - this.getX()) ** 2 + (joueur.getY() - this.getY()) ** 2)) {
             this.setX(this.getX() + (moveVector.x) * delta + deltaX);
             this.setY(this.getY() + (moveVector.y) * delta + deltaY);
@@ -724,7 +724,7 @@ export class MonstreGunner extends Monstre {
         this.actualiserPolygone(delta, ennemiColor);
 
         if (this.showLife && this.currentHP > 0) {
-            // Update HP text position
+            // Mise a jour de la position du HP text
             this.hpText.x = this.getX();
             this.hpText.y = this.getY() - 10;
             this.hpText.text = this.currentHP;
@@ -735,10 +735,10 @@ export class MonstreGunner extends Monstre {
         if (this.isOnCooldown) return;
         this.isOnCooldown = true;
 
-        // Calculate the angle towards the player
+        // Calcul de l'angle vers le joueur
         const angleToPlayer = Math.atan2((joueur.getY() + joueur.size) - this.getY(), (joueur.getX() + joueur.size) - this.getX());
 
-        // Create bullet and initialize its properties
+        // Créer une balle et inisialiser ses propriétés
         const bullet = new PIXI.Graphics();
         bullet.radius = this.bulletSize;
         bullet.lineStyle(3, 0xFF0000, 1);
@@ -750,7 +750,7 @@ export class MonstreGunner extends Monstre {
         bullet.x = this.getX() + Math.cos(angleToPlayer) * gunLength;
         bullet.y = this.getY() + Math.sin(angleToPlayer) * gunLength;
 
-        // Set bullet's initial angle and movement direction
+        // Inisiliser l'angle et la direction de la balle
         bullet.angle = angleToPlayer;
         bullet.speed = 3;
 
@@ -764,11 +764,11 @@ export class MonstreGunner extends Monstre {
         for (let i = MonstreGunner.bullets.length - 1; i >= 0; i--) {
             let b = MonstreGunner.bullets[i];
 
-            // Update bullet position based on its angle
+            // Mise a jour de la position de la nalle selon son angle
             b.x += Math.cos(b.angle) * b.speed * delta + deltaX;
             b.y += Math.sin(b.angle) * b.speed * delta + deltaY;
 
-            // Remove bullets that go off-screen
+            // Enlever les balles qui sont off-screen
             if (b.x < -b.radius || b.x > Monstre.app.view.width + b.radius ||
                 b.y < -b.radius || b.y > Monstre.app.view.height + b.radius || MonstreGunner.isBulletCollidingWithJoueur(joueur)) {
                 Monstre.app.stage.removeChild(b);
@@ -778,6 +778,7 @@ export class MonstreGunner extends Monstre {
         }
     }
 
+    // Méthode pout vérifier si une balle entre en collision avec le joueur 
     static isBulletCollidingWithJoueur(joueur) {
         for (let i = MonstreGunner.bullets.length - 1; i >= 0; i--) {
             let bullet = MonstreGunner.bullets[i];
@@ -799,6 +800,7 @@ export class MonstreGunner extends Monstre {
         }
     }
     
+    // Gestion des effets quand une balle touche le joueur
     static onBulletHitPlayer(joueur) {
         if(!joueur.isImmune)
         {
