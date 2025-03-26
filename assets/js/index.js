@@ -38,7 +38,8 @@ const Application = PIXI.Application,
 
 
 
-//noComeBacks makes it so the spawner stops to let in the ones that were lost tot the cleansing !
+// noComeBacks empêche le spawner de réapparaître pour laisser entrer ceux qui 
+// ont été perdus lors du nettoyage !
 let joueur, state,  xF = 0, yF = 0, x = 0, y = 0, x2 = 0, y2 = 0,
 monstres = Monstre.monstres, explosions = Explosion.explosions, exps = Exp.exps, exp = Exp, explosion = Explosion, bullets = Gun.bullets,
 sword, gun, hasSword = false,  dedPos = 0, elapsedTime = 0, min = 0, hour = 0, event, swinging = 0,
@@ -69,7 +70,7 @@ debugText.x = 10;
 debugText.y = 10;
 debugText.zIndex = 1000;
 
-
+// fonction qui initialise et configure les éléments nécessaires avant de commencer le jeu
 function setup() {
     app.stage.sortableChildren = true;
     Monstre.addApp(app);
@@ -102,7 +103,7 @@ function setup() {
     //new Event("ambush");
     new Event(" ");
 
-    sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // Blue rectangle of 10x80
+    sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // rectangle bleu de 10x80
     gun = new Gun(1, joueur.baseDMG, 1);
     Upgrade.addWeapons(Sword, Gun, Explosion, sword, gun);
     joueur.chooseClass();
@@ -118,20 +119,20 @@ function setup() {
     setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur);
 
 
-    // Set the game state
+    // Set le statut du jeu
     state = play;
 
     Grid.pauseGrid(app);
     app.pause = true;
  
     
-    // Start the game loop
+    // Commencer la boucle du jeu
     app.ticker.add((delta) => play(delta));
     app.stage.addChild(debugText);
 }
 
 
-
+// La boucle principale du jeu qui est appelée à chaque frame  
 function play(delta) {
     resizeApp(joueur);
     if(!app.pause)
@@ -308,6 +309,7 @@ function play(delta) {
     afficherDebug(delta);
 }
 
+// Fonction qui affiche les informations de débogage 
 function afficherDebug(delta) {
     if (!joueur.debug) {
         debugText.text = "";
@@ -360,7 +362,7 @@ window.addEventListener('resize', () => {
 });
 const EXP_BAR = document.getElementById('expBar');
 
-
+// Mise q jour de la barre d'expérience
 function updateExpBar(joueur) {
     let height = window.innerHeight;
     let width = window.innerWidth;
@@ -370,18 +372,19 @@ function updateExpBar(joueur) {
     EXP_BAR.style.width = `${width}px`;
 }
 
+// Adapte la taille de l'app à la fenêtre du navigateur
 function resizeApp(joueur) {
     let width = window.innerWidth;
     let height = window.innerHeight;
     app.renderer.resize(width * 0.98, height * 0.98);
-    app.view.style.position = "absolute"; // Ensure positioning works
+    app.view.style.position = "absolute"; // assurer que le positionnement est correct
     joueur.body.x = width/2.08;
     joueur.body.y = height/2.145;
     app.view.style.bottom = "0";
     app.view.style.transform = "translateX(0.5%)";
     updateExpBar(joueur);
 }
-// Update cursor position on mouse move
+// Update position du curseur avec le mouvement de la souris
 document.addEventListener("mousemove", (event) => {
     cursorX = event.clientX;
     cursorY = event.clientY;
@@ -416,7 +419,7 @@ document.addEventListener('keydown', event =>
     }
 });
 
-// Add the canvas that Pixi automatically created for you to the HTML document
+// Ajouter le canvas que PIXI a automatiquement créé pour vous au document HTML
 document.body.appendChild(app.view);
 loader.add("index.html").load(setup);
 

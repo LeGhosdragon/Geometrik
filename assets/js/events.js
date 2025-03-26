@@ -1,3 +1,8 @@
+/**
+ * La classe Event gère les événements dynamique du jeu. Elle définit 
+ * les comportements des vagues d'ennemis (type, fréquence d'apparition,
+ * difficutlé etc.)
+ */
 export class Event{
     static events = [];
     static Monstre = null;
@@ -24,6 +29,7 @@ export class Event{
         Event.events.push(this);
     }
 
+    // Méthode qui met à jour les événements actifs en fct du temps écoulé
     static updateEvents(delta)
     {
 
@@ -34,29 +40,29 @@ export class Event{
                 event.timeElapsed%3600 == 0 ? event.ajouterMONSTRE( Math.round(delta), "expBall",  3 ) :0;
                 event.timeElapsed%7200 == 0 ? Event.updateDifficultee() : "";
             } 
-            if(event.type == "normal") // ennemies are spawning at a regular interval without anything special
+            if(event.type == "normal") // Les ennemis apparaissent a une rythmr normal sans rien de particulier
             {
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "normal", 2 + Event.difficultyDegree) :0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(50/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 4 + Event.difficultyDegree) :0 : 0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(30/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "tank",   5 + Event.difficultyDegree) :0 : 0;
                 event.state = !(event.timeElapsed >= 3600);
             }
-            if(event.type == "horde") // normal ennemies start circling the player for short while
+            if(event.type == "horde") // normal les ennemis circulent autour du joueur pour un bout de temps
             {
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "normal", 2 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800);
             }
-            if(event.type == "ambush")// runner ennemies start circling the player for short while
+            if(event.type == "ambush")// ennemis runner circulent autour du joueur pour un petit instant
             {
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 3 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800);
             }
-            if(event.type == "fort") // tank ennemies start circling the player for short while
+            if(event.type == "fort") // ennemis tank  cirulent autour du joueur pour un petit instant
             {
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta),  "tank",  4 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800);
             }
-            if(event.type == "guns") // tank ennemies start circling the player for short while
+            if(event.type == "guns") // ennemis tank  cirulent autour du joueur pour un petit instant
             {
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta),  "gunner",  4 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800);
@@ -77,6 +83,8 @@ export class Event{
         });
     }
 
+    // Méthode sélectionne un nouveau event aléatoire et met à jour
+    // la propriété du current Event
     static getNewEvent()
     {
         let name = Event.eventNameList[Math.floor(Math.random() * Event.eventNameList.length)];
@@ -91,9 +99,10 @@ export class Event{
         Event.difficultyDegree = Event.difficultyDegree < 10 ? Event.difficultyDegree + 1 : Event.difficultyDegree;
     }
 
+    // Méthode qui ajoute un certain nb de monstres avec le nb de coôtés donné
+    ajouterMONSTRE(amount = 1, type = "normal", sides = 3) { 
 
-    ajouterMONSTRE(amount = 1, type = "normal", sides = 3) {  
-        
+        // si le nb de monstres actifs est inf a la limite -> ajouter
         if((Event.Monstre.cleanMonstres.length < 10 || !this.comeBacks) && Event.monstres.length < 100 * Event.difficultyDegree)
         {
             for (let i = 0; i < amount; i++) {
@@ -121,7 +130,8 @@ export class Event{
 
     }
 
-
+    // Méthode qui remplace les monstres existants qui ne sont plus actifs et
+    // les repositionne aléatoirement off-screen
     placeOldOnes()
     {
         Event.Monstre.cleanMonstres.forEach(monstre => {
@@ -142,7 +152,7 @@ export class Event{
         });
     }
 
-
+    // génère une position aléatoire off-screen et retourne les coordonnées x,y
     static posRandomExterieur() {
         let margin = Math.min(Event.app.view.width, Event.app.view.height) * 0.2; // Thin area around the screen
         let randomX, randomY;
@@ -191,6 +201,7 @@ export class Event{
         return [randomX, randomY];
     }
 
+    // ajoute une réf aux différents type de monstres
     static addMonstres(monstresInput,m2,m3,m4,m5,m6)
     {
         Event.Monstre = monstresInput;
@@ -201,9 +212,11 @@ export class Event{
         Event.MonstreExp = m5;
         Event.MonstreGunner = m6;
     }
+    // ajoute une réf a l'app PIXI
     static addApp(appInput) {
         Event.app = appInput;
     }
+    // ajoute un réf au joueur
     static addJoueur(joueurInput) {
         Event.joueur = joueurInput;
     }

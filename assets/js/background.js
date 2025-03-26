@@ -261,7 +261,10 @@ function createOctahedron(size) {
 }
 
 
-
+/**
+ * Classe utilisée pour créer, positionner, faire tourner et mettre a jour 
+ * des formes 3D pour enrichir le fond de la scène.
+ */
 
 export class Shape3D {
     
@@ -275,7 +278,7 @@ export class Shape3D {
         this.speedX = (Math.random() - 0.2) * 0.002;
         this.speedY = (Math.random() - 0.2) * 0.002;
         this.speedZ = (Math.random() - 0.2) * 0.002;
-        this.position = { x, y, z }; // Position that can be updated
+        this.position = { x, y, z }; // Position qui peut être updated
         this.graphics = new PIXI.Graphics();
         this.app.stage.addChild(this.graphics);
     }
@@ -284,6 +287,7 @@ export class Shape3D {
     static minDistance = 300;
     static maxAttempts = 10; 
     
+    // Méthode qui projette un point 3D sur un plan 2D et retourne les coordonnées 
     project3D(point3D) {
         const distance = 400;
         const scale = distance / (distance + point3D.z);
@@ -295,21 +299,24 @@ export class Shape3D {
     rotate(point) {
         let { x, y, z } = point;
 
-        // Rotate around X-axis
+        // Rotation autour de l'axe X
         let y1 = y * Math.cos(this.angleX) - z * Math.sin(this.angleX);
         let z1 = y * Math.sin(this.angleX) + z * Math.cos(this.angleX);
 
-        // Rotate around Y-axis
+        // Rotation autour de l'axe Y
         let x2 = x * Math.cos(this.angleY) + z1 * Math.sin(this.angleY);
         let z2 = -x * Math.sin(this.angleY) + z1 * Math.cos(this.angleY);
 
-        // Rotate around Z-axis
+        // Rotation autour de l'axe Z
         let x3 = x2 * Math.cos(this.angleZ) - y1 * Math.sin(this.angleZ);
         let y3 = x2 * Math.sin(this.angleZ) + y1 * Math.cos(this.angleZ);
 
         return { x: x3, y: y3, z: z2 };
     }
 
+    // 1. Dessiner les formes 3D 
+    // 2. Mettre à jour les angles de rotation
+    // 3. Trace les arrêtes entre les sommets projetés
     draw() {
         this.graphics.clear();
         this.graphics.lineStyle(this.position.z*1.3, this.app.space ? this.app.ennemiColor : this.app.ennemiColor, 1);
@@ -333,8 +340,8 @@ export class Shape3D {
         this.angleZ += this.speedZ;
     }
 
+// Mettre à jour la position en ajoutant des offsets    
     updatePosition(dx, dy) {
-        // Update position by adding offsets
         this.position.x += dx*this.position.z;
         this.position.y += dy*this.position.z;
     }
@@ -343,7 +350,7 @@ export class Shape3D {
         return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
     }
     
-    // Function to check if a new position is too close to any existing shape
+    // Fonction pour vérifier si une nouvelle position est trop proche d'une forme existante
     static isTooCloseToExistingShapes(newPos, shapes, minDistance) {
         for (let shape of shapes) {
             const dist = Shape3D.distanceBetweenPoints(newPos, shape.position);
@@ -355,7 +362,7 @@ export class Shape3D {
     }
 
 
-    // Function to spawn shapes without overlap
+    // Fonction pour générer des formes sans overlap
     static spawnShapes(Event, app) {
         for (let i = 0; i < 1; i++) {
             const size = Math.random() * 250 + 50;
@@ -384,12 +391,12 @@ export class Shape3D {
                 z = Math.random() ;
                 x -= app.view.width/2;
                 y -= app.view.height/2;
-                // Check if the new position is too close to any existing shape
+                // Vérifie si la nouvelle position est trop proche d'une forme existante
                 if (!Shape3D.isTooCloseToExistingShapes({ x, y, z }, Shape3D.shapes, Shape3D.minDistance)) {
                     validPosition = true;
                 } else {
-                    // Move the shape further away by a random factor if the position is invalid
-                    let moveFactor = 1 + Math.random() * 2; // Move factor between 1x and 3x
+                    // Déplace la forme plus loin avec un facteur aléatoire si la position est invalide
+                    let moveFactor = 1 + Math.random() * 2; // Facteur de déplacement entre 1x et 3x
                     x += (Math.random() > 0.5 ? 1 : -1) * moveFactor * Shape3D.minDistance;
                     y += (Math.random() > 0.5 ? 1 : -1) * moveFactor * Shape3D.minDistance;
                     z += (Math.random() > 0.5 ? 1 : -1) * moveFactor * Shape3D.minDistance;
