@@ -152,9 +152,11 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
         if(joueur.debug)
         {
             joueur.debug = false;
+            app.graph.visible = false;
         }
         else{
             joueur.debug = true;
+            app.graph.visible = true;
         }
     }
     milk.press = () =>

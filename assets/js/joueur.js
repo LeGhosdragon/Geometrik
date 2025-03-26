@@ -263,7 +263,8 @@ export class Joueur {
     // Gestion de la barre d'EXP
     getExpBar(width = 20) {
         let progress = Math.floor((this.exp / this.expReq) * width);
-        let bar = "[" + "#".repeat(progress < 20 ? progress : 20) + "-".repeat(width - progress) < 20 ? Math.abs(width - progress) : 20 + "]";
+        progress = Math.min(progress, width);
+        let bar = "[" + "#".repeat(progress) + "-".repeat(width - progress) + "]";
         return `Lvl ${this.lvl} ${bar} ${this.exp}/${this.expReq}`;
     }
 

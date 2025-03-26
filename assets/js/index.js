@@ -7,6 +7,7 @@ import { Exp } from './experience.js';
 import { Upgrade } from './upgrades.js';
 import { Event } from './events.js';
 
+
 // Aliases
 const Application = PIXI.Application,
     Container = PIXI.Container,
@@ -104,7 +105,7 @@ function setup() {
     new Event(" ");
 
     sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // rectangle bleu de 10x80
-    gun = new Gun(1, joueur.baseDMG, 1);
+    gun = new Gun(1, joueur.baseDMG*1.7, 1);
     Upgrade.addWeapons(Sword, Gun, Explosion, sword, gun);
     joueur.chooseClass();
 ;
@@ -137,10 +138,8 @@ function play(delta) {
     resizeApp(joueur);
     if(!app.pause)
     {
-        if(joueur.currentHP <= Event.ennemiDifficultee*2)
-        {
-            joueur.triggerDamageEffect();
-        }
+        Event.updateEvents(delta);
+        if(joueur.currentHP <= Event.ennemiDifficultee*2) joueur.triggerDamageEffect();
         joueur.updatelvl();
         joueur.updateHP();
         elapsedTime += delta / 60;
@@ -155,8 +154,8 @@ function play(delta) {
             min -= 60;
             hour += 1;
         }    
-        //console.log('current cooldown:', gun.isOnCooldown);
-        Event.updateEvents(delta);
+
+
         
         let xI = xF;
         let yI = yF;
@@ -201,6 +200,8 @@ function play(delta) {
 
         Grid.grid.x -= joueur.getVX() * delta;
         Grid.grid.y -= joueur.getVY() * delta;  
+        app.gradientLine.x += deltaX;
+        app.gradientLine.y += deltaY;
         
         x += joueur.getVX() * delta;
         y += joueur.getVY() * delta;
@@ -208,46 +209,38 @@ function play(delta) {
         y2 += joueur.getVY() * delta;
 
         for (let shape of Shape3D.shapes) {
-            shape.updatePosition(deltaX,deltaY);//Math.sin(Date.now() / 1000) * 2, Math.cos(Date.now() / 1000) * 2); // Example movement
+            shape.updatePosition(deltaX,deltaY, [joueur.getX(), joueur.getY()]);
             shape.draw();
         }
-        // for (let shape of shapes) {
-        //     shape.move(deltax, deltay, deltaZ);  // Update position
-        //     shape.draw();  // Draw shape at updated position
-        // }
-        //console.log(sword.cooldown);
-        if((joueur.hold && joueur.hasSword) || swinging > 0 || (joueur.clickLock && joueur.hasSword))
-        {
-            if(swinging == 0){
-                swinging = sword.cooldown > 1/sword.swingSpeed ? sword.cooldown : (sword.swingSpeed++) * 0 + sword.cooldown; 
-                if(sword.cooldown < 10) {sword.cooldown = 10;}
+
+        // Simplified Game Loop
+        if ((joueur.hold || joueur.clickLock) && joueur.hasSword || swinging > 0) {
+            if (swinging === 0) {
+                swinging = Math.max(sword.cooldown, 10);
                 sword.body.visible = true;
                 sword.hasSword = true;
-                monstres.forEach(otherMonstre => {
-                    otherMonstre.setSwordHit(false);
-                });
                 sword.isSwinging = true;
                 sword.firstSwing = true;
+
+                // Reset hit status for all monsters
+                monstres.forEach(monstre => monstre.setSwordHit(false));
             }
 
-            swinging = (swinging - delta) < 0 ? 0 : swinging - delta;
-            if(swinging == 0){
+            // Decrease swinging time
+            swinging = Math.max(0, swinging - delta);
+            if (swinging === 0) {
                 sword.hasSword = false;
                 sword.body.visible = false;
-            }   
+            }
+
             //console.log(swinging);
             sword.playSwordSwing(delta, cursorX, cursorY);
         }
+
         
         (gun.cooldownTimeLeft-=delta) <= 0 ? gun.isOnCooldown = false : gun.isOnCooldown = true;
-        if(joueur.hold && !gun.isOnCooldown || joueur.clickLock && !gun.isOnCooldown)
-        {
-            gun.shoot();
-        }
-        if(sword.hasTrail)
-        {
-            sword.updateTrail(delta, [0, 0.1, 0.2,0.05, 0.15, 0.25 ,-0.05], deltaX, deltaY);
-        }
+        if(joueur.hold && !gun.isOnCooldown || joueur.clickLock && !gun.isOnCooldown){gun.shoot();}
+        if(sword.hasTrail){sword.updateTrail(delta, [0, 0.1, 0.2,0.05, 0.15, 0.25 ,-0.05], deltaX, deltaY);}
 
         gun.update(delta, cursorX, cursorY, deltaX, deltaY);
 
@@ -255,23 +248,10 @@ function play(delta) {
 
         monstres.forEach(monstre => {
             monstre.bouger(joueur,delta, deltaX, deltaY, app.ennemiColor);
-            if(sword.hasSword)
-            {
-                if (sword.isSwordCollidingWithMonster(monstre)) {
-                    sword.onSwordHitEnemy(monstre);             
-                }
-            }
-            if(gun.isBulletCollidingWithMonster(monstre))
-            {
-                gun.onBulletHitEnemy(monstre);
-            }
+            if(sword.hasSword) {if (sword.isSwordCollidingWithMonster(monstre)) sword.onSwordHitEnemy(monstre);}
+            if(gun.isBulletCollidingWithMonster(monstre)) gun.onBulletHitEnemy(monstre);
         });
-        MonstreGunner.bullets.forEach(bullet => {
-            if(sword.isSwordCollidingWithBullet(bullet))
-            {
-                sword.onSwordHitEnemyBullet(bullet);
-            }
-        })
+        MonstreGunner.bullets.forEach(bullet => {if(sword.isSwordCollidingWithBullet(bullet)) sword.onSwordHitEnemyBullet(bullet);});
 
         
         explosions.forEach(explosion => {
@@ -289,28 +269,23 @@ function play(delta) {
             {
                 exp.body.clear();
                 app.stage.removeChild(exp);
-                if (index !== -1) {
-                    exps.splice(index, 1);
-                }
+                if (index !== -1) exps.splice(index, 1);
             }
         });
         
         joueur.onPlayerCollision(monstres);
     }
-    else{
-
-    }
+    
     app.ennemiColor = updateBackgroundColor(app, Monstre);
-    Shape3D.shapes.forEach(shape => {
-        shape.draw();
-    });
+    Shape3D.shapes.forEach(shape => shape.draw());
+
     Monstre.cleanup();
     Exp.cleanup(delta);
-    afficherDebug(delta);
+    afficherDebug();
 }
 
 // Fonction qui affiche les informations de débogage 
-function afficherDebug(delta) {
+function afficherDebug() {
     if (!joueur.debug) {
         debugText.text = "";
         return;
@@ -338,6 +313,7 @@ function afficherDebug(delta) {
         BulletPierce : ${gun.pierce-1}
         Exp orbs: ${exps.length}
         ExpBuildup: ${Exp.expBuildUp}
+        Shapes : ${Shape3D.shapes.length}
         Epée Active: ${sword.hasSword ? "Oui" : "Non"}
         Gun Active: ${gun.hasGun ? "Oui" : "Non"}
         MILK : ${Monstre.dedMilkMan}
@@ -348,17 +324,60 @@ function afficherDebug(delta) {
         FPS : ${app.ticker.FPS.toFixed(0)}
     `;
     debugText.style.fill = app.ennemiColor;
+
 }
+
+// Gestion du graphique des FPS
+function getFpsGraph(app, graphWidth = 100, graphHeight = 50) {
+    const fpsHistory = [];
+    const maxDataPoints = graphWidth;
+    const graph = new PIXI.Graphics();
+
+    app.ticker.add(() => {
+        if (fpsHistory.length >= maxDataPoints) {
+            fpsHistory.shift();
+        }
+        fpsHistory.push(app.ticker.FPS);
+
+        graph.clear();
+        graph.beginFill(0x000000, 0.5);
+        graph.drawRect(0, 0, graphWidth, graphHeight);
+        graph.endFill();
+
+        const maxFps = 60;
+        graph.lineStyle(2, 0x00FF00);
+
+        fpsHistory.forEach((fps, index) => {
+            const x = (index / maxDataPoints) * graphWidth;
+            const y = graphHeight - (fps / maxFps) * graphHeight;
+            if (index === 0) {
+                graph.moveTo(x, y);
+            } else {
+                graph.lineTo(x, y);
+            }
+        });
+    });
+    graph.x = 44;
+    graph.y = 570;
+    graph.zIndex = 1000;
+    return graph;
+}
+app.graph = getFpsGraph(app);
+app.graph.visible = false;
+app.stage.addChild(app.graph);
+
 
 window.addEventListener('resize', () => {
     app.stage.removeChild(Grid.grid);
     app.renderer.resize(window.innerWidth, window.innerHeight);
-    Grid.grid = Grid.drawGridBackground(0.5, app); 
-    //Grid.grid.zIndex = 0;
     Grid.pauseGrid(app);
-            app.pause = !app.pause;
-            Grid.pauseGrid(app);
-            app.pause = !app.pause;
+    app.pause = !app.pause;
+    Grid.pauseGrid(app);
+    app.pause = !app.pause;
+    setTimeout(() => {
+    sword.body.x = joueur.getX() + 15;
+    sword.body.y = joueur.getY() + 12;
+    }, 100);
 });
 const EXP_BAR = document.getElementById('expBar');
 

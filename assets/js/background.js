@@ -8,12 +8,14 @@ let vitesseCouleur = 0.00001;
 
 export class Grid {
 
-    static grid = this.drawGridBackground(0.5);
+    static grid = this.drawGridBackground(1);
 
     static drawGridBackground(gridThickness, app = null) {
         const grid = new PIXI.Graphics();
         const gridSize = 1000000;
         const step = 100;
+        
+
 
         if (app != null) {
             if (app.space && gridThickness != 100) {
@@ -23,11 +25,11 @@ export class Grid {
             } else {
                 grid.lineStyle(gridThickness, 0x000000, 0.5);
             }
-        }
+        
 
-        const gradientTexture = Grid.createGradientTexture();
-        const gradientLine = new PIXI.TilingSprite(gradientTexture, gridSize * 2, gridSize * 2);
-        gradientLine.position.set(-gridSize, -gridSize);
+        const gradientTexture = Grid.createSmoothGradientTexture();
+        app.gradientLine = new PIXI.TilingSprite(gradientTexture, gridSize * 2, gridSize * 2);
+        app.gradientLine.position.set(-gridSize, -gridSize);
 
         for (let i = -gridSize; i < gridSize; i += step) {
             grid.moveTo(i, -gridSize);
@@ -39,39 +41,48 @@ export class Grid {
             grid.lineTo(gridSize, j);
         }
 
-        grid.position.set(900, 400);
-
 
         if (app != null && app.space) {
-            gradientLine.mask = grid;
-            app.stage.addChild(gradientLine);
+            app.gradientLine.mask = grid;
+            app.stage.addChild(app.gradientLine);
             app.ticker.add(() => {
-                gradientLine.tilePosition.x += 2;
-                gradientLine.tilePosition.y += 1;
+                app.gradientLine.tilePosition.x += 1.5;
+                app.gradientLine.tilePosition.y += 1;
             });
         }
 
+        grid.position.set(900, 400);
+        if (gridThickness == 100 && app.space) {
+                app.gradientLine.visible = false;
+            }
+        }
         return grid;
     }
-
-    static createGradientTexture() {
+    static createSmoothGradientTexture() {
         const canvas = document.createElement('canvas');
         canvas.width = 512;
         canvas.height = 512;
         const ctx = canvas.getContext('2d');
-
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, '#ff00ff');
-        gradient.addColorStop(0.25, '#ff88ff');
-        gradient.addColorStop(0.5, '#00ffff');
-        gradient.addColorStop(0.75, '#88ffff');
-        gradient.addColorStop(1, '#ff00ff');
-
+    
+        // Create a radial gradient
+        const gradient = ctx.createRadialGradient(
+            canvas.width / 2, canvas.height / 2, 0,  // Starting circle: center of canvas, radius 0
+            canvas.width / 2, canvas.height / 2, canvas.width / 2 // Ending circle: center of canvas, radius to the edge
+        );
+    
+        // Add smooth color stops
+        //gradient.addColorStop(0, '#4a0099');  // Dark purple at the center
+        gradient.addColorStop(0.3, '#0099ff'); // Light blue
+        gradient.addColorStop(0.7, '#4a0099'); // Dark purple again
+        gradient.addColorStop(1, '#99005e');  // Deep pink at the edges
+        //gradient.addColorStop(1, '#0099ff'); // Light blue
+    
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    
         return PIXI.Texture.from(canvas);
     }
+    
 
     static getDynamicColor() {
         r = (Math.sin(Date.now() * vitesseCouleur) + 1) * 127.5;
@@ -83,7 +94,7 @@ export class Grid {
     static pauseGrid(app) {
         Grid.grid.clear();
         app.stage.removeChild(Grid.grid);
-        Grid.grid = Grid.drawGridBackground(!app.pause ? 100 : 0.5, app);
+        Grid.grid = Grid.drawGridBackground(!app.pause ? 100 : 1, app);
         app.stage.addChild(Grid.grid);
     }
 }
@@ -141,23 +152,6 @@ export function updateBackgroundColor(app, mstr, grid) {
     const { r: contrastR, g: contrastG, b: contrastB } = getContrastingColor(bgR, bgG, bgB);
     return (contrastR << 16) | (contrastG << 8) | contrastB;
 
-}
-function createGradientTexture() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 10;
-    const ctx = canvas.getContext('2d');
-
-    // Créer gradient (synthwave style)
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, '#ff00ff');  // Pink
-    gradient.addColorStop(0.5, '#00ffff'); // Cyan
-    gradient.addColorStop(1, '#ff00ff');  // Pink again
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    return PIXI.Texture.from(canvas);
 }
 
 
@@ -265,7 +259,6 @@ function createOctahedron(size) {
  * Classe utilisée pour créer, positionner, faire tourner et mettre a jour 
  * des formes 3D pour enrichir le fond de la scène.
  */
-
 export class Shape3D {
     
     constructor(app, vertices, edges, x, y, z) {
@@ -285,8 +278,9 @@ export class Shape3D {
 
     static shapes = [];
     static minDistance = 300;
-    static maxAttempts = 10; 
-    
+    static maxAttempts = 1; 
+    static maxDistanceFromPlayer = 1500; // Max distance from the player to keep the shape
+
     // Méthode qui projette un point 3D sur un plan 2D et retourne les coordonnées 
     project3D(point3D) {
         const distance = 400;
@@ -319,7 +313,7 @@ export class Shape3D {
     // 3. Trace les arrêtes entre les sommets projetés
     draw() {
         this.graphics.clear();
-        this.graphics.lineStyle(this.position.z*1.3, this.app.space ? this.app.ennemiColor : this.app.ennemiColor, 1);
+        this.graphics.lineStyle(this.position.z * 1.3, this.app.space ? this.app.ennemiColor : this.app.ennemiColor, 1);
 
         let projected = [];
 
@@ -340,16 +334,28 @@ export class Shape3D {
         this.angleZ += this.speedZ;
     }
 
-// Mettre à jour la position en ajoutant des offsets    
-    updatePosition(dx, dy) {
-        this.position.x += dx*this.position.z;
-        this.position.y += dy*this.position.z;
+    // Mettre à jour la position en ajoutant des offsets    
+    updatePosition(dx, dy, playerPosition) {
+        this.position.x += dx * this.position.z;
+        this.position.y += dy * this.position.z;
+
+        // Check if the shape is too far from the player, and remove it if so
+        const distance = Shape3D.distanceBetweenPoints(0, 0, this.position.x , this.position.y);
+        if (distance > Shape3D.maxDistanceFromPlayer) {
+            Shape3D.shapes = Shape3D.shapes.filter(shape => shape !== this.graphics);
+            this.app.stage.removeChild(this.graphics);
+            let index = Shape3D.shapes.indexOf(this);
+            if (index !== -1) {
+                Shape3D.shapes.splice(index, 1);
+            }
+        }
     }
 
-    static distanceBetweenPoints(p1, p2) {
-        return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    // Function to calculate distance between two points
+    static distanceBetweenPoints(p1x, p1y, p2x, p2y) {
+        return Math.sqrt(Math.pow(p1x - p2x, 2) + Math.pow(p1y - p2y, 2));
     }
-    
+
     // Fonction pour vérifier si une nouvelle position est trop proche d'une forme existante
     static isTooCloseToExistingShapes(newPos, shapes, minDistance) {
         for (let shape of shapes) {
@@ -360,7 +366,6 @@ export class Shape3D {
         }
         return false;
     }
-
 
     // Fonction pour générer des formes sans overlap
     static spawnShapes(Event, app) {
@@ -388,9 +393,9 @@ export class Shape3D {
             let validPosition = false;
             while (!validPosition && attempts < Shape3D.maxAttempts) {
                 [x, y] = Event.posRandomExterieur();
-                z = Math.random() ;
-                x -= app.view.width/2;
-                y -= app.view.height/2;
+                z = Math.random();
+                x -= app.view.width / 2;
+                y -= app.view.height / 2;
                 // Vérifie si la nouvelle position est trop proche d'une forme existante
                 if (!Shape3D.isTooCloseToExistingShapes({ x, y, z }, Shape3D.shapes, Shape3D.minDistance)) {
                     validPosition = true;
@@ -410,10 +415,4 @@ export class Shape3D {
             }
         }
     }
-
-    
-
 }
-
-
-
