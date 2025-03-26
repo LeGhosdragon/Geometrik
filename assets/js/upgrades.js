@@ -19,6 +19,7 @@ export class Upgrade
     gunCode = "gun";
     swordCode = "sword";
     bombCode = "explosion";
+    boite = [];
 
     boiteGun = [
         [   // Bullet pierce
@@ -62,7 +63,7 @@ export class Upgrade
         [   // Sword width
             new Upg(() => Upgrade.sword.wideness, (val) => Upgrade.sword.wideness = val,
                 "x", 1.1,
-                "Cleave Width", () => `Increase sword cleave width! ${Upgrade.sword.wideness.toFixed(2)} => ${(Upgrade.sword.wideness*1.1).toFixed}`, "../images/SwordWidth.gif",
+                "Cleave Width", () => `Increase sword cleave width! ${Upgrade.sword.wideness.toFixed(2)} => ${(Upgrade.sword.wideness*1.1).toFixed(2)}`, "../images/SwordWidth.gif",
                 true
             )//, insérer plus
         ],
@@ -75,8 +76,8 @@ export class Upgrade
         ],
         [   // Sword cooldown
             new Upg(() => Upgrade.sword.cooldown, (val) => Upgrade.sword.cooldown = val,
-                "x", 0.5,
-                "Cooldown", () => `Reduce sword cooldown! ${(Upgrade.gun.cooldown / 60).toFixed(2)}s => ${(Upgrade.gun.cooldown * 0.8 / 60).toFixed(2)}s`, "../images/Cooldown.gif",
+                "x", 0.8,
+                "Cooldown", () => `Reduce sword cooldown! ${(Upgrade.sword.cooldown / 60).toFixed(2)}s => ${(Upgrade.sword.cooldown * 0.8 / 60).toFixed(2)}s`, "../images/Cooldown.gif",
                 true
             )//, insérer plus
         ],
@@ -90,7 +91,7 @@ export class Upgrade
         [   // Sword knockback
             new Upg(() => Upgrade.sword.knockback, (val) => Upgrade.sword.knockback = val,
                 "+", 2,
-                "Sword Knockback", () => `More knockback! Force: ${(Upgrade.gun.knockback).toFixed(2)}N => ${(Upgrade.gun.knockback + 2).toFixed(2)}N`, "../images/Knockback.gif",
+                "Sword Knockback", () => `More knockback! Force: ${(Upgrade.sword.knockback).toFixed(2)}N => ${(Upgrade.sword.knockback + 2).toFixed(2)}N`, "../images/Knockback.gif",
                 true
             )//, insérer plus
         ]
@@ -157,12 +158,17 @@ export class Upgrade
         ],
     ];
     
-    boite = [];
+
 
     constructor(weapon){
         this.weapon = weapon;
         this.description = "description";
         this.boite = this.weapon == "gun" ? this.boiteGun.concat(this.boiteJoueur) :  this.boiteSword.concat(this.boiteJoueur);
+        if(weapon == "gun"){
+            Upgrade.gun.body.visible = true; 
+            Upgrade.gun.hasGun = true;
+        }
+        if(weapon == "sword"){Upgrade.joueur.hasSword = true;}
     }
 
     // Méthode pour sélectionner un nb d'upgrades aléatoires
@@ -249,7 +255,7 @@ export class Upgrade
             card.style.color = "white";
             card.style.textAlign = "center";
             card.style.padding = "15px";
-            card.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+            //card.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
             card.style.cursor = "pointer";
             card.style.userSelect = "none"; // Prevent text highlighting
             

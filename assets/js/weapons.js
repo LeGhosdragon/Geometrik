@@ -47,7 +47,7 @@ export class Weapon{
 
 export class Sword extends Weapon {
     
-    constructor(cooldown = 1, baseDMG = 15, length, hasSword, hasTrail = true) {
+    constructor(cooldown = 1, baseDMG = 15, length, hasSword, hasTrail = false) {
         super("sword", cooldown, baseDMG, new PIXI.Graphics());
         this.firstSwing = true;
         this.hasSword = hasSword;
@@ -277,6 +277,10 @@ export class Gun extends Weapon {
         gun.beginFill(this.color);
         if (Weapon.Monstre.dedMilkMan) {
             gun.beginFill(0xFFFFFF);
+        }
+        else if(Weapon.app.space)
+        {
+            gun.beginFill(0x000000);
         }
         gun.drawRect(0, 0, 10, 15);
         gun.endFill();

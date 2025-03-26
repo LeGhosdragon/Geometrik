@@ -77,8 +77,17 @@ export class Monstre {
         this.elapsedTime += 3 * delta;
         let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
         this.body.clear();
-        this.body.lineStyle(3, 0x000000, 1);
-        this.body.beginFill(ennemiColor);
+        if(Monstre.app.space)
+        {
+            this.body.lineStyle(3, ennemiColor, 1);
+            this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
+        }
+        else
+        {
+            this.body.lineStyle(3, 0x000000, 1);
+            this.body.beginFill(ennemiColor);
+        }
+
     
         const radius = newSize * 50;
         const angleStep = (2 * Math.PI) / this.sides;
@@ -208,123 +217,6 @@ export class Monstre {
     
         Monstre.app.ticker.add(applyKnockback);
     }
-    knockback(force, angle) {
-        if (!this.body) {
-            console.warn("Knockback failed: body is null");
-            return;
-        }
-    
-        this.knockbackX = Math.cos(angle) * force;
-        this.knockbackY = Math.sin(angle) * force;
-    
-        let decayRate = 0.92;
-        let duration = 10; // Frames
-    
-        let frames = 0;
-        const applyKnockback = () => {
-            if (frames >= duration || !this.body) {
-                Monstre.app.ticker.remove(applyKnockback);
-                return;
-            }
-    
-            // S'assurer que les valeurs sont valides avant de les définir
-            if (typeof this.getX !== "function" || typeof this.getY !== "function") {
-                console.error("Error: getX or getY is not a function.");
-                Monstre.app.ticker.remove(applyKnockback);
-                return;
-            }
-    
-            this.setX(this.getX() + this.knockbackX);
-            this.setY(this.getY() + this.knockbackY);
-    
-            // Decay the knockback force over time
-            this.knockbackX *= decayRate;
-            this.knockbackY *= decayRate;
-    
-            frames++;
-        };
-    
-        Monstre.app.ticker.add(applyKnockback);
-    }
-        
-    
-
-    knockback(force, angle) {
-        if (!this.body) {
-            console.warn("Knockback failed: body is null");
-            return;
-        }
-    
-        this.knockbackX = Math.cos(angle) * force;
-        this.knockbackY = Math.sin(angle) * force;
-    
-        let decayRate = 0.92;
-        let duration = 10; // Frames
-    
-        let frames = 0;
-        const applyKnockback = () => {
-            if (frames >= duration || !this.body) {
-                Monstre.app.ticker.remove(applyKnockback);
-                return;
-            }
-    
-            // S'assurer que les valeurs sont valides avant de les définir
-            if (typeof this.getX !== "function" || typeof this.getY !== "function") {
-                console.error("Error: getX or getY is not a function.");
-                Monstre.app.ticker.remove(applyKnockback);
-                return;
-            }
-    
-            this.setX(this.getX() + this.knockbackX);
-            this.setY(this.getY() + this.knockbackY);
-    
-            // Decay the knockback force over time
-            this.knockbackX *= decayRate;
-            this.knockbackY *= decayRate;
-    
-            frames++;
-        };
-    
-        Monstre.app.ticker.add(applyKnockback);
-    }
-    knockback(force, angle) {
-        if (!this.body) {
-            console.warn("Knockback failed: body is null");
-            return;
-        }
-    
-        this.knockbackX = Math.cos(angle) * force;
-        this.knockbackY = Math.sin(angle) * force;
-    
-        let decayRate = 0.92;
-        let duration = 10; // Frames
-    
-        let frames = 0;
-        const applyKnockback = () => {
-            if (frames >= duration || !this.body) {
-                Monstre.app.ticker.remove(applyKnockback);
-                return;
-            }
-    
-            // S'assurer que les valeurs sont valides avant de les définir
-            if (typeof this.getX !== "function" || typeof this.getY !== "function") {
-                console.error("Error: getX or getY is not a function.");
-                Monstre.app.ticker.remove(applyKnockback);
-                return;
-            }
-    
-            this.setX(this.getX() + this.knockbackX);
-            this.setY(this.getY() + this.knockbackY);
-    
-            // Decay the knockback force over time
-            this.knockbackX *= decayRate;
-            this.knockbackY *= decayRate;
-    
-            frames++;
-        };
-    
-        Monstre.app.ticker.add(applyKnockback);
-    }
         
     
 
@@ -347,6 +239,7 @@ export class Monstre {
     }
     
     // Mise a jour des points de vie du monstre
+
     updateHP() {
         if (this.currentHP <= 0) {
             // Trigger l'animation de mort avant de le supprimer du jeu
@@ -363,7 +256,7 @@ export class Monstre {
                     Monstre.Exp.expBuildUp = 0;
                 }
             }
-    
+            Monstre.joueur.statistics.kills += 1;
             // Supprimer le monstre de l'array 
             let index = Monstre.monstres.indexOf(this);
             if (index !== -1) {
@@ -464,6 +357,7 @@ export class Monstre {
     // Gestion de la perte de HP par le monstre selon le type de d'arme utilisé
     endommagé(dmg, weapon, crit) {
         crit ? dmg *= Monstre.joueur.critDMG : 0;
+        Monstre.joueur.statistics.dmgDealt += dmg;
         this.setHP(this.getHP() - dmg);
         this.createHitEffect(this, dmg, crit);
         
@@ -539,6 +433,23 @@ export class Monstre {
             damageText.destroy({ children: true });
         }
     }
+
+    getContrastingColor(r, g, b) {
+        // Simply invert the RGB values for a contrasting color
+        const contrastR = 255 - r;
+        const contrastG = 255 - g;
+        const contrastB = 255 - b;
+    
+        // Return the RGB color for the contrasting color
+        return { r: contrastR, g: contrastG, b: contrastB };
+    }
+    // Function to extract RGB from a hex color code
+    hexToRgb(hex) {
+        const r = (hex >> 16) & 0xFF;
+        const g = (hex >> 8) & 0xFF;
+        const b = hex & 0xFF;
+        return { r, g, b };
+    }
     
     static addJoueur(joueurInput) {
         Monstre.joueur = joueurInput;
@@ -578,7 +489,7 @@ export class MonstreNormal extends Monstre {
         const speed = 1;
         const spinSpeed = 0.02;
         const baseHP = Math.round(25 * ennemiDifficultee);
-        const exp = Math.round(2 * ennemiDifficultee);
+        const exp = Math.round(2 * ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
@@ -591,7 +502,7 @@ export class MonstreRunner extends Monstre {
         const speed = 2.5;
         const spinSpeed = 0.04;
         const baseHP = Math.round(15 * ennemiDifficultee);
-        const exp = Math.round(1 * ennemiDifficultee);
+        const exp = Math.round(1 + ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
@@ -624,7 +535,7 @@ export class MonstreTank extends Monstre {
         const speed = 0.4;
         const spinSpeed = 0.005;
         const baseHP = Math.round(50 * ennemiDifficultee);
-        const exp = Math.round(4 * ennemiDifficultee);
+        const exp = Math.round(4 + 4 * ennemiDifficultee/3);
         const baseDMG = Math.round(2 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
@@ -686,7 +597,7 @@ export class MonstreGunner extends Monstre {
         const speed = 1;
         const spinSpeed = 0.005;
         const baseHP = Math.round(15 * ennemiDifficultee);
-        const exp = Math.round(4 * ennemiDifficultee);
+        const exp = Math.round(4 + 4 * ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
         this.shootInterval = 250;  

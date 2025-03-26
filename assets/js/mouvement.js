@@ -32,7 +32,8 @@ export function keyboard(keyCode) {
 }
 
 
-export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
+
+export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur) {
     console.log("this is working");
     
     // Arrow keys
@@ -47,7 +48,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
         enableGun = keyboard(71),       // 'G' key
         enableDebug = keyboard(186),   // ';' key
         milk = keyboard(77),          // 'M' key
-        pause = keyboard(27),        // 'Echap' key
+        space = keyboard(80),        // 'P' key
         lvlUp = keyboard(76),       // 'L' key
         autoAttack = keyboard(67); // 'C' key
     
@@ -194,10 +195,12 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
     lvlUp.press = () =>
     {
         joueur.exp += joueur.expReq*1 + 1; 
+        joueur.statistics.expGained += joueur.expReq*1 + 1;
     }
 
     autoAttack.press = () =>
     {
+        //joueur.createStatsBoards();
         if(joueur.clickLock)
         {
             joueur.hold = false;
@@ -209,6 +212,54 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp) {
             joueur.clickLock = true;
         }
 
+    }
+
+    space.press = () =>
+    {
+        //app.space = !app.space;
+        if(!app.space)
+        {
+            app.space = true;
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0xFFFFFF, 1);
+            joueur.body.beginFill(0xFF0000);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0xFFFFFF, 1);
+            gun.body.beginFill(0x000000);
+            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.endFill();
+            if(!app.pause)
+            {   
+                Joueur.Grid.pauseGrid(app);
+                app.pause = true;
+                Joueur.Grid.pauseGrid(app);
+                app.pause = false;
+            }
+
+           
+        }
+        else{
+            app.space = false;
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0x000000, 1);
+            joueur.body.beginFill(0xFF0000);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0x000000, 1);
+            gun.body.beginFill(0x9966FF);
+            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.endFill();
+            if(!app.pause)
+            {   
+                Joueur.Grid.pauseGrid(app);
+                app.pause = true;
+                Joueur.Grid.pauseGrid(app);
+                app.pause = false;
+            }
+            
+          
+        }
     }
 
     // Arrow keys press and release
