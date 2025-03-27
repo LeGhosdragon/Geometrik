@@ -639,9 +639,9 @@ export class MonstreGunner extends Monstre {
     
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "gunner";
-        const size = 0.2;
+        const size = 0.3;
         const speed = 1;
-        const spinSpeed = 0.005;
+        const spinSpeed = 0;
         const baseHP = Math.round(15 * ennemiDifficultee);
         const exp = Math.round(4 + 4 * ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
@@ -650,9 +650,9 @@ export class MonstreGunner extends Monstre {
         this.lastShotTime = 0;
         this.currentTime = 0;
         this.isOnCooldown = false;
-        this.bulletSize = 10;
+        this.bulletSize = 8;
     }
-    
+
     actualiserPolygone(delta, ennemiColor) {
         if (this.sides < 3) return;
         this.couleur = ennemiColor;
@@ -666,6 +666,8 @@ export class MonstreGunner extends Monstre {
             this.body.lineStyle(3, 0x000000, 1);
             this.body.beginFill(ennemiColor);
         }
+
+        //Monstre.joueur.getX();
     
         const radius = newSize * 50;
         const angleStep = (2 * Math.PI) / this.sides;
@@ -680,6 +682,8 @@ export class MonstreGunner extends Monstre {
 
         this.body.closePath();
         this.body.endFill();
+        this.body.shadowColor = "red";
+        this.body.shadowBlur = 15;
 
         // S'assurer que le HP reste à jour
         this.updateHP();
