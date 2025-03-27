@@ -65,14 +65,14 @@ export class Music {
         if (this.audio) {
             this.audio.pause();
             this.audio.currentTime = 0;
-            console.log(`Stopped: ${this.nom}`);
+            //console.log(`Stopped: ${this.nom}`);
         }
     }
 
     pause() {
         if (this.audio) {
             this.audio.pause();
-            console.log(`Paused: ${this.nom}`);
+            //console.log(`Paused: ${this.nom}`);
         }
     }
 

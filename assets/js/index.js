@@ -102,7 +102,7 @@ function setup() {
     Event.addApp(app);
     Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner);
 
-    new Event("normal");
+    Event.currentEvent = new Event("normal");
     //new Event("ambush");
     new Event(" ");
 
@@ -280,12 +280,20 @@ function play(delta) {
     }
     
     app.ennemiColor = updateBackgroundColor(app, Monstre);
+    document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
     Shape3D.shapes.forEach(shape => shape.draw());
     Event.updateMusic();
     Monstre.cleanup();
     Exp.cleanup(delta);
     afficherDebug();
 }
+function intToRGB(colorInt) {
+    const r = (colorInt >> 16) & 0xFF; // Extract Red
+    const g = (colorInt >> 8) & 0xFF;  // Extract Green
+    const b = colorInt & 0xFF;         // Extract Blue
+    return `rgb(${r}, ${g}, ${b})`;    // Return as RGB string
+}
+
 
 // Fonction qui affiche les informations de débogage 
 function afficherDebug() {
@@ -323,7 +331,7 @@ function afficherDebug() {
         Cursor X: ${cursorX}
         Cursor Y: ${cursorY}
         Elapsed time: ${hour<=0?"":hour + "h"}${min<=0?"":min+ "m"}${elapsedTime.toFixed(2)}s
-        Event : ${Event.currentEvent}
+        Event : ${Event.currentEventName}
         Song : ${Event.currentMusic.nom ? Event.currentMusic.nom : 0}
         FPS : ${app.ticker.FPS.toFixed(0)}
 
@@ -345,6 +353,7 @@ function afficherDebug() {
         // la touche C active ou désactive l'auto-attaque
         // la touche P active ou désactive le mode space 
         // la touche Backspace commits ded
+        // la touche E passe automatiquement au prochain Event
     `;
     debugText.style.fill = app.ennemiColor;
 

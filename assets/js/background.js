@@ -411,7 +411,7 @@ export class Shape3D {
             if (validPosition) {
                 Shape3D.shapes.push(new Shape3D(app, vertices, edges, x, y, z));
             } else {
-                console.warn("Could not find a valid position after " + Shape3D.maxAttempts + " attempts.");
+                //console.warn("Could not find a valid position after " + Shape3D.maxAttempts + " attempts.");
             }
         }
     }

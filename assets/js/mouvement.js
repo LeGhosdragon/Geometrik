@@ -34,7 +34,7 @@ export function keyboard(keyCode) {
 
 
 export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur, Event) {
-    console.log("this is working");
+    //console.log("this is working");
     
     // Arrow keys
     const leftArrow = keyboard(37),         // Left arrow
@@ -50,9 +50,10 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
         milk = keyboard(77),          // 'M' key
         space = keyboard(80),        // 'P' key
         lvlUp = keyboard(76),       // 'L' key
-        autoAttack = keyboard(67); // 'C' key
-        updateDiff = keyboard(75);// 'k' key
-        suicide = keyboard(8);   // 'Backspace' key
+        autoAttack = keyboard(67), // 'C' key
+        updateDiff = keyboard(75),// 'k' key
+        suicide = keyboard(8),   // 'Backspace' key
+        event = keyboard(69);   // 'E' key
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
         upWASD = keyboard(87),       // 'W' key
@@ -204,7 +205,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
     updateDiff.press = () =>
     {
         Event.updateDifficultee();
-        console.log("updating enemy difficulty");
+        //console.log("updating enemy difficulty");
     }
 
     autoAttack.press = () =>
@@ -273,6 +274,17 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
 
     suicide.press = () => {
         if(!app.pause) joueur.playerDied();
+    }
+
+    event.press = () => {
+        console.log(Event.events);
+        Event.events.forEach(event => {  
+            if(event.type != ' ')
+            {
+                event.state = false;
+            }
+        });
+
     }
 
     // Arrow keys press and release
