@@ -117,7 +117,7 @@ function setup() {
     //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
     // }, 10);
 
-    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur);
+    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur,Event);
 
 
     // Set le statut du jeu
@@ -200,8 +200,8 @@ function play(delta) {
 
         Grid.grid.x -= joueur.getVX() * delta;
         Grid.grid.y -= joueur.getVY() * delta;  
-        app.gradientLine.x += deltaX;
-        app.gradientLine.y += deltaY;
+        app.gradientLine.x -= joueur.getVX() * delta;
+        app.gradientLine.y -= joueur.getVY() * delta;
         
         x += joueur.getVX() * delta;
         y += joueur.getVY() * delta;

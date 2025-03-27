@@ -359,7 +359,7 @@ export class Shape3D {
     // Fonction pour vérifier si une nouvelle position est trop proche d'une forme existante
     static isTooCloseToExistingShapes(newPos, shapes, minDistance) {
         for (let shape of shapes) {
-            const dist = Shape3D.distanceBetweenPoints(newPos, shape.position);
+            const dist = Shape3D.distanceBetweenPoints(newPos.x, newPos.y, shape.position.x, shape.position.y);
             if (dist < minDistance) {
                 return true;
             }

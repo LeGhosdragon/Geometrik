@@ -33,24 +33,26 @@ export function keyboard(keyCode) {
 
 
 
-export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur) {
+export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur, Event) {
     console.log("this is working");
     
     // Arrow keys
-    const leftArrow = keyboard(37),  // Left arrow
-        upArrow = keyboard(38),     // Up arrow
-        rightArrow = keyboard(39), // Right arrow 
-        downArrow = keyboard(40), // Down arrow
+    const leftArrow = keyboard(37),         // Left arrow
+        upArrow = keyboard(38),            // Up arrow
+        rightArrow = keyboard(39),        // Right arrow 
+        downArrow = keyboard(40),        // Down arrow
         enableSword = keyboard(81),     // 'Q' key
         enableText = keyboard(84),     // 'T' key
         enableDedBomb = keyboard(66), // 'B' key
-        enableDedExp = keyboard(89), // 'Y' key
-        enableGun = keyboard(71),       // 'G' key
-        enableDebug = keyboard(186),   // ';' key
-        milk = keyboard(77),          // 'M' key
-        space = keyboard(80),        // 'P' key
-        lvlUp = keyboard(76),       // 'L' key
-        autoAttack = keyboard(67); // 'C' key
+        enableDedExp = keyboard(89),        // 'Y' key
+        enableGun = keyboard(71),          // 'G' key
+        enableDebug = keyboard(186),      // ';' key
+        milk = keyboard(77),             // 'M' key
+        space = keyboard(80),           // 'P' key
+        lvlUp = keyboard(76),          // 'L' key
+        autoAttack = keyboard(67),    // 'C' key
+        updateDiff = keyboard(75);   // 'k' key
+
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -198,6 +200,12 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
     {
         joueur.exp += joueur.expReq*1 + 1; 
         joueur.statistics.expGained += joueur.expReq*1 + 1;
+    }
+
+    updateDiff.press = () =>
+    {
+        Event.updateDifficultee();
+        console.log("updating enemy difficulty");
     }
 
     autoAttack.press = () =>
