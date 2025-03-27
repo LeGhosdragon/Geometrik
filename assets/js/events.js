@@ -37,11 +37,12 @@ export class Event{
     // Méthode qui met à jour les événements actifs en fct du temps écoulé
     static updateEvents(delta)
     {
-
+        //console.log(Event.events);
         Event.events.forEach(event => {   
             event.timeElapsed += 1;     
             if(event.type == " ")// Ajoute le monstre Exp et incrémente la rapidité du spawning des ennemis
             {
+
                 event.timeElapsed%3600 == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "expBall",  3 ) :0;
                 event.timeElapsed%7200 == 0 ? Event.updateDifficultee() : "";
             } 
@@ -56,6 +57,9 @@ export class Event{
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "normal", 2 + Event.difficultyDegree) :0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(50/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "runner", 4 + Event.difficultyDegree) :0 : 0;
                 Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(30/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "tank",   5 + Event.difficultyDegree) :0 : 0;
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), /*"normal"*/"gunner", 2 + Event.difficultyDegree) :0;
+                Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(50/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "runner", 4 + Event.difficultyDegree) :0 : 0;
+                Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(30/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.round(delta), "tank",   5 + Event.difficultyDegree) :0 : 0;
                 event.state = !(event.timeElapsed >= 3600);
             }
             if(event.type == "horde") // ennemis normal circulent autour du joueur pour un bout de temps
@@ -66,6 +70,8 @@ export class Event{
                 Event.nextSongIs = "space2";
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "normal", 2 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 3600);
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "normal", 2 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
             }
             if(event.type == "ambush")// ennemis runner circulent autour du joueur pour un petit instant
             {
@@ -75,6 +81,8 @@ export class Event{
                 Event.nextSongIs = "difficulty";
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "runner", 3 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 3600);
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "runner", 3 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
             }
             if(event.type == "fort") // ennemis tank  cirulent autour du joueur pour un petit instant
             {
@@ -84,6 +92,8 @@ export class Event{
                 Event.nextSongIs = "difficulty2";
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta),  "tank",  4 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 3600);
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta),  "tank",  4 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
             }
             if(event.type == "guns") // ennemis tank  cirulent autour du joueur pour un petit instant
             {
@@ -93,6 +103,8 @@ export class Event{
                 Event.nextSongIs = "normalIntense";
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta),  "gunner",  4 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 3600);
+                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta),  "gunner",  4 + Event.difficultyDegree) :0;
+                event.state = !(event.timeElapsed >= 1800);
             }
             if(event.type == "boss")// milkMan?
             {
@@ -173,15 +185,19 @@ export class Event{
     // Méthode qui ajoute un certain nb de monstres avec le nb de coôtés donné
     ajouterMONSTRE(amount = 1, type = "normal", sides = 3) { 
 
+
+
         // si le nb de monstres actifs est inf a la limite -> ajouter
         if((Event.Monstre.cleanMonstres.length < 10 || !this.comeBacks) && Event.monstres.length < 100 * Event.difficultyDegree)
         {
+            //console.log(amount);
             for (let i = 0; i < amount; i++) {
-
+                //console.oglog("2");
                 let rngPos = Event.posRandomExterieur();
 
                 let monstre;
                 if(type == "normal") { 
+                    //console.log("3");
                     monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}            
                 else if(type == "runner") {
                     monstre = new Event.MonstreRunner( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
@@ -196,6 +212,7 @@ export class Event{
             }
         }
         else{
+            //console.log("4");
             this.placeOldOnes();
         }
 

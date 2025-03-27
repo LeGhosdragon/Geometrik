@@ -119,7 +119,7 @@ function setup() {
     //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
     // }, 10);
 
-    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur);
+    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur,Event);
 
 
     // Set le statut du jeu

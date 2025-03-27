@@ -47,7 +47,7 @@ export class Weapon{
 
 export class Sword extends Weapon {
     
-    constructor(cooldown = 1, baseDMG = 15, length, hasSword, hasTrail = true) {
+    constructor(cooldown = 1, baseDMG = 15, length, hasSword, hasTrail = false) {
         super("sword", cooldown, baseDMG, new PIXI.Graphics());
         this.firstSwing = true;
         this.hasSword = hasSword;

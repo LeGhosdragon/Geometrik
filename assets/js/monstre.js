@@ -77,23 +77,18 @@ export class Monstre {
         this.elapsedTime += 3 * delta;
         let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
         this.body.clear();
-        if(Monstre.app.space)
-        {
+        if(Monstre.app.space) {
             this.body.lineStyle(3, ennemiColor, 1);
             this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
-        }
-        else
-        {
+        } else {
             this.body.lineStyle(3, 0x000000, 1);
             this.body.beginFill(ennemiColor);
         }
-
     
         const radius = newSize * 50;
         const angleStep = (2 * Math.PI) / this.sides;
     
         this.body.moveTo(radius * Math.cos(0), radius * Math.sin(0));
-    
         for (let i = 1; i <= this.sides; i++) {
             let angle = i * angleStep;
             let x = radius * Math.cos(angle);
@@ -539,6 +534,57 @@ export class MonstreTank extends Monstre {
         const baseDMG = Math.round(2 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
+
+
+    // mise a jour de l'apparence du monstre
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        // gérer les couleurs selon le thème ?
+        if (Monstre.app.space) {
+            this.body.lineStyle(3, ennemiColor, 1);
+            this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
+        } else {
+            this.body.lineStyle(3, 0x000000, 1);
+            this.body.beginFill(ennemiColor);
+        }
+    
+        const radius = newSize * 50;
+        const angleStep = (2 * Math.PI) / this.sides;
+    
+        this.body.moveTo(radius, 0);
+        for (let i = 1; i <= this.sides; i++) {
+            let angle = i * angleStep;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+
+        // inner shape of tank
+        this.body.moveTo(0.5*radius, 0);
+        for (let i = 0; i <= this.sides; i++) {
+            let angle = i * angleStep;
+            let x = 0.5*radius * Math.cos(angle);
+            let y = 0.5*radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+        for (let i = 0; i < this.sides; i++) {
+            let angle = i * angleStep;
+            this.body.moveTo(0.5*radius * Math.cos(angle), 0.5*radius * Math.sin(angle));
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+        
+        this.body.closePath();
+        this.body.endFill();
+        
+        // S'assurer que le HP reste à jour
+        this.updateHP();
+    }
 }
 
 export class MonstreExp extends Monstre {
@@ -593,9 +639,9 @@ export class MonstreGunner extends Monstre {
     
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "gunner";
-        const size = 0.2;
+        const size = 0.3;
         const speed = 1;
-        const spinSpeed = 0.005;
+        const spinSpeed = 0;
         const baseHP = Math.round(15 * ennemiDifficultee);
         const exp = Math.round(4 + 4 * ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
@@ -604,7 +650,43 @@ export class MonstreGunner extends Monstre {
         this.lastShotTime = 0;
         this.currentTime = 0;
         this.isOnCooldown = false;
-        this.bulletSize = 10;
+        this.bulletSize = 8;
+    }
+
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        if(Monstre.app.space) {
+            this.body.lineStyle(3, ennemiColor, 1);
+            this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
+        } else {
+            this.body.lineStyle(3, 0x000000, 1);
+            this.body.beginFill(ennemiColor);
+        }
+
+        //Monstre.joueur.getX();
+    
+        const radius = newSize * 50;
+        const angleStep = (2 * Math.PI) / this.sides;
+    
+        this.body.moveTo(radius * Math.cos(0), radius * Math.sin(0));
+        for (let i = 1; i <= this.sides; i++) {
+            let angle = i * angleStep;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+
+        this.body.closePath();
+        this.body.endFill();
+        this.body.shadowColor = "red";
+        this.body.shadowBlur = 15;
+
+        // S'assurer que le HP reste à jour
+        this.updateHP();
     }
 
     bouger(joueur, delta, deltaX, deltaY, ennemiColor) {
@@ -723,17 +805,7 @@ export class MonstreGunner extends Monstre {
 }
 
 
-export class Boss extends Monstre {
-    constructor(x, y, sides, ennemiDifficultee) {
-        const type = "normal";
-        const size = 0.3;
-        const speed = 1;
-        const spinSpeed = 0.02;
-        const baseHP = Math.round(25 * ennemiDifficultee);
-        const exp = Math.round(2 * ennemiDifficultee/3);
-        const baseDMG = Math.round(1 * ennemiDifficultee);
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
-        //this.audio = new Monstre.Music("");
 
-    }
+export class Boss extends Monstre {
+    
 }
