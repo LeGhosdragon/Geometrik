@@ -6,6 +6,7 @@ import { Weapon, Sword, Explosion, Gun } from './weapons.js';
 import { Exp } from './experience.js';
 import { Upgrade } from './upgrades.js';
 import { Event } from './events.js';
+import { Music } from './musics.js';
 
 
 // Aliases
@@ -97,6 +98,7 @@ function setup() {
     Upgrade.addJoueur(joueur);
     Upgrade.addMonstre(Monstre);
     Upgrade.addGrid(Grid);
+    Event.addMusic(Music);
     Event.addApp(app);
     Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner);
 
@@ -199,9 +201,10 @@ function play(delta) {
 
 
         Grid.grid.x -= joueur.getVX() * delta;
-        Grid.grid.y -= joueur.getVY() * delta;  
-        app.gradientLine.x += deltaX;
-        app.gradientLine.y += deltaY;
+        Grid.grid.y -= joueur.getVY() * delta; 
+
+        app.gradientLine.x -= joueur.getVX() * delta;
+        app.gradientLine.y -= joueur.getVY() * delta;
         
         x += joueur.getVX() * delta;
         y += joueur.getVY() * delta;
@@ -278,7 +281,7 @@ function play(delta) {
     
     app.ennemiColor = updateBackgroundColor(app, Monstre);
     Shape3D.shapes.forEach(shape => shape.draw());
-
+    Event.updateMusic();
     Monstre.cleanup();
     Exp.cleanup(delta);
     afficherDebug();
@@ -297,7 +300,7 @@ function afficherDebug() {
         baseGunDMG: ${gun.baseDMG}
         baseSwordDMG: ${sword.baseDMG}
         Crit chance : ${joueur.critChance}%
-        Crit DMG : ${joueur.critDMG}x
+        Crit DMG : ${joueur.critDMG}
         Vitesse Joueur : ${joueur.vitesse}
         Vitesse X : ${joueur.getVX().toFixed(2)}
         Vitesse Y : ${joueur.getVY().toFixed(2)}
@@ -321,7 +324,27 @@ function afficherDebug() {
         Cursor Y: ${cursorY}
         Elapsed time: ${hour<=0?"":hour + "h"}${min<=0?"":min+ "m"}${elapsedTime.toFixed(2)}s
         Event : ${Event.currentEvent}
+        Song : ${Event.currentMusic.nom ? Event.currentMusic.nom : 0}
         FPS : ${app.ticker.FPS.toFixed(0)}
+
+
+
+
+
+
+
+        // la touche Q active ou désactive l'épée
+        // la touche T active ou désactive les textes de vie des ennemis
+        // la touche Y desactive ou active les exp orbs qui droppent des ennemis
+        // la touche B active ou désactive les explosions lors de la mort d'ennemis
+        // la touche ; active debug mode
+        // la touche G active ou désactive gun
+        // la touche M active MILK_MODE
+        // la touche "échap" pause la partie
+        // la touche L active un très GRAND nombre de lvlUps
+        // la touche C active ou désactive l'auto-attaque
+        // la touche P active ou désactive le mode space 
+        // la touche Backspace commits ded
     `;
     debugText.style.fill = app.ennemiColor;
 
@@ -358,7 +381,7 @@ function getFpsGraph(app, graphWidth = 100, graphHeight = 50) {
         });
     });
     graph.x = 44;
-    graph.y = 570;
+    graph.y = 585;
     graph.zIndex = 1000;
     return graph;
 }

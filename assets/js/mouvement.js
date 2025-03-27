@@ -50,7 +50,9 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
         milk = keyboard(77),          // 'M' key
         space = keyboard(80),        // 'P' key
         lvlUp = keyboard(76),       // 'L' key
-        autoAttack = keyboard(67); // 'C' key
+        autoAttack = keyboard(67), // 'C' key
+
+        suicide = keyboard(8); // 'Backspace' key
     
     // WASD keys
     const leftWASD = keyboard(65),   // 'A' key
@@ -262,6 +264,10 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
             
           
         }
+    }
+
+    suicide.press = () => {
+        if(!app.pause) joueur.playerDied();
     }
 
     // Arrow keys press and release

@@ -721,3 +721,19 @@ export class MonstreGunner extends Monstre {
         }
     }
 }
+
+
+export class Boss extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "normal";
+        const size = 0.3;
+        const speed = 1;
+        const spinSpeed = 0.02;
+        const baseHP = Math.round(25 * ennemiDifficultee);
+        const exp = Math.round(2 * ennemiDifficultee/3);
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        //this.audio = new Monstre.Music("");
+
+    }
+}

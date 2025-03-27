@@ -1,3 +1,4 @@
+
 /**
  * La classe Joueur gère ses propriétés, son affichage, so progression et ses interactions
  * avec les monstres.
@@ -315,7 +316,9 @@ export class Joueur {
         const heure = ((this.statistics.timePlayed%(3600000 * 60))/1000 - minute - seconde);
         this.statistics.timePlayed = this.statistics.timePlayed.toFixed(0) + "( " + Math.abs(heure.toFixed(0)) + "h " + minute.toFixed(0)/60 + "min " + seconde.toFixed(2) + "s "+ ")";
         const gameOverText = new PIXI.Text("Game Over", {
-            fontFamily: 'courier new',
+            fontFamily: 'calibri',
+            stroke: 'black',      // Black outline
+            strokeThickness: 4, 
             fontSize: 72,
             weight: 'bold',
             fill: 0xFF0000,
@@ -469,14 +472,14 @@ export class Joueur {
             statRow.style.borderRadius = "10px";
     
             // Stat name
-            const name = document.createElement("span");
+            const name = document.createElement("body");
             name.textContent = this.formatStatName(statName);
             name.style.fontFamily = "courier new";
             name.style.fontSize = "18px";
             name.style.color = "#ccc";
     
             // Stat value
-            const value = document.createElement("span");
+            const value = document.createElement("body");
             value.textContent = statValue;
             value.style.fontFamily = "courier new";
             value.style.fontSize = "18px";
