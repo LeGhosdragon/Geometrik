@@ -60,11 +60,12 @@ export class Event{
 
                 while(bossChoose)
                 {
+                    if (compteur == 10) {break;}
                     if(compteur >= 10){break;}
                     num = Math.floor(Math.random() * 2);
                     switch (num) {
                         case 0:
-                            if(Event.boss["bossNormal"] != null) {compteur++;}
+                            if(Event.boss["bossNormal"] != null) {compteur++;compteur++;}
                             else {
                                 event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
                                 Event.currentMusic.stop();
@@ -195,6 +196,7 @@ export class Event{
                 let rngPos = Event.posRandomExterieur();
 
                 let monstre;           
+                let monstre;          
                 if(type == "normal") { 
                     monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
                     // ligne de debug à Antoine pour tester les ennemis:
