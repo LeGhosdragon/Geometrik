@@ -1,5 +1,5 @@
 export class Music {
-    static volume = 0; // Default volume (50%)
+    static volume = 1; // Default volume (50%)
 
     constructor(nom) {
         this.nom = nom;

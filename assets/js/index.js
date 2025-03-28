@@ -1,5 +1,5 @@
 import { setupKeyboardControls } from './mouvement.js';
-import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, bossNormal } from './monstre.js';
+import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan } from './monstre.js';
 import { Grid, updateBackgroundColor, Shape3D} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
@@ -94,6 +94,7 @@ function setup() {
     Monstre.addJoueur(joueur);
     Monstre.addExplosion(explosion);
     Monstre.addEvent(Event);
+    Monstre.addShape(Shape3D);
     Weapon.addMonstreGunner(MonstreGunner);
     Upgrade.addApp(app);
     Upgrade.addJoueur(joueur);
@@ -101,7 +102,7 @@ function setup() {
     Upgrade.addGrid(Grid);
     Event.addMusic(Music);
     Event.addApp(app);
-    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, bossNormal);
+    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan);
     Joueur.addEvent(Event);
     Event.currentEvent = new Event("normal");
 
@@ -213,7 +214,7 @@ function play(delta) {
         y2 += joueur.getVY() * delta;
 
         for (let shape of Shape3D.shapes) {
-            shape.updatePosition(deltaX,deltaY, [joueur.getX(), joueur.getY()]);
+            shape.updatePosition(deltaX, deltaY, Event.boss["err404"]);
             shape.draw();
         }
 

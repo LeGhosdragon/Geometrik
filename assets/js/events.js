@@ -12,8 +12,12 @@ export class Event{
     static MonstreTank = null;
     static MonstreExp = null;
     static MonstreGunner = null;
-    static bossNormal = null;
-    static bossRunner = null;
+    static BossNormal = null;
+    static BossRunner = null;
+    static BossTank = null;
+    static BossGunner = null;
+    static MilkMan = null;
+    static Err404 = null;
     static monstres = null;
     static app = null;
     static joueur = null;
@@ -26,8 +30,7 @@ export class Event{
     static currentMusic = null;
     static nextSong = false;
     static nextSongIs = null;
-    static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "milkMan":null, "err404":null};
-    static hasBoss = false;
+    static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "bossGunner":null, "milkMan":null, "err404":null};
 
     constructor(type)
     {
@@ -47,23 +50,42 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 1800 == 0 ? bossChoose = true : 0;
+                event.timeElapsed % 600 == 0 ? bossChoose = true : 0;//SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUU
+                let compteur = 0;
+
+                // if(Event.boss["err404"] == null){
+                //     event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
+                // }
+
+
                 while(bossChoose)
                 {
-                    num = Math.floor(Math.random() * 1);
+                    if(compteur >= 10){break;}
+                    num = Math.floor(Math.random() * 2);
                     switch (num) {
                         case 0:
-                            if(Event.boss["bossNormal"] != null) {}
+                            if(Event.boss["bossNormal"] != null) {compteur++;}
                             else {
                                 event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
                                 Event.currentMusic.stop();
-                                Event.hasBoss = true; 
+    
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "boss";
                                 bossChoose = false;
+                                compteur = 0;
                             }
                             break;
-                    
+                        case 1:
+                            if(Event.boss["err404"] != null) {compteur++;}
+                            else {
+                                event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "404Boss";
+                                bossChoose = false;
+                                compteur = 0;
+                            }
+                            break;
                         default:
                             break;
                     }
@@ -172,9 +194,7 @@ export class Event{
             for (let i = 0; i < amount; i++) {
                 let rngPos = Event.posRandomExterieur();
 
-                let monstre;
-                if(type == "normal" ) { 
-                    monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}            
+                let monstre;           
                 if(type == "normal") { 
                     monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
                     // ligne de debug à Antoine pour tester les ennemis:
@@ -198,13 +218,33 @@ export class Event{
         //console.log(type);
         let monstre;
         if(type == "bossNormal"){
-            monstre = new Event.bossNormal( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);
-            Event.boss["bossNormal"] = monstre;
+            monstre = new Event.BossNormal( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);
+            Event.boss[type] = monstre;
             Event.app.stage.addChild(monstre.body);
             Event.monstres.push(monstre);}
         if(type == "bossRunner"){
-            monstre = new Event.bossRunner( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
-            Event.boss["bossRunner"] = monstre;
+            monstre = new Event.BossRunner( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
+            Event.boss[type] = monstre;
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);}
+        if(type == "bossTank"){
+            monstre = new Event.BossTank( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);
+            Event.boss[type] = monstre;
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);}
+        if(type == "bossGunner"){
+            monstre = new Event.BossGunner( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
+            Event.boss[type] = monstre;
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);}
+        if(type == "err404"){
+            monstre = new Event.Err404( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);
+            Event.boss[type] = monstre;
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);}
+        if(type == "milkMan"){
+            monstre = new Event.MilkMan( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
+            Event.boss[type] = monstre;
             Event.app.stage.addChild(monstre.body);
             Event.monstres.push(monstre);}
         else if(code == "normal"){
@@ -286,7 +326,7 @@ export class Event{
     }
 
     // ajoute une réf aux différents type de monstres
-    static addMonstres(monstresInput,m2,m3,m4,m5,m6,m7)//,m8)
+    static addMonstres(monstresInput,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12)
     {
         Event.Monstre = monstresInput;
         Event.monstres = Event.Monstre.monstres;
@@ -295,8 +335,12 @@ export class Event{
         Event.MonstreTank = m4;
         Event.MonstreExp = m5;
         Event.MonstreGunner = m6;
-        Event.bossNormal = m7;
-        //Event.bossRunner = m8;
+        Event.BossNormal = m7;
+        Event.BossRunner = m8;
+        Event.BossTank = m9;
+        Event.BossGunner = m10;
+        Event.Err404 = m11;
+        Event.MilkMan = m12;
     }
     // ajoute une réf a l'app PIXI
     static addApp(appInput) {

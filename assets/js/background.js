@@ -172,94 +172,16 @@ function hexToRgb(hex) {
 
 
 
-function createCube(size) {
-    const d = size / 2;
-    const vertices = [
-        { x: -d, y: -d, z: -d },
-        { x: d, y: -d, z: -d },
-        { x: d, y: d, z: -d },
-        { x: -d, y: d, z: -d },
-        { x: -d, y: -d, z: d },
-        { x: d, y: -d, z: d },
-        { x: d, y: d, z: d },
-        { x: -d, y: d, z: d },
-    ];
-
-    const edges = [
-        [0, 1], [1, 2], [2, 3], [3, 0],
-        [4, 5], [5, 6], [6, 7], [7, 4],
-        [0, 4], [1, 5], [2, 6], [3, 7]
-    ];
-
-    return { vertices, edges };
-}
-
-
-function createPyramid(size) {
-    const d = size / 2;
-    const vertices = [
-        { x: 0, y: d, z: 0 },
-        { x: -d, y: -d, z: -d },
-        { x: d, y: -d, z: -d },
-        { x: d, y: -d, z: d },
-        { x: -d, y: -d, z: d }
-    ];
-
-    const edges = [
-        [0, 1], [0, 2], [0, 3], [0, 4],
-        [1, 2], [2, 3], [3, 4], [4, 1]
-    ];
-
-    return { vertices, edges };
-}
-
-function createTetrahedron(size) {
-    const d = size / 2;
-    const vertices = [
-        { x: 0, y: d, z: 0 },
-        { x: -d, y: -d, z: d },
-        { x: d, y: -d, z: d },
-        { x: 0, y: -d, z: -d }
-    ];
-
-    const edges = [
-        [0, 1], [0, 2], [0, 3],
-        [1, 2], [1, 3], [2, 3]
-    ];
-
-    return { vertices, edges };
-}
-
-function createOctahedron(size) {
-    const d = size / 2;
-    const vertices = [
-        { x: 0, y: d, z: 0 },
-        { x: 0, y: -d, z: 0 },
-        { x: d, y: 0, z: 0 },
-        { x: -d, y: 0, z: 0 },
-        { x: 0, y: 0, z: d },
-        { x: 0, y: 0, z: -d }
-    ];
-
-    const edges = [
-        [0, 2], [0, 3], [0, 4], [0, 5],
-        [1, 2], [1, 3], [1, 4], [1, 5],
-        [2, 4], [2, 5], [3, 4], [3, 5]
-    ];
-
-    return { vertices, edges };
-}
-
-
 /**
  * Classe utilisée pour créer, positionner, faire tourner et mettre a jour 
  * des formes 3D pour enrichir le fond de la scène.
  */
 export class Shape3D {
     
-    constructor(app, vertices, edges, x, y, z) {
+    constructor(app, vertices, edges, x, y, z, boss = false) {
         this.app = app;
         this.vertices = vertices;
+        this.boss = false;
         this.edges = edges;
         this.angleX = Math.random() * Math.PI * 2;
         this.angleY = Math.random() * Math.PI * 2;
@@ -271,13 +193,15 @@ export class Shape3D {
         let num = Math.ceil(Math.random() * 3);
         switch (num) {
             case 1:
-                this.color = '0x0099ff';
+                !boss ? this.color = '0x0099ff' : this.color = '0xFF0000';
                 break;
             case 2:
-                this.color = '0x4a0099';
+                !boss ? this.color = '0x4a0099' : this.color = '0x000000';
+                
                 break;
             case 3:
-                this.color = '0x99005e';
+                !boss ? this.color = '0x99005e' : this.color = '0xFFFFFF';
+                
                 break;
             default:
                 break;
@@ -295,7 +219,7 @@ export class Shape3D {
     // Méthode qui projette un point 3D sur un plan 2D et retourne les coordonnées 
     project3D(point3D) {
         const distance = 400;
-        const scale = distance / (distance + point3D.z);
+        const scale = distance / Math.max(distance + point3D.z, 1);
         const x = point3D.x * scale + this.app.view.width / 2;
         const y = point3D.y * scale + this.app.view.height / 2;
         return { x, y };
@@ -325,7 +249,8 @@ export class Shape3D {
     draw() {
         this.graphics.clear();
 
-        this.graphics.lineStyle(this.position.z * 1.3, this.app.space ? this.color : this.app.ennemiColor, 1);
+        if(!this.boss) {this.graphics.lineStyle(this.position.z * 1.3, this.app.space ? this.color : this.app.ennemiColor, 1);}
+        else{this.graphics.lineStyle(this.position.z * 2, this.app.space ? this.color : this.app.ennemiColor, 1);}
 
         let projected = [];
 
@@ -347,10 +272,19 @@ export class Shape3D {
     }
 
     // Mettre à jour la position en ajoutant des offsets    
-    updatePosition(dx, dy, playerPosition) {
-        this.position.x += dx * this.position.z;
-        this.position.y += dy * this.position.z;
+    updatePosition(dx, dy, bossPos = 0) {
 
+        if(!this.boss)
+        {
+            this.position.x += dx * this.position.z;
+            this.position.y += dy * this.position.z;
+        }
+        else if(bossPos.getX() != null && bossPos.getY() != null){
+            this.position.x = bossPos.getX()  - this.app.view.width / 2;
+            this.position.y = bossPos.getY()  - this.app.view.height / 2;
+        }
+        if(!this.boss)
+        {
         // Check if the shape is too far from the player, and remove it if so
         const distance = Shape3D.distanceBetweenPoints(0, 0, this.position.x , this.position.y);
         if (distance > Shape3D.maxDistanceFromPlayer) {
@@ -360,7 +294,7 @@ export class Shape3D {
             if (index !== -1) {
                 Shape3D.shapes.splice(index, 1);
             }
-        }
+        }}
     }
 
     // Function to calculate distance between two points
@@ -387,16 +321,16 @@ export class Shape3D {
             let vertices, edges;
             switch (shapeType) {
                 case 0:
-                    ({ vertices, edges } = createCube(size));
+                    ({ vertices, edges } = Shape3D.createCube(size));
                     break;
                 case 1:
-                    ({ vertices, edges } = createPyramid(size));
+                    ({ vertices, edges } = Shape3D.createPyramid(size));
                     break;
                 case 2:
-                    ({ vertices, edges } = createTetrahedron(size));
+                    ({ vertices, edges } = Shape3D.createTetrahedron(size));
                     break;
                 case 3:
-                    ({ vertices, edges } = createOctahedron(size));
+                    ({ vertices, edges } = Shape3D.createOctahedron(size));
                     break;
             }
 
@@ -426,5 +360,84 @@ export class Shape3D {
                 //console.warn("Could not find a valid position after " + Shape3D.maxAttempts + " attempts.");
             }
         }
+    }
+    
+
+    static createCube(size) {
+        const d = size / 2;
+        const vertices = [
+            { x: -d, y: -d, z: -d },
+            { x: d, y: -d, z: -d },
+            { x: d, y: d, z: -d },
+            { x: -d, y: d, z: -d },
+            { x: -d, y: -d, z: d },
+            { x: d, y: -d, z: d },
+            { x: d, y: d, z: d },
+            { x: -d, y: d, z: d },
+        ];
+
+        const edges = [
+            [0, 1], [1, 2], [2, 3], [3, 0],
+            [4, 5], [5, 6], [6, 7], [7, 4],
+            [0, 4], [1, 5], [2, 6], [3, 7]
+        ];
+
+        return { vertices, edges };
+    }
+
+
+    static createPyramid(size) {
+        const d = size / 2;
+        const vertices = [
+            { x: 0, y: d, z: 0 },
+            { x: -d, y: -d, z: -d },
+            { x: d, y: -d, z: -d },
+            { x: d, y: -d, z: d },
+            { x: -d, y: -d, z: d }
+        ];
+
+        const edges = [
+            [0, 1], [0, 2], [0, 3], [0, 4],
+            [1, 2], [2, 3], [3, 4], [4, 1]
+        ];
+
+        return { vertices, edges };
+    }
+
+    static createTetrahedron(size) {
+        const d = size / 2;
+        const vertices = [
+            { x: 0, y: d, z: 0 },
+            { x: -d, y: -d, z: d },
+            { x: d, y: -d, z: d },
+            { x: 0, y: -d, z: -d }
+        ];
+
+        const edges = [
+            [0, 1], [0, 2], [0, 3],
+            [1, 2], [1, 3], [2, 3]
+        ];
+
+        return { vertices, edges };
+    }
+
+    static createOctahedron(size) {
+        const d = size / 2;
+        const vertices = [
+            { x: 0, y: d, z: 0 },
+            { x: 0, y: -d, z: 0 },
+            { x: d, y: 0, z: 0 },
+            { x: -d, y: 0, z: 0 },
+            { x: 0, y: 0, z: d },
+            { x: 0, y: 0, z: -d }
+        ];
+
+        const edges = [
+            [0, 2], [0, 3], [0, 4], [0, 5],
+            [1, 2], [1, 3], [1, 4], [1, 5],
+            [2, 4], [2, 5], [3, 4], [3, 5]
+        ];
+
+        return { vertices, edges };
     }
 }

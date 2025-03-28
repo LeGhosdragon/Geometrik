@@ -7,6 +7,7 @@ export class Monstre {
     static joueur = null;
     static cleanMonstres = [];
     static Explosion = null;
+    static Shape3D = null;
     static Exp = null;
     static app = null;
     static Event = null;
@@ -156,6 +157,7 @@ export class Monstre {
 
     // éviter les collisions entre les monstres
     avoidMonsterCollision() {
+        
         const minDistance = 85 * this.size;
         const avoidFactor = 1.2;
 
@@ -452,6 +454,9 @@ export class Monstre {
     }
     static addEvent(eventInput) {
         Monstre.Event = eventInput;
+    }
+    static addShape(shapeInput) {
+        Monstre.Shape3D = shapeInput;
     }
     
         // Getters et Setters    
@@ -810,7 +815,7 @@ export class MonstreGunner extends Monstre {
 
 
 
-export class bossNormal extends Monstre {
+export class BossNormal extends Monstre {
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "bossNormal";
         const size = 1.2;
@@ -825,16 +830,10 @@ export class bossNormal extends Monstre {
     updateHP() {
         if (this.currentHP <= 0) {
 
-            if (Monstre.dedExpl) {new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);}
-            if (Monstre.dedEXP) {
-                new Monstre.Exp(this.getX(), this.getY(), this.exp);
-                if(this.type == "bossNormal")
-                {
-                    Monstre.Event.nextSong = true;
-                    Monstre.Event.currentMusic.stop();
-                }
-            }
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
             Monstre.joueur.statistics.kills += 1;
+
             // Supprimer le monstre de l'array 
             let index = Monstre.monstres.indexOf(this);
             if (index !== -1) {
@@ -861,6 +860,344 @@ export class bossNormal extends Monstre {
         }
     
         // Mise a jour ud texte HP si le joueur est encore en vie
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
+}
+export class BossTank extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "bossTank";
+        const size = 1.2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
+        const exp = Math.round(2 * ennemiDifficultee/3)*100;
+        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+            
+            // Supprimer le monstre de l'array 
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+    
+            // Supprimer les graphiques du stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+    
+            // Arrêt de toute animation ticker-based
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+    
+            // Clean up des références pour le garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["bossTank"] = null;
+            return;
+        }
+    
+        // Mise a jour ud texte HP si le joueur est encore en vie
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
+}
+
+export class BossRunner extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "bossRunner";
+        const size = 1.2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
+        const exp = Math.round(2 * ennemiDifficultee/3)*100;
+        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+            
+            // Supprimer le monstre de l'array 
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+    
+            // Supprimer les graphiques du stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+    
+            // Arrêt de toute animation ticker-based
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+    
+            // Clean up des références pour le garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["bossRunner"] = null;
+            return;
+        }
+    
+        // Mise a jour ud texte HP si le joueur est encore en vie
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
+}
+
+export class MilkMan extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "milkMan";
+        const size = 1.2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
+        const exp = Math.round(2 * ennemiDifficultee/3)*100;
+        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+            
+            // Supprimer le monstre de l'array 
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+    
+            // Supprimer les graphiques du stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+    
+            // Arrêt de toute animation ticker-based
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+    
+            // Clean up des références pour le garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["milkMan"] = null;
+            return;
+        }
+    
+        // Mise a jour ud texte HP si le joueur est encore en vie
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
+}
+
+export class BossGunner extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "bossGunner";
+        const size = 1.2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
+        const exp = Math.round(2 * ennemiDifficultee/3)*100;
+        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+            
+            // Supprimer le monstre de l'array 
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+    
+            // Supprimer les graphiques du stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+    
+            // Arrêt de toute animation ticker-based
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+    
+            // Clean up des références pour le garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["bossGunner"] = null;
+            return;
+        }
+    
+        // Mise a jour ud texte HP si le joueur est encore en vie
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
+}
+export class Err404 extends Monstre {
+    static shapes = [];
+    
+    constructor(x, y, sides = 10, ennemiDifficultee) {
+        const shapeNum = 100;
+        const type = "err404";
+        const size = 2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2) * 125;
+        const exp = Math.round(2 * ennemiDifficultee / 3) * 100;
+        const baseDMG = Math.round(1 * ennemiDifficultee);
+        
+        super(x, y, 15, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        this.count = 0;
+        this.shapeNum = shapeNum;
+        this.attachedShapes = [];
+        this.createBody();
+    }    
+
+    createBody() {
+        for (let i = 0; i < this.shapeNum; i++) {
+            let vertices, edges;
+            ({ vertices, edges } = Monstre.Shape3D.createCube(300));
+            
+            // Create shape at monster's position
+            let shape = new Monstre.Shape3D(Monstre.app, vertices, edges, this.body.x, this.body.y, Math.random(), true);
+            shape.boss = true;
+            // Attach to monster
+            this.attachedShapes.push(shape);
+            Monstre.Shape3D.shapes.push(shape);
+        }
+    }
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        if(this.count > 20)
+        {
+            this.vitesse = Math.random() * 10;
+            this.count = 0;
+        }
+        this.count+=1*delta;
+
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+
+        this.body.clear();
+        if(Monstre.app.space) {
+            this.body.lineStyle(3, ennemiColor, 1);
+            this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
+        } else {
+            this.body.lineStyle(3, 0x000000, 1);
+            this.body.beginFill(ennemiColor);
+        }
+    
+        const radius = this.size * 70;
+        const angleStep = (2 * Math.PI) / this.sides;
+    
+        this.body.moveTo(radius * Math.cos(0), radius * Math.sin(0));
+        for (let i = 1; i <= this.sides; i++) {
+            let angle = i * angleStep;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+
+        this.body.closePath();
+        this.body.endFill();
+        this.body.zIndex = -1;
+        this.body.visible = false;
+        // S'assurer que le HP reste à jour
+        this.updateHP();
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+
+            // Remove shapes from scene when monster dies
+            for (let shape of this.attachedShapes) {
+                let shapeIndex = Monstre.Shape3D.shapes.indexOf(shape);
+                if (shapeIndex !== -1) {
+                    Monstre.Shape3D.shapes.splice(shapeIndex, 1);
+                }
+            }
+            this.attachedShapes = [];
+
+            // Remove monster from stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["err404"] = null;
+            return;
+        }
+
         if (this.showLife) {
             this.hpText.text = this.currentHP;
             this.hpText.x = this.getX();
