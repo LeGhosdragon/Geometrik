@@ -130,7 +130,11 @@ export class Event{
             if (Event.currentMusic.audio.currentTime >= (Event.currentMusic.audio.duration) || Event.boss || Event.nextSong) {
                 // Arrête la musique actuelle
                 Event.currentMusic.stop();
-    
+                
+
+                if (false) { return; } // DEBUG; MUTER LA MUSIQUE POUR LE DÉVELOPPEMENT.
+
+
                 // Change pour la nouvelle musique
                 if(!Event.boss && !Event.nextSong)
                 {
@@ -189,8 +193,9 @@ export class Event{
 
                 let monstre;
                 if(type == "normal") { 
-                    //console.log("3");
-                    monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}            
+                    monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
+                    // ligne de debug à Antoine pour tester les ennemis:
+                    //monstre = new Event.MonstreGunner( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
                 else if(type == "runner") {
                     monstre = new Event.MonstreRunner( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
                 else if(type == "tank") {

@@ -646,7 +646,7 @@ export class MonstreGunner extends Monstre {
         const exp = Math.round(4 + 4 * ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
-        this.shootInterval = 250;  
+        this.shootInterval = 250;
         this.lastShotTime = 0;
         this.currentTime = 0;
         this.isOnCooldown = false;
@@ -667,23 +667,23 @@ export class MonstreGunner extends Monstre {
             this.body.beginFill(ennemiColor);
         }
 
-        //Monstre.joueur.getX();
+        const angleToPlayer = Math.atan2((Monstre.joueur.getY() + Monstre.joueur.size) - this.getY(), (Monstre.joueur.getX() + Monstre.joueur.size) - this.getX());
+        this.body.rotation = angleToPlayer;
+        //this.body.rotation
+        
+        const r = newSize * 50;
+        //const angleStep = (2 * Math.PI) / this.sides;
     
-        const radius = newSize * 50;
-        const angleStep = (2 * Math.PI) / this.sides;
-    
-        this.body.moveTo(radius * Math.cos(0), radius * Math.sin(0));
-        for (let i = 1; i <= this.sides; i++) {
-            let angle = i * angleStep;
-            let x = radius * Math.cos(angle);
-            let y = radius * Math.sin(angle);
-            this.body.lineTo(x, y);
-        }
+        this.body.moveTo(r*0.5, r*-0.7);
+        this.body.lineTo(r*1.4, r*-0.7);
+        this.body.lineTo(r*1.4, r*0.7);
+        this.body.lineTo(r*0.5, r*0.7);
+        this.body.lineTo(r*-0.3, r*1.1);
+        this.body.lineTo(r*-1.1, r*0);
+        this.body.lineTo(r*-0.3, r*-1.1);
 
         this.body.closePath();
         this.body.endFill();
-        this.body.shadowColor = "red";
-        this.body.shadowBlur = 15;
 
         // S'assurer que le HP reste à jour
         this.updateHP();
