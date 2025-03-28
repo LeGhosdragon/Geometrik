@@ -48,12 +48,14 @@ export class Event{
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
                 event.timeElapsed % 1800 == 0 ? bossChoose = true : 0;
+                let compteur = 0;
                 while(bossChoose)
                 {
+                    if (compteur == 10) {break;}
                     num = Math.floor(Math.random() * 1);
                     switch (num) {
                         case 0:
-                            if(Event.boss["bossNormal"] != null) {}
+                            if(Event.boss["bossNormal"] != null) {compteur++;}
                             else {
                                 event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
                                 Event.currentMusic.stop();
@@ -172,9 +174,7 @@ export class Event{
             for (let i = 0; i < amount; i++) {
                 let rngPos = Event.posRandomExterieur();
 
-                let monstre;
-                if(type == "normal" ) { 
-                    monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}            
+                let monstre;          
                 if(type == "normal") { 
                     monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
                     // ligne de debug à Antoine pour tester les ennemis:

@@ -671,20 +671,18 @@ export class MonstreGunner extends Monstre {
             this.body.beginFill(ennemiColor);
         }
 
-        const angleToPlayer = Math.atan2((Monstre.joueur.getY() + Monstre.joueur.size) - this.getY(), (Monstre.joueur.getX() + Monstre.joueur.size) - this.getX());
-        this.body.rotation = angleToPlayer;
-        //this.body.rotation
-        
+        this.body.rotation = Math.atan2((Monstre.joueur.getY() + Monstre.joueur.size) - this.getY(), (Monstre.joueur.getX() + Monstre.joueur.size) - this.getX());
         const r = newSize * 50;
-        //const angleStep = (2 * Math.PI) / this.sides;
     
-        this.body.moveTo(r*0.5, r*-0.7);
-        this.body.lineTo(r*1.4, r*-0.7);
-        this.body.lineTo(r*1.4, r*0.7);
-        this.body.lineTo(r*0.5, r*0.7);
+        this.body.moveTo(r*0.5, r*0.6);
+        this.body.lineTo(r*0.5, r*-0.6);
+        this.body.lineTo(r*1.4, r*-0.8);
+        this.body.lineTo(r*1.4, r*0.8);
+        this.body.lineTo(r*0.5, r*0.6);
         this.body.lineTo(r*-0.3, r*1.1);
         this.body.lineTo(r*-1.1, r*0);
         this.body.lineTo(r*-0.3, r*-1.1);
+        this.body.lineTo(r*0.5, r*-0.6);
 
         this.body.closePath();
         this.body.endFill();
