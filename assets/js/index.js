@@ -1,5 +1,5 @@
 import { setupKeyboardControls } from './mouvement.js';
-import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner } from './monstre.js';
+import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, bossNormal } from './monstre.js';
 import { Grid, updateBackgroundColor, Shape3D} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
@@ -93,6 +93,7 @@ function setup() {
     Monstre.addExp(exp);
     Monstre.addJoueur(joueur);
     Monstre.addExplosion(explosion);
+    Monstre.addEvent(Event);
     Weapon.addMonstreGunner(MonstreGunner);
     Upgrade.addApp(app);
     Upgrade.addJoueur(joueur);
@@ -100,17 +101,17 @@ function setup() {
     Upgrade.addGrid(Grid);
     Event.addMusic(Music);
     Event.addApp(app);
-    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner);
-
+    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, bossNormal);
+    Joueur.addEvent(Event);
     Event.currentEvent = new Event("normal");
-    //new Event("ambush");
+
     new Event(" ");
 
     sword = new Sword(1, joueur.baseDMG, 80, hasSword);  // rectangle bleu de 10x80
     gun = new Gun(1, joueur.baseDMG*1.7, 1);
     Upgrade.addWeapons(Sword, Gun, Explosion, sword, gun);
     joueur.chooseClass();
-;
+    activerSpace();
 
 
 
@@ -331,8 +332,8 @@ function afficherDebug() {
         Cursor X: ${cursorX}
         Cursor Y: ${cursorY}
         Elapsed time: ${hour<=0?"":hour + "h"}${min<=0?"":min+ "m"}${elapsedTime.toFixed(2)}s
-        Event : ${Event.currentEventName}
-        Song : ${Event.currentMusic.nom ? Event.currentMusic.nom : 0}
+        Event : ${Event.currentEvent.type}
+        Song : ${Event.currentMusic.nom != null ? Event.currentMusic.nom : 0}
         FPS : ${app.ticker.FPS.toFixed(0)}
 
 
@@ -434,6 +435,27 @@ function resizeApp(joueur) {
     app.view.style.bottom = "0";
     app.view.style.transform = "translateX(0.5%)";
     updateExpBar(joueur);
+}
+
+function activerSpace()
+{
+    app.space = true;
+    joueur.body.clear();
+    joueur.body.lineStyle(3, 0xFFFFFF, 1);
+    joueur.body.beginFill(0xFF0000);
+    joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+    joueur.body.endFill();
+    gun.body.lineStyle(3, 0xFFFFFF, 1);
+    gun.body.beginFill(0x000000);
+    gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+    gun.body.endFill();
+    if(!app.pause)
+    {   
+        Joueur.Grid.pauseGrid(app);
+        app.pause = true;
+        Joueur.Grid.pauseGrid(app);
+        app.pause = false;
+    }
 }
 // Update position du curseur avec le mouvement de la souris
 document.addEventListener("mousemove", (event) => {

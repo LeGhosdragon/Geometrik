@@ -19,7 +19,7 @@ export class Grid {
 
         if (app != null) {
             if (app.space && gridThickness != 100) {
-                grid.lineStyle(gridThickness, 0xFFFFFF, 1);
+                grid.lineStyle(gridThickness*1.5, 0xFFFFFF, 1);
             } else if (gridThickness == 100 && app.space) {
                 grid.lineStyle(gridThickness, 0x000000, 1);
             } else {
@@ -45,10 +45,6 @@ export class Grid {
         if (app != null && app.space) {
             app.gradientLine.mask = grid;
             app.stage.addChild(app.gradientLine);
-            app.ticker.add(() => {
-                app.gradientLine.tilePosition.x += 1.5;
-                app.gradientLine.tilePosition.y += 1;
-            });
         }
 
         grid.position.set(900, 400);
@@ -271,6 +267,21 @@ export class Shape3D {
         this.speedX = (Math.random() - 0.2) * 0.002;
         this.speedY = (Math.random() - 0.2) * 0.002;
         this.speedZ = (Math.random() - 0.2) * 0.002;
+        this.color = 0xFFFFFF;
+        let num = Math.ceil(Math.random() * 3);
+        switch (num) {
+            case 1:
+                this.color = '0x0099ff';
+                break;
+            case 2:
+                this.color = '0x4a0099';
+                break;
+            case 3:
+                this.color = '0x99005e';
+                break;
+            default:
+                break;
+        }
         this.position = { x, y, z }; // Position qui peut être updated
         this.graphics = new PIXI.Graphics();
         this.app.stage.addChild(this.graphics);
@@ -313,7 +324,8 @@ export class Shape3D {
     // 3. Trace les arrêtes entre les sommets projetés
     draw() {
         this.graphics.clear();
-        this.graphics.lineStyle(this.position.z * 1.3, this.app.space ? this.app.ennemiColor : this.app.ennemiColor, 1);
+
+        this.graphics.lineStyle(this.position.z * 1.3, this.app.space ? this.color : this.app.ennemiColor, 1);
 
         let projected = [];
 
@@ -369,7 +381,7 @@ export class Shape3D {
 
     // Fonction pour générer des formes sans overlap
     static spawnShapes(Event, app) {
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 10; i++) {
             const size = Math.random() * 250 + 50;
             let shapeType = Math.floor(Math.random() * 4);
             let vertices, edges;

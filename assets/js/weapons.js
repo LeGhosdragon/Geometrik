@@ -84,60 +84,73 @@ export class Sword extends Weapon {
 
     updateTrail(delta, offsets, deltaX, deltaY) {
         if (!this.body.visible) {
-            this.trail.forEach((particle, index) => {
-                if (particle.alpha > 0) {
-                    particle.alpha -= 0.02 * (index + 1) * alpha;
+            this.trail.forEach((trailData, index) => {
+                if (trailData.particle.alpha > 0) {
+                    trailData.particle.alpha -= 0.02 * (index + 1);
                 }
             });
-        } else {
-            const dx = this.getX() - this.previousSwordPosition.x;
-            const dy = this.getY() - this.previousSwordPosition.y;
-            const swordSpeed = Math.sqrt(dx * dx + dy * dy);
-            const numParticles = Math.max(15, Math.floor(this.length / 4) + Math.floor(swordSpeed * 5));
-            this.previousSwordPosition.x = this.getX();
-            this.previousSwordPosition.y = this.getY();
+            return;
+        }
     
+        const dx = this.getX() - this.previousSwordPosition.x;
+        const dy = this.getY() - this.previousSwordPosition.y;
+        const swordSpeed = Math.sqrt(dx * dx + dy * dy);
+        const numParticles = Math.max(10, Math.floor(this.length / 5) + Math.floor(swordSpeed * 3)); // Fewer particles
+    
+        this.previousSwordPosition.x = this.getX();
+        this.previousSwordPosition.y = this.getY();
+    
+        const pivotX = this.getX();
+        const pivotY = this.getY();
+    
+        // Create particles only if necessary
+        if (this.trail.length < numParticles) {
             offsets.forEach((offset) => {
                 const angle = this.body.rotation - Math.PI / 2 + offset;
                 const step = this.length / numParticles;
-                const pivotX = this.getX();
-                const pivotY = this.getY();
     
-                for (let i = 0; i < numParticles; i++) {
+                for (let i = 0; i < numParticles - this.trail.length; i++) {
                     const distance = i * step;
-                    const x = pivotX + Math.cos(angle) * (distance + 30);
-                    const y = pivotY + Math.sin(angle) * (distance + 30);
+                    const x = pivotX + Math.cos(angle) * (distance + 20);
+                    const y = pivotY + Math.sin(angle) * (distance + 20);
     
-                    const trailParticle = new PIXI.Graphics();
-                    trailParticle.beginFill(0x0FFFFF, 0.3);
-                    trailParticle.drawCircle(0, 0, 6);
-                    trailParticle.endFill();
+                    let trailParticle;
+                    if (this.trailPool.length > 0) {
+                        // Reuse old particle
+                        trailParticle = this.trailPool.pop();
+                        trailParticle.alpha = 0.3;
+                    } else {
+                        // Create new particle
+                        trailParticle = new PIXI.Graphics();
+                        trailParticle.beginFill(0x0FFFFF, 0.3);
+                        trailParticle.drawCircle(0, 0, 5);
+                        trailParticle.endFill();
+                        Weapon.trailContainer.addChild(trailParticle); // Use a container
+                    }
+    
                     trailParticle.x = x;
                     trailParticle.y = y;
                     trailParticle.zIndex = -1;
-    
-                    Weapon.app.stage.addChild(trailParticle);
                     this.trail.push({ particle: trailParticle, age: 0 });
                 }
             });
         }
     
+        // Update existing particles
         this.trail.forEach((trailData) => {
             const particle = trailData.particle;
-            if (particle.alpha > 0) {
-                trailData.age++;
-                particle.alpha -= 0.012 * trailData.age;
-                particle.x += deltaX;
-                particle.y += deltaY;
-            }
+            trailData.age++;
+            particle.alpha -= 0.01;
+            particle.x += deltaX;
+            particle.y += deltaY;
         });
     
-        // Clean up particles when they are fully transparent
+        // Recycle faded particles
         for (let i = this.trail.length - 1; i >= 0; i--) {
             const trailData = this.trail[i];
             if (trailData.particle.alpha <= 0) {
-                Weapon.app.stage.removeChild(trailData.particle);
-                trailData.particle.destroy();  // Ensure proper cleanup
+                Weapon.trailContainer.removeChild(trailData.particle);
+                this.trailPool.push(trailData.particle); // Store for reuse
                 this.trail.splice(i, 1);
             }
         }
@@ -145,7 +158,7 @@ export class Sword extends Weapon {
         this.body.zIndex = 1;
         Weapon.app.stage.addChild(this.body);
     }
-
+    
     hideSwordAndParticles() {
         this.body.visible = false;
     }

@@ -8,11 +8,12 @@ export class Joueur {
     static Monstre = null;
     static upgrade = null;
     static Upgrade = null;
+    static Event = null;
     static Explosion = null;
     static EXP_BAR = document.getElementById('expBar');
     static Grid = null;
 
-    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 15, elapsedTime = 0, couleur = 0xFF0000, weapons = ["sword","gun"]) {
+    constructor(app, size = 16, vitesse = 2, baseHP = 20, currentHP = baseHP, baseDMG = 15, elapsedTime = 0, couleur = 0xFF0000, weapons = ["sword","gun"]) {
         this.hold = false;
         this.clickLock = false;
         this.lvl = 0;
@@ -397,7 +398,7 @@ export class Joueur {
                 this.body.visible = true;
                 this.hpText.visible = true;
                 this.healthBar.visible = true;
-                
+                Joueur.Event.currentMusic.play();
                 document.body.removeChild(container);
             });
             container.appendChild(card);
@@ -543,7 +544,10 @@ export class Joueur {
     {
         Joueur.Grid = grid;
     }
-
+    static addEvent(event)
+    {
+        Joueur.Event = event;
+    }
 
     // Getters et Setters
     setHP(hp)

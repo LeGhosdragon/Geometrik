@@ -11,6 +11,8 @@ export class Music {
             return;
         }
 
+        //console.log(`Loading: ${this.path}`);
+
         // Écoute l'événement pour obtenir la durée une fois chargé
         this.audio.addEventListener("loadedmetadata", () => {
             this.duration = this.audio.duration;
@@ -53,11 +55,15 @@ export class Music {
     }
 
     play() {
-        if (this.audio.readyState >= 3) { // Vérifie que l'audio est prêt
+        if (this.audio.readyState < 3) { // Vérifie si l'audio n'est pas prêt
+            console.warn(`Audio not fully loaded: ${this.nom}. Waiting...`);
+            this.audio.addEventListener('canplaythrough', () => {
+                console.log(`Now playing: ${this.nom}`);
+                this.audio.play().catch(err => console.error("Play error:", err));
+            }, { once: true });
+        } else {
             console.log(`Playing: ${this.nom}`);
             this.audio.play().catch(err => console.error("Play error:", err));
-        } else {
-            console.warn(`Audio not ready yet: ${this.nom}`);
         }
     }
 

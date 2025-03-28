@@ -9,6 +9,7 @@ export class Monstre {
     static Explosion = null;
     static Exp = null;
     static app = null;
+    static Event = null;
     static showLife = false;
     static dedExpl = false;
     static dedEXP = true;
@@ -449,6 +450,9 @@ export class Monstre {
     static addJoueur(joueurInput) {
         Monstre.joueur = joueurInput;
     }
+    static addEvent(eventInput) {
+        Monstre.Event = eventInput;
+    }
     
         // Getters et Setters    
 
@@ -483,7 +487,7 @@ export class MonstreNormal extends Monstre {
         const size = 0.3;
         const speed = 1;
         const spinSpeed = 0.02;
-        const baseHP = Math.round(25 * ennemiDifficultee);
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2);
         const exp = Math.round(2 * ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
@@ -496,7 +500,7 @@ export class MonstreRunner extends Monstre {
         const size = 0.25;
         const speed = 2.5;
         const spinSpeed = 0.04;
-        const baseHP = Math.round(15 * ennemiDifficultee);
+        const baseHP = Math.round(15 * ennemiDifficultee**1.2);
         const exp = Math.round(1 + ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
@@ -529,7 +533,7 @@ export class MonstreTank extends Monstre {
         const size = 0.45;
         const speed = 0.4;
         const spinSpeed = 0.005;
-        const baseHP = Math.round(50 * ennemiDifficultee);
+        const baseHP = Math.round(50 * ennemiDifficultee**1.2);
         const exp = Math.round(4 + 4 * ennemiDifficultee/3);
         const baseDMG = Math.round(2 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
@@ -594,7 +598,7 @@ export class MonstreExp extends Monstre {
         const size = 0.5;
         const speed = 0.2;
         const spinSpeed = 0.003;
-        const baseHP = Math.round(250 * ennemiDifficultee);
+        const baseHP = Math.round(250 * ennemiDifficultee**1.2);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, 1, Monstre.Exp.expBuildUp);
     }
     actualiserPolygone() {
@@ -624,7 +628,7 @@ export class MonstreExp extends Monstre {
             let y = radius * Math.sin(angle);
             this.body.lineTo(x, y);
         }
-        this.exp = Monstre.Exp.expBuildUp;
+        this.exp = Monstre.Exp.expBuildUp + Monstre.joueur.reqExp;
     
         this.body.closePath();
         this.body.endFill();
@@ -642,7 +646,7 @@ export class MonstreGunner extends Monstre {
         const size = 0.3;
         const speed = 1;
         const spinSpeed = 0;
-        const baseHP = Math.round(15 * ennemiDifficultee);
+        const baseHP = Math.round(15 * ennemiDifficultee**1.2);
         const exp = Math.round(4 + 4 * ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
@@ -734,7 +738,7 @@ export class MonstreGunner extends Monstre {
         // Créer une balle et inisialiser ses propriétés
         const bullet = new PIXI.Graphics();
         bullet.radius = this.bulletSize;
-        bullet.lineStyle(3, 0xFF0000, 1);
+        bullet.lineStyle(3, 0xFFFFFF, 1);
         bullet.beginFill(0xFF0000);
         bullet.drawCircle(0, 0, bullet.radius);
         bullet.endFill();
@@ -806,6 +810,62 @@ export class MonstreGunner extends Monstre {
 
 
 
-export class Boss extends Monstre {
+export class bossNormal extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "bossNormal";
+        const size = 1.2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
+        const exp = Math.round(2 * ennemiDifficultee/3)*100;
+        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+
+            if (Monstre.dedExpl) {new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);}
+            if (Monstre.dedEXP) {
+                new Monstre.Exp(this.getX(), this.getY(), this.exp);
+                if(this.type == "bossNormal")
+                {
+                    
+                }
+            }
+            Monstre.joueur.statistics.kills += 1;
+            // Supprimer le monstre de l'array 
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
     
+            // Supprimer les graphiques du stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+    
+            // Arrêt de toute animation ticker-based
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+    
+            // Clean up des références pour le garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss = null;
+            return;
+        }
+    
+        // Mise a jour ud texte HP si le joueur est encore en vie
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
 }

@@ -12,6 +12,8 @@ export class Event{
     static MonstreTank = null;
     static MonstreExp = null;
     static MonstreGunner = null;
+    static bossNormal = null;
+    static bossRunner = null;
     static monstres = null;
     static app = null;
     static joueur = null;
@@ -22,9 +24,10 @@ export class Event{
     static eventNameList = ["normal", "horde", "ambush", "fort", "guns"];
     static musicList = null;
     static currentMusic = null;
-    static boss = false;
     static nextSong = false;
     static nextSongIs = null;
+    static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "milkMan":null, "err404":null};
+    static hasBoss = false;
 
     constructor(type)
     {
@@ -35,105 +38,85 @@ export class Event{
         Event.events.push(this);
     }
 
-    // Méthode qui met à jour les événements actifs en fct du temps écoulé
     static updateEvents(delta)
     {
-        //console.log(Event.events);
         Event.events.forEach(event => {   
             event.timeElapsed += 1;     
-            if(event.type == " ")// Ajoute le monstre Exp et incrémente la rapidité du spawning des ennemis
-            {
-                event.timeElapsed%7200 == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "expBall",  3 ) :0;
-                event.timeElapsed%7200 == 0 ? Event.updateDifficultee() : "";
+            if(event.type == " ") {
+                event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
+                event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
+
+                if (Event.boss["bossNormal"] == null) { event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
+                    Event.hasBoss = true; 
+                    Event.nextSong = true; 
+                    Event.nextSongIs = "boss";
+                }
+                else{event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( 1, "normal", 2 + Event.difficultyDegree, "normal") :0;}
             } 
-            if(event.type == "normal") // Les ennemis apparaissent a une rythmr normal sans rien de particulier
-            {
-                if(Event.currentMusic == null)
-                {
-                    Event.currentMusic = this.musicList["space3"];
-                    Event.currentMusic.play();
-                    Event.currentMusic.setAutoPlay(true);
-                }
-                if(Event.nextSongIs != "difficulty"){
-                    Event.nextSong = true;
-                }
-                Event.nextSongIs = "difficulty";
-                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "normal", 2 + Event.difficultyDegree) :0;
-                Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(50/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "runner", 4 + Event.difficultyDegree) :0 : 0;
-                Event.difficultyDegree >=2 ? event.timeElapsed%Math.round(30/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "tank",   5 + Event.difficultyDegree) :0 : 0;
+            if(event.type == "normal") {
+               // Update the music based on the current event
+
+                Event.nextSongIs = "space2";
+                event.timeElapsed % Math.round(40 / Event.difficultyDegree) == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "normal", 2 + Event.difficultyDegree) : 0;
+                Event.difficultyDegree >= 2 ? event.timeElapsed % Math.round(50 / Event.difficultyDegree) == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "runner", 4 + Event.difficultyDegree) : 0 : 0;
+                Event.difficultyDegree >= 2 ? event.timeElapsed % Math.round(30 / Event.difficultyDegree) == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "tank", 5 + Event.difficultyDegree) : 0 : 0;
                 event.state = !(event.timeElapsed >= 3600) && event.state;
             }
-            if(event.type == "horde") // ennemis normal circulent autour du joueur pour un bout de temps
-            {
-                if(Event.nextSongIs != "space2"){
-                    Event.nextSong = true;
-                }
-                Event.nextSongIs = "space2";
-                event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "normal", 2 + Event.difficultyDegree) :0;
+            if (event.type == "horde") {
+                Event.nextSongIs = "space";
+                event.timeElapsed % Math.round(40 / Event.difficultyDegree) == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "normal", 2 + Event.difficultyDegree) : 0;
                 event.state = !(event.timeElapsed >= 1800) && event.state;
             }
             if(event.type == "ambush")// ennemis runner circulent autour du joueur pour un petit instant
             {
-                if(Event.nextSongIs != "speed"){
-                    Event.nextSong = true;
-                }
                 Event.nextSongIs = "speed";
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta), "runner", 3 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800) && event.state;
             }
             if(event.type == "fort") // ennemis tank  cirulent autour du joueur pour un petit instant
             {
-                if(Event.nextSongIs != "difficulty2"){
-                    Event.nextSong = true;
-                }
                 Event.nextSongIs = "difficulty2";
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta),  "tank",  4 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800) && event.state;
             }
             if(event.type == "guns") // ennemis tank  cirulent autour du joueur pour un petit instant
             {
-                if(Event.nextSongIs != "normalIntense"){
-                    Event.nextSong = true;
-                }
                 Event.nextSongIs = "normalIntense";
                 event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( Math.ceil(delta),  "gunner",  4 + Event.difficultyDegree) :0;
                 event.state = !(event.timeElapsed >= 1800) && event.state;
             }
-            if(event.type == "boss")// milkMan?
-            {
-                
-            } 
             if (!event.state) {
                 let index = Event.events.indexOf(event);
                 if (index > -1) {
                     Event.events.splice(index, 1);
                 }
                 Event.ennemiDifficultee *= 1.1;
-                Event.currentEvent = new Event(Event.getNewEvent());
+                Event.currentEvent = new Event(Event.getNewEventName());
             }
             
         });
+        Event.updateMusic(); 
     }
 
-    // Méthode sélectionne un nouveau event aléatoire et met à jour
-    // la propriété du current Event
-    static getNewEvent()
+    static getNewEventName()
     {
-        let name = Event.eventNameList[Math.floor(Math.random() * Event.eventNameList.length)];
-        console.log(name + " : new event");
-        Event.currentEventName = name;
-        return name;
+        let event = Math.floor(Math.random() * 5);
+        return Event.eventNameList[event];
     }
 
     static updateMusic() {
         if (Event.currentMusic != null) {
-            if (Event.currentMusic.audio.currentTime >= (Event.currentMusic.audio.duration) || Event.boss || Event.nextSong) {
-                // Arrête la musique actuelle
+            // Check if the current song is finished or if we need to play the next song
+            if (Event.currentMusic.audio.currentTime >= (Event.currentMusic.audio.duration - 1) || Event.nextSong) {
+                // Stop current music
                 Event.currentMusic.stop();
-    
-                // Change pour la nouvelle musique
-                if(!Event.boss && !Event.nextSong)
-                {
+
+                if (Event.nextSong) {
+                    Event.currentMusic = Event.musicList[Event.nextSongIs];
+                    Event.nextSong = false; 
+                    Event.currentMusic.play();
+                } else {
+
                     let num = Math.round(Math.random() * 3);
                     switch (num) {
                         case 1:
@@ -145,51 +128,35 @@ export class Event{
                         case 3:
                             Event.currentMusic = Event.musicList["space3"];
                             break;
-                            
                         default:
                             break;
                     }
+                    Event.currentMusic.play(); // Play the selected music
                 }
-                else if(Event.nextSong)
-                {
-                    Event.currentMusic = Event.musicList[Event.nextSongIs];
-                    Event.nextSong = false;
-                }
-                if (Event.currentMusic) {
-                    
-                    Event.currentMusic.play();
-                    console.log("Switched to " + Event.currentMusic.nom);
-                } else {
-                    console.warn("Music "+ Event.currentMusic.nom +" not found.");
-                }
-
             }
         }
     }
     
-
 
     static updateDifficultee()
     {
         Event.difficultyDegree = Event.difficultyDegree < 10 ? Event.difficultyDegree + 1 : Event.difficultyDegree;
     }
 
+    // ... Rest of the class remains unchanged ...
+
+
+
     // Méthode qui ajoute un certain nb de monstres avec le nb de coôtés donné
-    ajouterMONSTRE(amount = 1, type = "normal", sides = 3) { 
-
-
-
+    ajouterMONSTRE(amount = 1, type = "normal", sides = 3, code = "") { 
         // si le nb de monstres actifs est inf a la limite -> ajouter
-        if((Event.Monstre.cleanMonstres.length < 10 || !this.comeBacks) && Event.monstres.length < 100 * Event.difficultyDegree)
+        if((Event.Monstre.cleanMonstres.length < 10 || !this.comeBacks) && Event.monstres.length < 100 * Event.difficultyDegree && code == "")
         {
-            //console.log(amount);
             for (let i = 0; i < amount; i++) {
-                //console.oglog("2");
                 let rngPos = Event.posRandomExterieur();
 
                 let monstre;
-                if(type == "normal") { 
-                    //console.log("3");
+                if(type == "normal" ) { 
                     monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}            
                 else if(type == "runner") {
                     monstre = new Event.MonstreRunner( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
@@ -204,10 +171,26 @@ export class Event{
             }
         }
         else{
-            //console.log("4");
             this.placeOldOnes();
         }
-
+        let rngPos = Event.posRandomExterieur();
+        //console.log(type);
+        let monstre;
+        if(type == "bossNormal"){
+            monstre = new Event.bossNormal( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);
+            Event.boss["bossNormal"] = monstre;
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);}
+        if(type == "bossRunner"){
+            monstre = new Event.bossRunner( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
+            Event.boss["bossRunner"] = monstre;
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);}
+        else if(code == "normal"){
+            monstre = new Event.MonstreNormal( Event.boss["bossNormal"].getX(), Event.boss["bossNormal"].getY(), sides, Event.ennemiDifficultee);
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);
+        }
     }
 
     // Méthode qui remplace les monstres existants qui ne sont plus actifs et
@@ -282,7 +265,7 @@ export class Event{
     }
 
     // ajoute une réf aux différents type de monstres
-    static addMonstres(monstresInput,m2,m3,m4,m5,m6)
+    static addMonstres(monstresInput,m2,m3,m4,m5,m6,m7)//,m8)
     {
         Event.Monstre = monstresInput;
         Event.monstres = Event.Monstre.monstres;
@@ -291,6 +274,8 @@ export class Event{
         Event.MonstreTank = m4;
         Event.MonstreExp = m5;
         Event.MonstreGunner = m6;
+        Event.bossNormal = m7;
+        //Event.bossRunner = m8;
     }
     // ajoute une réf a l'app PIXI
     static addApp(appInput) {
@@ -318,5 +303,7 @@ export class Event{
             "milkMan": new Event.Music("milkMan"),
             "speed": new Event.Music("speed")
         };
+        Event.currentMusic = new Event.Music("space2");
+
     }
 }

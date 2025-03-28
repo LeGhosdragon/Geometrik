@@ -25,35 +25,35 @@ export class Upgrade
         [   // Bullet pierce
             new Upg(() => Upgrade.gun.pierce, (val) => Upgrade.gun.pierce = val,
                 "+", 1,
-                "Pierce", () => `Bullets pierce one more enemy! Piercing: ${Upgrade.gun.pierce - 1} => ${Upgrade.gun.pierce}`, "../images/Pierce.gif",
+                "Pierce", () => `Bullets pierce one more enemy!\n\n\n\n\n\nPiercing: ${Upgrade.gun.pierce - 1} => ${Upgrade.gun.pierce}`, "../images/Pierce.gif",
                 true
             )//, insérer plus
         ],
         [   // Gun damage
             new Upg(() => Upgrade.gun.baseDMG, (val) => Upgrade.gun.baseDMG = val,
                 "x", 1.2,
-                "Gun Damage", () => `More bullet damage! DMG: ${(Upgrade.gun.baseDMG).toFixed(2)}dmg => ${(Upgrade.gun.baseDMG * 1.2).toFixed(2)}dmg`, "../images/Dmg.gif",
+                "Gun Damage", () => `More bullet damage!\n\n\n\n\n\n\n${(Upgrade.gun.baseDMG).toFixed(2)}dmg => ${(Upgrade.gun.baseDMG * 1.2).toFixed(2)}dmg`, "../images/Dmg.gif",
                 true
             )//, insérer plus
         ],
         [   // Gun cooldown
             new Upg(() => Upgrade.gun.cooldown, (val) => Upgrade.gun.cooldown = val,
                 "x", 0.8,
-                "Cooldown", () => `Generate bullets faster! ${(Upgrade.gun.cooldown / 60).toFixed(2)}s => ${(Upgrade.gun.cooldown * 0.8 / 60).toFixed(2)}s`, "../images/Cooldown.gif",
+                "Cooldown", () => `Generate bullets faster!\n\n\n\n\n\n${(Upgrade.gun.cooldown / 60).toFixed(2)}s => ${(Upgrade.gun.cooldown * 0.8 / 60).toFixed(2)}s`, "../images/Cooldown.gif",
                 true
             )//, insert more 
         ],
         [   // Bullet size
             new Upg(() => Upgrade.gun.bulletSize, (val) => Upgrade.gun.bulletSize = val,
                 "+", 3,
-                "Bullet Size", () => `Bigger bullets! Size: ${(Upgrade.gun.bulletSize).toFixed(2)}px => ${(Upgrade.gun.bulletSize + 3).toFixed(2)}px`, "../images/bulletSize.gif",
+                "Bullet Size", () => `Bigger bullets!\n\n\n\n\n\n\n${(Upgrade.gun.bulletSize).toFixed(2)}px => ${(Upgrade.gun.bulletSize + 3).toFixed(2)}px`, "../images/bulletSize.gif",
                 true
             )//, insert more
         ],
         [   // Gun knockback
             new Upg(() => Upgrade.gun.knockback, (val) => Upgrade.gun.knockback = val,
                 "+", 2,
-                "Bullet Knockback", () => `More knockback! Force: ${(Upgrade.gun.knockback).toFixed(2)} N => ${(Upgrade.gun.knockback + 2).toFixed(2)} N`, "../images/Knockback.gif",
+                "Bullet Knockback", () => `More knockback!\n\n\n\n\n\n\n${(Upgrade.gun.knockback).toFixed(2)} N => ${(Upgrade.gun.knockback + 2).toFixed(2)} N`, "../images/Knockback.gif",
                 true
             )//, insérer plus
         ]
@@ -63,35 +63,35 @@ export class Upgrade
         [   // Sword width
             new Upg(() => Upgrade.sword.wideness, (val) => Upgrade.sword.wideness = val,
                 "x", 1.1,
-                "Cleave Width", () => `Increase sword cleave width! ${Upgrade.sword.wideness.toFixed(2)} => ${(Upgrade.sword.wideness*1.1).toFixed(2)}`, "../images/SwordWidth.gif",
+                "Cleave Width", () => `Increase sword cleave width!\n\n\n\n\n\n${Upgrade.sword.wideness.toFixed(2)} => ${(Upgrade.sword.wideness*1.1).toFixed(2)}`, "../images/SwordWidth.gif",
                 true
             )//, insérer plus
         ],
         [   // Sword damage
             new Upg(() => Upgrade.sword.baseDMG, (val) => Upgrade.sword.baseDMG = val,
                 "x", 1.2,
-                "Sword Damage", () => `Increase sword damage! DMG: ${(Upgrade.sword.baseDMG).toFixed(2)}dmg => ${(Upgrade.sword.baseDMG * 1.2).toFixed(2)}dmg`, "../images/Dmg.gif",
+                "Sword Damage", () => `Increase sword damage!\n\n\n\n\n\n${(Upgrade.sword.baseDMG).toFixed(2)}dmg => ${(Upgrade.sword.baseDMG * 1.2).toFixed(2)}dmg`, "../images/Dmg.gif",
                 true
             )//, insérer plus
         ],
         [   // Sword cooldown
             new Upg(() => Upgrade.sword.cooldown, (val) => Upgrade.sword.cooldown = val,
                 "x", 0.8,
-                "Cooldown", () => `Reduce sword cooldown! ${(Upgrade.sword.cooldown / 60).toFixed(2)}s => ${(Upgrade.sword.cooldown * 0.8 / 60).toFixed(2)}s`, "../images/Cooldown.gif",
+                "Cooldown", () => `Reduce sword cooldown!\n\n\n\n\n\n${(Upgrade.sword.cooldown / 60).toFixed(2)}s => ${(Upgrade.sword.cooldown * 0.8 / 60).toFixed(2)}s`, "../images/Cooldown.gif",
                 true
             )//, insérer plus
         ],
         [   // Sword length
             new Upg(() => Upgrade.sword.length, (val) => Upgrade.sword.length = val,
                 "+", 30,
-                "Sword Length", () => `Increase sword length for greater reach! ${Upgrade.sword.length}px => ${Upgrade.sword.length + 30}px`, "../images/bulletSize.gif",
+                "Sword Length", () => `Increase sword length for greater reach!\n\n\n\n\n${Upgrade.sword.length}px => ${Upgrade.sword.length + 30}px`, "../images/bulletSize.gif",
                 true
             )//, insérer plus
         ],
         [   // Sword knockback
             new Upg(() => Upgrade.sword.knockback, (val) => Upgrade.sword.knockback = val,
                 "+", 2,
-                "Sword Knockback", () => `More knockback! Force: ${(Upgrade.sword.knockback).toFixed(2)}N => ${(Upgrade.sword.knockback + 2).toFixed(2)}N`, "../images/Knockback.gif",
+                "Sword Knockback", () => `More knockback!\n\n\n\n\n\n\n${(Upgrade.sword.knockback).toFixed(2)}N => ${(Upgrade.sword.knockback + 2).toFixed(2)}N`, "../images/Knockback.gif",
                 true
             )//, insérer plus
         ]
@@ -101,60 +101,104 @@ export class Upgrade
         [   // Player speed
             new Upg(() => Upgrade.joueur.vitesse, (val) => Upgrade.joueur.vitesse = val,
                 "+", 0.2,
-                "Player Speed", () => `Move faster to avoid enemies! ${Upgrade.joueur.vitesse.toFixed(2)}m/s => ${(Upgrade.joueur.vitesse + 0.2).toFixed(2)}m/s`, "../images/MovementSpeed.gif",
+                "Player Speed", () => `Move faster to avoid enemies!\n\n\n\n\n\n${Upgrade.joueur.vitesse.toFixed(2)}m/s => ${(Upgrade.joueur.vitesse + 0.2).toFixed(2)}m/s`, "../images/MovementSpeed.gif",
                 true
             )//, insérer plus
         ],
         [   // Player collection area
             new Upg(() => Upgrade.joueur.distanceDattraction, (val) => Upgrade.joueur.distanceDattraction = val,
                 "x", 1.3,
-                "Attraction Area", () => `Increase area to collect items! ${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
+                "Attraction Area", () => `Increase area to collect items!\n\n\n\n\n\n${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.distanceDattraction, (val) => Upgrade.joueur.distanceDattraction = val,
                 "x", 1.3,
-                "Attraction Area", () => `Increase area to collect items! ${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
+                "Attraction Area", () => `Increase area to collect items!\n\n\n\n\n\n${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.distanceDattraction, (val) => Upgrade.joueur.distanceDattraction = val,
                 "x", 1.3,
-                "Attraction Area", () => `Increase area to collect items! ${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
+                "Attraction Area", () => `Increase area to collect items!\n\n\n\n\n\n${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.distanceDattraction, (val) => Upgrade.joueur.distanceDattraction = val,
                 "x", 1.3,
-                "Attraction Area", () => `Increase area to collect items! ${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
+                "Attraction Area", () => `Increase area to collect items!\n\n\n\n\n\n${Upgrade.joueur.distanceDattraction.toFixed(2)}px => ${(Upgrade.joueur.distanceDattraction * 1.3).toFixed(2)}px`, "../images/Magnet.gif",
                 false
             )//, insérer plus
         ],
         [   // Player health
             new Upg(() => Upgrade.joueur.baseHP, (val) => { Upgrade.joueur.currentHP += val; Upgrade.joueur.baseHP += val; Upgrade.joueur.updateHP();},
                 "x", 0.2,
-                "Player Health", () => `Increase player's max health! HP : ${Upgrade.joueur.currentHP.toFixed(2)} => ${(Upgrade.joueur.currentHP+Upgrade.joueur.baseHP*0.2).toFixed(2)}`, "../images/Health.gif",
+                "Player Health", () => `Increase player's max health!\n\n\n\n\n\n${Upgrade.joueur.currentHP.toFixed(2)} => ${(Upgrade.joueur.currentHP+Upgrade.joueur.baseHP*0.2).toFixed(2)}`, "../images/Health.gif",
                 true
             )//, insérer plus
         ],
         [   // Player explosion
             new Upg(() => Upgrade.joueur.upgExplosion, (val) => Upgrade.joueur.upgExplosion = val,
                 "bool", true,
-                "Player Explosion", () => `Explode when harmed, damaging and pushing nearby enemies! ${Upgrade.joueur.upgExplosion} => enabled`, "../images/PlayerBoom.gif",
+                "Player Explosion", () => `Explode when harmed, damaging and pushing nearby enemies!\n\n\n\n\n${Upgrade.joueur.upgExplosion} => enabled`, "../images/PlayerBoom.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.explRadius, (val) => Upgrade.joueur.explRadius = val,
                 "x", 1.3,
-                "Explosion Radius", () => `Increase explosion radius for greater impact! ${Upgrade.joueur.explRadius.toFixed(2)} => ${(Upgrade.joueur.explRadius*1.3).toFixed(2)}`, "../images/PlayerBoom.gif",
+                "Explosion Radius", () => `Increase explosion radius for greater impact!\n\n\n\n\n${Upgrade.joueur.explRadius.toFixed(2)} => ${(Upgrade.joueur.explRadius*1.3).toFixed(2)}`, "../images/PlayerBoom.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.explRadius, (val) => Upgrade.joueur.explRadius = val,
                 "x", 1.3,
-                "Explosion Radius", () => `Increase explosion radius for greater impact! ${Upgrade.joueur.explRadius.toFixed(2)} => ${(Upgrade.joueur.explRadius*1.3).toFixed(2)}`, "../images/PlayerBoom.gif",
+                "Explosion Radius", () => `Increase explosion radius for greater impact!\n\n\n\n\n${Upgrade.joueur.explRadius.toFixed(2)} => ${(Upgrade.joueur.explRadius*1.3).toFixed(2)}`, "../images/PlayerBoom.gif",
                 false
             ),
             new Upg(() => Upgrade.Explosion.bodyKnockback, (val) => Upgrade.Explosion.bodyKnockback = val,
                 "x", 2,
-                "Explosion Impact", () => `Increase explosion impact for greater impact! ${Upgrade.Explosion.bodyKnockback.toFixed(2)} => ${(Upgrade.Explosion.bodyKnockback*2).toFixed(2)}`, "../images/PlayerBoom.gif",
+                "Explosion Impact", () => `Increase explosion impact for greater impact!\n\n\n\n\n${Upgrade.Explosion.bodyKnockback.toFixed(2)} => ${(Upgrade.Explosion.bodyKnockback*2).toFixed(2)}`, "../images/PlayerBoom.gif",
                 false
             )//, insérer plus
+        ],
+        [   // Player crit chance
+            new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
+                "+", 5,
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 5}`, "../images/CritChance.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
+                "+", 10,
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 10}`, "../images/CritChance.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
+                "+", 10,
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 10}`, "../images/CritChance.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
+                "+", 10,
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 10}`, "../images/CritChance.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
+                "+", 20,
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 20}`, "../images/CritChance.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
+                "+", 20,
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 20}`, "../images/CritChance.gif",
+                false
+            ),
+            new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
+                "+", 20,
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 20}`, "../images/CritChance.gif",
+                false
+            )
+        ],
+        [   // Player crit damage
+            new Upg(() => Upgrade.joueur.critDMG, (val) => Upgrade.joueur.critDMG = val,
+                "+", 30,
+                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${Upgrade.joueur.critDMG} => ${Upgrade.joueur.critDMG + 30}`, "../images/CritDMG.gif",
+                true
+            )
         ],
     ];
     

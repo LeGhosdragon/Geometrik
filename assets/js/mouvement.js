@@ -277,7 +277,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
     }
 
     event.press = () => {
-        console.log(Event.events);
+        //console.log(Event.events);
         Event.events.forEach(event => {  
             if(event.type != ' ')
             {
