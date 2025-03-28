@@ -196,7 +196,7 @@ export class Upgrade
         [   // Player crit damage
             new Upg(() => Upgrade.joueur.critDMG, (val) => Upgrade.joueur.critDMG = val,
                 "x", 1.30,
-                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${Upgrade.joueur.critDMG*100}% => ${Upgrade.joueur.critDMG*100 + 30}%`, "../images/CritDMG.gif",
+                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${(Upgrade.joueur.critDMG*100).toFixed(0)}% => ${(Upgrade.joueur.critDMG*100 + 30).toFixed(0)}%`, "../images/CritDMG.gif",
                 true
             )
         ],

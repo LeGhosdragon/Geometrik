@@ -50,17 +50,17 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;//SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUU
+                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;
                 let compteur = 0;
 
-                // if(Event.boss["err404"] == null){
-                //     event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
+                // if(Event.boss["bossTank"] == null){
+                //     event.ajouterMONSTRE(1, "bossTank", 2 + Event.difficultyDegree, "boss"); 
                 // }
 
 
                 while(bossChoose && compteur < 100)
                 {
-                    num = Math.floor(Math.random() * 2);
+                    num = Math.floor(Math.random() * 3);
                     switch (num) {
                         case 0:
                             if(Event.boss["bossNormal"] != null) {compteur++;}
@@ -70,6 +70,8 @@ export class Event{
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "boss";
                                 bossChoose = false;
+                                Event.updateMusic(); 
+                                Event.nextSong = false; 
                             }
                             break;
                         case 1:
@@ -80,6 +82,32 @@ export class Event{
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "404Boss";
                                 bossChoose = false;
+                                Event.updateMusic(); 
+                                Event.nextSong = false; 
+                            }
+                            break;
+                        case 2:
+                            if(Event.boss["bossGunner"] != null) {compteur++;}
+                            else {
+                                event.ajouterMONSTRE(1, "bossGunner", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "kim";
+                                bossChoose = false;
+                                Event.updateMusic(); 
+                                Event.nextSong = false; 
+                            }
+                            break;
+                        case 3:
+                            if(Event.boss["bossTank"] != null) {compteur++;}
+                            else {
+                                event.ajouterMONSTRE(1, "bossTank", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "difficulty";
+                                bossChoose = false;
+                                Event.updateMusic(); 
+                                Event.nextSong = false; 
                             }
                             break;
                         default:
@@ -169,6 +197,7 @@ export class Event{
                             break;
                     }
                     Event.currentMusic.play(); // Play the selected music
+                    Event.currentMusic.audio.currentTime = 0;
                 }
                 console.log(Event.currentMusic.nom);
                 if(Event.currentMusic.nom == "404Boss")
@@ -218,7 +247,6 @@ export class Event{
             this.placeOldOnes();
         }
         let rngPos = Event.posRandomExterieur();
-        //console.log(type);
         let monstre;
         if(type == "bossNormal"){
             monstre = new Event.BossNormal( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);

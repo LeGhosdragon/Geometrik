@@ -181,7 +181,7 @@ export class Shape3D {
     constructor(app, vertices, edges, x, y, z, boss = false) {
         this.app = app;
         this.vertices = vertices;
-        this.boss = false;
+        this.boss = boss;
         this.edges = edges;
         this.angleX = Math.random() * Math.PI * 2;
         this.angleY = Math.random() * Math.PI * 2;
