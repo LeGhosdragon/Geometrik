@@ -158,6 +158,10 @@ export class Event{
                 let monstre;
                 if(type == "normal" ) { 
                     monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}            
+                if(type == "normal") { 
+                    monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
+                    // ligne de debug à Antoine pour tester les ennemis:
+                    //monstre = new Event.MonstreGunner( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
                 else if(type == "runner") {
                     monstre = new Event.MonstreRunner( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);}
                 else if(type == "tank") {
