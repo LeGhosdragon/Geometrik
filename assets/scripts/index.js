@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function(){
     const btnCompte = document.getElementById("btn-compte");
 
     btnJouer.addEventListener("click", function(){
-        window.location.href = '../pages/play.html';
+        window.location.href = '../../Jeu/assets/pages/index.html';
     })
 
     btnCompte.addEventListener("click", function(){

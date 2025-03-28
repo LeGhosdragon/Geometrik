@@ -50,7 +50,7 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 600 == 0 ? bossChoose = true : 0;//SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUU
+                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0; //SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUUE
                 let compteur = 0;
 
                 // if(Event.boss["err404"] == null){
