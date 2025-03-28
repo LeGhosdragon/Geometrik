@@ -69,7 +69,6 @@ export class Event{
                             else {
                                 event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
                                 Event.currentMusic.stop();
-    
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "boss";
                                 bossChoose = false;
@@ -174,7 +173,13 @@ export class Event{
                     }
                     Event.currentMusic.play(); // Play the selected music
                 }
+                console.log(Event.currentMusic.nom);
+                if(Event.currentMusic.nom == "404Boss")
+                {
+                    Event.currentMusic.audio.currentTime = 44;
+                }
             }
+ 
         }
     }
     
@@ -194,8 +199,7 @@ export class Event{
         {
             for (let i = 0; i < amount; i++) {
                 let rngPos = Event.posRandomExterieur();
-
-                let monstre;           
+         
                 let monstre;          
                 if(type == "normal") { 
                     monstre = new Event.MonstreNormal( rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);}
