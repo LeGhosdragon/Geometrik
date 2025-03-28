@@ -159,44 +159,44 @@ export class Upgrade
         [   // Player crit chance
             new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
                 "+", 5,
-                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 5}`, "../images/CritChance.gif",
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance}% => ${Upgrade.joueur.critChance + 5}%`, "../images/CritChance.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
                 "+", 10,
-                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 10}`, "../images/CritChance.gif",
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance}% => ${Upgrade.joueur.critChance + 10}%`, "../images/CritChance.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
                 "+", 10,
-                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 10}`, "../images/CritChance.gif",
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance}% => ${Upgrade.joueur.critChance + 10}%`, "../images/CritChance.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
                 "+", 10,
-                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 10}`, "../images/CritChance.gif",
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance}% => ${Upgrade.joueur.critChance + 10}%`, "../images/CritChance.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
                 "+", 20,
-                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 20}`, "../images/CritChance.gif",
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance}% => ${Upgrade.joueur.critChance + 20}%`, "../images/CritChance.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
                 "+", 20,
-                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 20}`, "../images/CritChance.gif",
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance}% => ${Upgrade.joueur.critChance + 20}%`, "../images/CritChance.gif",
                 false
             ),
             new Upg(() => Upgrade.joueur.critChance, (val) => Upgrade.joueur.critChance = val,
                 "+", 20,
-                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance} => ${Upgrade.joueur.critChance + 20}`, "../images/CritChance.gif",
+                "Critical Chance", () => `You crit more often!\n\n\n\n\n\n\n${Upgrade.joueur.critChance}% => ${Upgrade.joueur.critChance + 20}%`, "../images/CritChance.gif",
                 false
             )
         ],
         [   // Player crit damage
             new Upg(() => Upgrade.joueur.critDMG, (val) => Upgrade.joueur.critDMG = val,
-                "+", 30,
-                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${Upgrade.joueur.critDMG} => ${Upgrade.joueur.critDMG + 30}`, "../images/CritDMG.gif",
+                "x", 1.30,
+                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${Upgrade.joueur.critDMG*100}% => ${Upgrade.joueur.critDMG*100 + 30}%`, "../images/CritDMG.gif",
                 true
             )
         ],

@@ -1,28 +1,30 @@
 export class Music {
+    static volume = 0; // Default volume (50%)
+
     constructor(nom) {
         this.nom = nom;
         this.path = this.getAudioPath(nom);
         this.audio = new Audio(this.path);
-        this.duration = 0; // Initialement 0
+        this.duration = 0; // Initial duration is 0
 
-        // Vérifie si le chemin est valide
+        // Check if the path is valid
         if (!this.path) {
             console.error(`Audio path for '${nom}' not found.`);
             return;
         }
 
-        //console.log(`Loading: ${this.path}`);
-
-        // Écoute l'événement pour obtenir la durée une fois chargé
+        // Listen for metadata to get duration
         this.audio.addEventListener("loadedmetadata", () => {
             this.duration = this.audio.duration;
-            //console.log(`Duration of ${nom}: ${this.duration}s`);
         });
 
-        // Gestion des erreurs de chargement
+        // Handle loading errors
         this.audio.addEventListener("error", (e) => {
             console.error(`Error loading audio '${nom}':`, e);
         });
+
+        // Set initial volume
+        this.audio.volume = Music.volume;
     }
 
     getAudioPath(nom) {
@@ -55,13 +57,15 @@ export class Music {
     }
 
     play() {
-        if (this.audio.readyState < 3) { // Vérifie si l'audio n'est pas prêt
+        if (this.audio.readyState < 3) { 
             console.warn(`Audio not fully loaded: ${this.nom}. Waiting...`);
             this.audio.addEventListener('canplaythrough', () => {
+                this.audio.volume = Music.volume;
                 console.log(`Now playing: ${this.nom}`);
                 this.audio.play().catch(err => console.error("Play error:", err));
             }, { once: true });
         } else {
+            this.audio.volume = Music.volume;
             console.log(`Playing: ${this.nom}`);
             this.audio.play().catch(err => console.error("Play error:", err));
         }
@@ -71,14 +75,12 @@ export class Music {
         if (this.audio) {
             this.audio.pause();
             this.audio.currentTime = 0;
-            //console.log(`Stopped: ${this.nom}`);
         }
     }
 
     pause() {
         if (this.audio) {
             this.audio.pause();
-            //console.log(`Paused: ${this.nom}`);
         }
     }
 
@@ -86,5 +88,13 @@ export class Music {
         if (this.audio) {
             this.audio.autoplay = bool;
         }
+    }
+
+    setVolume(level) {
+        if (level < 0) level = 0;
+        if (level > 1) level = 1;
+        this.audio.volume = level;
+        Music.volume = level;
+        console.log(`Volume of ${this.nom} set to: ${this.audio.volume}`);
     }
 }

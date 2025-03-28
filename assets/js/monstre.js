@@ -830,7 +830,8 @@ export class bossNormal extends Monstre {
                 new Monstre.Exp(this.getX(), this.getY(), this.exp);
                 if(this.type == "bossNormal")
                 {
-                    
+                    Monstre.Event.nextSong = true;
+                    Monstre.Event.currentMusic.stop();
                 }
             }
             Monstre.joueur.statistics.kills += 1;
@@ -855,7 +856,7 @@ export class bossNormal extends Monstre {
             this.body.destroy({ children: true });
             this.hpText = null;
             this.body = null;
-            Monstre.Event.boss = null;
+            Monstre.Event.boss["bossNormal"] = null;
             return;
         }
     

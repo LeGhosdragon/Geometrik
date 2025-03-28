@@ -40,18 +40,36 @@ export class Event{
 
     static updateEvents(delta)
     {
+        let num = null;
+        let bossChoose = false;
         Event.events.forEach(event => {   
             event.timeElapsed += 1;     
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-
-                if (Event.boss["bossNormal"] == null) { event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
-                    Event.hasBoss = true; 
-                    Event.nextSong = true; 
-                    Event.nextSongIs = "boss";
+                event.timeElapsed % 1800 == 0 ? bossChoose = true : 0;
+                while(bossChoose)
+                {
+                    num = Math.floor(Math.random() * 1);
+                    switch (num) {
+                        case 0:
+                            if(Event.boss["bossNormal"] != null) {}
+                            else {
+                                event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.hasBoss = true; 
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "boss";
+                                bossChoose = false;
+                            }
+                            break;
+                    
+                        default:
+                            break;
+                    }
                 }
-                else{event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( 1, "normal", 2 + Event.difficultyDegree, "normal") :0;}
+
+                if (Event.boss["bossNormal"] != null) { event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( 1, "normal", 2 + Event.difficultyDegree, "normal") :0;}
             } 
             if(event.type == "normal") {
                // Update the music based on the current event
@@ -143,7 +161,6 @@ export class Event{
         Event.difficultyDegree = Event.difficultyDegree < 10 ? Event.difficultyDegree + 1 : Event.difficultyDegree;
     }
 
-    // ... Rest of the class remains unchanged ...
 
 
 
@@ -308,6 +325,5 @@ export class Event{
             "speed": new Event.Music("speed")
         };
         Event.currentMusic = new Event.Music("space2");
-
     }
 }
