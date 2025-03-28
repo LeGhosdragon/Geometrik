@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogue</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="../scripts/catalogue.js" defer></script>
+    <script src="../scripts/navAuth.js" defer></script>
+</head>
+<body>
+    <nav>
+        <ul class="nav-left">
+            <li>
+                <a href="index.html">
+                    <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
+                </a>
+            </li>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="about.html">À propos</a></li>
+            <li><a href="catalogue.html">Catalogue</a></li>
+            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
+            <li><a href="palmares.html">Palmares</a></li>
+        </ul>
+        <ul class="nav-right">
+            <div class="toggle-switch">
+                <label class="switch-label">
+                  <input type="checkbox" class="checkbox">
+                  <span class="slider"></span>
+                </label>
+            </div>  
+            <div class="menu">
+                <div class="item">
+                  <a href="#" class="link">
+                    <span> Connexion </span>
+                    <svg viewBox="0 0 360 360" xml:space="preserve">
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          id="XMLID_225_"
+                          d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
+                        ></path>
+                      </g>
+                    </svg>
+                  </a>
+                  <div class="submenu">
+                    <div class="submenu-item">
+                      <a href="login.html" class="submenu-link"> Se Connecter </a>
+                    </div>
+                    <div class="submenu-item">
+                      <a href="signup.html" class="submenu-link"> S'inscrire </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </ul>
+    </nav>
+
+    <div class="catalogue-container">
+        <div class="catalogue-buttons">
+            <button id="catalogue-characters-btn">Héros</button>
+            <button id="catalogue-enemies-btn">Ennemis</button>
+            <button id="catalogue-upgrades-btn">Amélioration</button>
+        </div>
+
+        <div class="catalogue-content" id="catalogue-content">
+            <div class="catalogue-section" id="catalogue-characters">
+                <div class="catalogue-detail-view">
+                    <div class="catalogue-image-container">
+                        <img id="character-image" src="../images/characters/character1.png" alt="Character Image">
+                    </div>
+                    <div class="catalogue-description-container">
+                        <h2 id="character-name">Personnage 1</h2>
+                        <p id="character-description">Description Personnage 1</p>
+                        <div class="character-stats">
+                            <div class="stat">
+                                <span class="stat-label">Point de vie:</span>
+                                <span class="stat-value" id="character-health">20</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Dégats:</span>
+                                <span class="stat-value" id="character-attack">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="catalogue-section" id="catalogue-enemies" style="display: none;">
+                <div class="catalogue-detail-view">
+                    <div class="catalogue-image-container">
+                        <img id="enemy-image" src="../images/enemies/enemy1.png" alt="Enemy Image">
+                    </div>
+                    <div class="catalogue-description-container">
+                        <h2 id="enemy-name">Ennemi 1</h2>
+                        <p id="enemy-description">Description of Ennemi 1</p>
+                        <div class="enemy-stats">
+                            <div class="stat">
+                                <span class="stat-label">Point de vie:</span>
+                                <span class="stat-value" id="enemy-health">20</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Dégats:</span>
+                                <span class="stat-value" id="enemy-attack">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="catalogue-section" id="catalogue-upgrades" style="display: none;">
+                <div class="catalogue-detail-view">
+                    <div class="catalogue-image-container">
+                        <img id="upgrade-image" src="../images/upgrades/upgrade1.png" alt="Upgrade Image">
+                    </div>
+                    <div class="catalogue-description-container">
+                        <h2 id="upgrade-name">Amélioration 1</h2>
+                        <p id="upgrade-description">Description Amélioration 1</p>
+                        <div class="upgrade-details">
+                            <div class="stat">
+                                <span class="stat-label">Effet:</span>
+                                <span class="stat-value" id="upgrade-effect">Augmente le dégat</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="catalogue-navigation">
+            <button id="catalogue-prev-btn">Précédant</button>
+            <button id="catalogue-next-btn">Prochain</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,107 +1,87 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Geometrik</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometrik Page d'accueil</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="../scripts/index.js"></script>
+    <script src="../scripts/navAuth.js"></script>
 </head>
-<body id="bod">
-<!--<link rel="stylesheet" href="../styles/styles.css?v=1">-->
-<span id="expBar"></span>
-<script src="../../pixi/pixi.min.js"></script>
-<script type="module" src="../js/index.js"></script>
-<style>
+<body>
+    <nav>
+        <ul class="nav-left">
+            <li>
+                <a href="index.html">
+                    <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
+                </a>
+            </li>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="about.html">À propos</a></li>
+            <li><a href="catalogue.html">Catalogue</a></li>
+            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
+            <li><a href="palmares.html">Palmarès</a></li>
+        </ul>
+        <ul class="nav-right">
+            <div class="toggle-switch">
+                <label class="switch-label">
+                  <input type="checkbox" class="checkbox">
+                  <span class="slider"></span>
+                </label>
+            </div>  
+            <div class="menu">
+                <div class="item">
+                  <a href="#" class="link">
+                    <span> Connexion </span>
+                    <svg viewBox="0 0 360 360" xml:space="preserve">
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          id="XMLID_225_"
+                          d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
+                        ></path>
+                      </g>
+                    </svg>
+                  </a>
+                  <div class="submenu">
+                    <div class="submenu-item">
+                      <a href="login.html" class="submenu-link"> Se Connecter </a>
+                    </div>
+                    <div class="submenu-item">
+                      <a href="signup.html" class="submenu-link"> S'inscrire </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </ul>
+    </nav>
 
+    <div class="hero-container">
+      <div class="hero-content">
+          <h1 class="hero-title">Geometrik</h1>
+          <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
+          <div class="hero-buttons">
+            <button id="btn-jouer" class="btn btn-primary"> JOUER</button>
+            <button id="btn-compte" class="btn btn-secondary"> CRÉER COMPTE</button>
+          </div>
+      </div>
+    </div>
 
-  #expBar {
-    position: fixed;
-    bottom: 0;
-    left: -50px;
-    width: 200%!important;
-    height: 10px; /* Initial height */
-    background-color: rgba(44, 77, 43, 0.566); /* Visible color */
-    z-index: -1;
-  }
-  @keyframes heartbeat-darken {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-  }
+  <section class="trailer-section">
+      <div class="trailer-content">
+          <h2 class="trailer-title">Bande-annonce</h2>
+          <div class="video-container">
+              <video controls class="trailer-video">
+                  <source src="../videos/trailer.mp4" type="video/mp4">
+                  Votre navigateur ne supporte pas la lecture vidéo.
+              </video>
+          </div>
+      </div>
+  </section>
 
-  .darken-effect {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(circle, rgba(255, 0, 0, 0) 50%, rgba(255, 0, 0, 0.7) 100%);
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
-
-  .card{
-    white-space: pre-wrap;
-  }
-/* From Uiverse.io by css.cards-io */ 
-.card,  #stats-container ,span {
-  --glow-color: rgb(75, 225, 78);
-  --glow-spread-color: rgba(23, 183, 23, 0.781);
-  --enhanced-glow-color: rgb(32, 45, 28);
-  --btn-color: rgb(100, 61, 136);
-  border: .25em solid var(--glow-color);
-  padding: 1em 3em;
-  color: var(--glow-color);
-  font-size: 15px;
-  font-weight: bold;
-  background-color: var(--btn-color);
-  border-radius: 1em;
-  outline: none;
-  box-shadow: 0 0 1em .25em var(--glow-color),
-          0 0 4em 1em var(--glow-spread-color),
-          inset 0 0 .75em .25em var(--glow-color);
-  text-shadow: 0 0 .5em var(--glow-color);
-  position: relative;
-  transition: all 0.3s;
-}
-
-.card::after,  #stats-container::after { 
- pointer-events: none;
- content: "";
- position: absolute;
- top: 120%;
- left: 0;
- height: 100%;
- width: 100%;
- background-color: var(--glow-spread-color);
- filter: blur(2em);
- opacity: .7;
- transform: perspective(1.5em) rotateX(35deg) scale(1, .6);
-}
-
-.card:hover, #stats-container {
- color: var(--btn-color);
- background-color: var(--glow-color);
- box-shadow: 0 0 1em .25em var(--glow-color),
-        0 0 4em 2em var(--glow-spread-color),
-        inset 0 0 .75em .25em var(--glow-color);
-}
-
-.card:active {
- box-shadow: 0 0 0.6em .25em var(--glow-color),
-        0 0 2.5em 2em var(--glow-spread-color),
-        inset 0 0 .5em .25em var(--glow-color);
-}
-/* From Uiverse.io by Smit-Prajapati */ 
-
-
-.card:hover  {
-  background-size:
-    cover,
-    10px 10px,
-    10px 10px;
-    filter: hue-rotate(200deg);
-}
-
-
-
-  </style>
 </body>
 </html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometrik Inscription</title>
+    <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="../scripts/signup.js"></script>
+</head>
+<body>
+    <nav>
+        <ul class="nav-left">
+            <li>
+                <a href="index.html">
+                    <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
+                </a>
+            </li>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="#">À propos</a></li>
+            <li><a href="#">Catalogue</a></li>
+            <li><a href="#">Jouer</a></li>
+            <li><a href="#">Feedback</a></li>
+        </ul>
+        <ul class="nav-right">
+            <div class="toggle-switch">
+                <label class="switch-label">
+                  <input type="checkbox" class="checkbox">
+                  <span class="slider"></span>
+                </label>
+            </div>  
+            <div class="menu">
+                <div class="item">
+                  <a href="#" class="link">
+                    <span> Connexion </span>
+                    <svg viewBox="0 0 360 360" xml:space="preserve">
+                      <g id="SVGRepo_iconCarrier">
+                        <path
+                          id="XMLID_225_"
+                          d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
+                        ></path>
+                      </g>
+                    </svg>
+                  </a>
+                  <div class="submenu">
+                    <div class="submenu-item">
+                      <a href="signup.html" class="submenu-link"> Se Connecter </a>
+                    </div>
+                    <div class="submenu-item">
+                      <a href="login.html" class="submenu-link"> S'inscrire </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        <div class="form-container">
+            <div class="form-section">
+                <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik" class="form-logo">
+                <h1 class="form-title">Bienvenue chez Geometrik!</h1>
+                
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur:</label>                   
+                            <input type="text" name="username" id="username" required>       
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Courriel:</label>
+                        <input type="email" name="email" id="email" required> 
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Mot de passe:</label>
+                        <div class="password-container">
+                            <input type="password" name="password" id="password" required>
+                            <button type="button" class="password-toggle" id="password-toggle">👁️</button>
+                        </div>
+                    </div>
+                    <label class="cl-checkbox">
+                        <input checked="" type="checkbox">
+                        <span>Se souvenir de moi </span>
+                        
+                      </label>
+                    <div class="form-button">
+                        <button type="submit" id="btnSignUp">Créer un Compte</button>
+                    </div>
+                    
+                    <div class="form-link">
+                        <p>Vous avez déjà un compte? <a href="login.html" id="connectez-vous">Connectez-vous</a></p>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="image-section">
+                <img src="../images/logo.png" alt="Rubik's Cube">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
