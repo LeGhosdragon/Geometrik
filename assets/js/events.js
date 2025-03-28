@@ -50,7 +50,7 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 600 == 0 ? bossChoose = true : 0;//SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUU
+                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;//SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUU
                 let compteur = 0;
 
                 // if(Event.boss["err404"] == null){
@@ -58,21 +58,18 @@ export class Event{
                 // }
 
 
-                while(bossChoose)
+                while(bossChoose && compteur < 100)
                 {
-                    if (compteur == 10) {break;}
-                    if(compteur >= 10){break;}
                     num = Math.floor(Math.random() * 2);
                     switch (num) {
                         case 0:
-                            if(Event.boss["bossNormal"] != null) {compteur++;compteur++;}
+                            if(Event.boss["bossNormal"] != null) {compteur++;}
                             else {
                                 event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
                                 Event.currentMusic.stop();
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "boss";
                                 bossChoose = false;
-                                compteur = 0;
                             }
                             break;
                         case 1:
@@ -83,13 +80,13 @@ export class Event{
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "404Boss";
                                 bossChoose = false;
-                                compteur = 0;
                             }
                             break;
                         default:
                             break;
                     }
                 }
+
 
                 if (Event.boss["bossNormal"] != null) { event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( 1, "normal", 2 + Event.difficultyDegree, "normal") :0;}
             } 
