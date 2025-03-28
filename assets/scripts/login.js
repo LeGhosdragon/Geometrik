@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         login(username, password);
     });
+
     async function login(username, password) {
         try {
             const formData = new FormData();
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function(){
             
             if (data.reussite) {
                 localStorage.setItem('jeton', data.jeton);
-                window.location.href = '../pages/play.html';
+                window.location.href = '../pages/index.html';
             } else {
                 alert('Erreur de connexion: ' + (data.erreurs || "Erreur inconnue"));
             }
@@ -51,14 +52,30 @@ document.addEventListener("DOMContentLoaded", function(){
     }
     
 });
+
 function showPassword(passwordToggle, passwordInput){
     passwordToggle.addEventListener('click', function(){
         if(passwordInput.type === 'password'){
             passwordInput.type = 'text';
-            this.textContent = '👁️‍🗨️';
+            showImage('../images/show.png', 20, 20, 'show password');
+            console.log('show password');
+            //this.textContent = '../images/hide.png';
         } else {
             passwordInput.type = 'password';
-            this.textContent = '👁️';
+            showImage('../images/hide.png', 20, 20, 'hide password');
+            console.log('hide password');
+            //this.textContent = '../images/show.png';
         }
     });
+}
+
+function showImage(src, width, height, alt){
+    let image = document.createElement('img');
+    const passwordToggle = document.getElementById('password-toggle');
+    image.src = src;
+    image.width = width;
+    image.height = height;
+    image.alt = alt;
+    passwordToggle.innerHTML = ''; // Clear previous content
+    passwordToggle.appendChild(image);
 }

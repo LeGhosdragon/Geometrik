@@ -19,12 +19,27 @@ function showPassword(passwordToggle, passwordInput){
     passwordToggle.addEventListener('click', function(){
         if(passwordInput.type === 'password'){
             passwordInput.type = 'text';
-            this.textContent = '👁️‍🗨️';
+            showImage('../images/show.png', 20, 20, 'show password');
+            console.log('show password');
+            //this.textContent = '../images/hide.png';
         } else {
             passwordInput.type = 'password';
-            this.textContent = '👁️';
+            showImage('../images/hide.png', 20, 20, 'hide password');
+            console.log('hide password');
+            //this.textContent = '../images/show.png';
         }
     });
+}
+
+function showImage(src, width, height, alt){
+    let image = document.createElement('img');
+    const passwordToggle = document.getElementById('password-toggle');
+    image.src = src;
+    image.width = width;
+    image.height = height;
+    image.alt = alt;
+    passwordToggle.innerHTML = ''; // Clear previous content
+    passwordToggle.appendChild(image);
 }
 
 async function createAccount(username, password) {
@@ -55,7 +70,7 @@ async function createAccount(username, password) {
         
         if (data.reussite) {
             localStorage.setItem('jeton', data.jeton);
-            window.location.href = '../pages/play.html';
+            window.location.href = '../pages/index.html';
         } else {
             alert('Erreur de connexion: ' + (data.erreurs || "Erreur inconnue"));
         }
@@ -64,28 +79,29 @@ async function createAccount(username, password) {
         alert('Une erreur est survenue lors de la connexion: ' + error.message);
     }
 }
-function validerMotDePasse(mdp) {
-    const erreurs = [];
 
-    // Au moins une majuscule
-    if (!/[A-Z]/.test(mdp)) {
-        erreurs.push("Mettez une lettre majuscule pour votre mot de passe.");
-    }
+// function validerMotDePasse(mdp) {
+//     const erreurs = [];
 
-    // Au moins une minuscule
-    if (!/[a-z]/.test(mdp)) {
-        erreurs.push("Mettez une lettre minuscule pour votre mot de passe.");
-    }
+//     // Au moins une majuscule
+//     if (!/[A-Z]/.test(mdp)) {
+//         erreurs.push("Mettez une lettre majuscule pour votre mot de passe.");
+//     }
 
-    // Au moins un chiffre
-    if (!/[0-9]/.test(mdp)) {
-        erreurs.push("Il manque un nombre dans votre mot de passe.");
-    }
+//     // Au moins une minuscule
+//     if (!/[a-z]/.test(mdp)) {
+//         erreurs.push("Mettez une lettre minuscule pour votre mot de passe.");
+//     }
 
-    // Entre 8 et 32 caractères
-    if (mdp.length < 8 || mdp.length > 32) {
-        erreurs.push("Mettez un mot de passe entre 8 et 32 caractères inclusivement.");
-    }
+//     // Au moins un chiffre
+//     if (!/[0-9]/.test(mdp)) {
+//         erreurs.push("Il manque un nombre dans votre mot de passe.");
+//     }
 
-    return erreurs;
-}
+//     // Entre 8 et 32 caractères
+//     if (mdp.length < 8 || mdp.length > 32) {
+//         erreurs.push("Mettez un mot de passe entre 8 et 32 caractères inclusivement.");
+//     }
+
+//     return erreurs;
+// }

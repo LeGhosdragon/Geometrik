@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <script src="../scripts/signup.js"></script>
+  <script src="../scripts/navAuth.js"></script>
 </head>
 <body>
     <nav>
@@ -23,10 +24,9 @@
                 </a>
             </li>
             <li><a href="index.html">Accueil</a></li>
-            <li><a href="#">À propos</a></li>
-            <li><a href="#">Catalogue</a></li>
-            <li><a href="#">Jouer</a></li>
-            <li><a href="#">Feedback</a></li>
+            <li><a href="about.html">À propos</a></li>
+            <li><a href="catalogue.html">Catalogue</a></li>
+            <li><a href="play.html">Jouer</a></li>
             <li><a href="palmares.html">Palmares</a></li>
         </ul>
         <ul class="nav-right">
@@ -70,7 +70,7 @@
                 
                 <form id="signupForm">
                     <div class="form-group">
-                        <label for="username">Nom d'utilisateur:</label>                   
+                        <label for="username" id="username-hint">Nom d'utilisateur:</label>                   
                             <input type="text" name="username" id="username" required>       
                     </div>
                     
@@ -80,10 +80,10 @@
                     </div> -->
                     
                     <div class="form-group">
-                        <label for="password">Mot de passe:</label>
+                        <label for="password" id="password-hint">Mot de passe:</label>
                         <div class="password-container">
                             <input type="password" name="password" id="password" required>
-                            <button type="button" class="password-toggle" id="password-toggle">👁️</button>
+                            <button type="button" class="password-toggle" id="password-toggle"><img src="../images/hide.png" width="20" height="20" alt="Hide Password"></button>
                         </div>
                     </div>
                     <label class="cl-checkbox">
@@ -96,7 +96,7 @@
                     </div>
                     
                     <div class="form-link">
-                        <p>Vous avez déjà un compte? <a href="login.html" id="connectez-vous">Connectez-vous</a></p>
+                        <p>Vous avez déjà un compte? <a href="login.html" id="connectez-vous"><u>Connectez-vous</u></a></p>
                     </div>
                 </form>
             </div>

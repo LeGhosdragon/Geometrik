@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <script src="../scripts/index.js"></script>
+  <script src="../scripts/navAuth.js"></script>
 </head>
 <body>
     <nav>
@@ -23,10 +24,9 @@
                 </a>
             </li>
             <li><a href="index.html">Accueil</a></li>
-            <li><a href="#">À propos</a></li>
-            <li><a href="#">Catalogue</a></li>
+            <li><a href="about.html">À propos</a></li>
+            <li><a href="catalogue.html">Catalogue</a></li>
             <li><a href="play.html">Jouer</a></li>
-            <li><a href="#">Feedback</a></li>
             <li><a href="palmares.html">Palmares</a></li>
         </ul>
         <ul class="nav-right">
@@ -63,18 +63,27 @@
     </nav>
 
     <div class="hero-container">
-        <div class="hero-content">
-            <h1 class="hero-title">Geometrik</h1>
-            <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
-            <div class="hero-buttons">
-              <button id="test"> JOUER</button>
-              <button id="test"> CREER COMPTE</button>
-            </div>
-        </div>
-        <div class="hero-image">
-            <!-- Image d'arrière-plan définie via CSS -->
-        </div>
+      <div class="hero-content">
+          <h1 class="hero-title">Geometrik</h1>
+          <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
+          <div class="hero-buttons">
+            <button id="btn-jouer" class="btn btn-primary"> JOUER</button>
+            <button id="btn-compte" class="btn btn-secondary"> CREER COMPTE</button>
+          </div>
+      </div>
     </div>
+
+  <section class="trailer-section">
+      <div class="trailer-content">
+          <h2 class="trailer-title">Bande-annonce</h2>
+          <div class="video-container">
+              <video controls class="trailer-video">
+                  <source src="../videos/trailer.mp4" type="video/mp4">
+                  Votre navigateur ne supporte pas la lecture vidéo.
+              </video>
+          </div>
+      </div>
+  </section>
 
 </body>
 </html>
