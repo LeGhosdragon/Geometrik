@@ -7,7 +7,7 @@
             "name": "Launch msedge against localhost",
             "url": "http://127.0.0.1:3000/assets/pages/index.html",
             "webRoot": "${workspaceFolder}",
-            "sourceMaps": true,
+            "sourceMaps": false,
         },
     ]
 }
