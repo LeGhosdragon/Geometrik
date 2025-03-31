@@ -1,4 +1,25 @@
 'use strict';
+// Configuration - we'll store both dark and light mode settings
+const config = {
+  dark: {
+    backgroundColor: 'hsla(240,100%,3%,1)',
+    baseHue: 240,
+    rangeHue: 60,
+    compositeOperation: 'lighter',
+    particleColorTemplate: (hue, opacity) => `hsla(${hue},100%,60%,${opacity})`
+  },
+  light: {
+    backgroundColor: 'hsla(0,0%,100%,1)',
+    baseHue: 200,
+    rangeHue: 160,
+    compositeOperation: 'multiply',
+    particleColorTemplate: (hue, opacity) => `hsla(${hue},100%,40%,${opacity})`
+  }
+};
+
+// Set default mode
+let currentMode = 'dark';
+let toggleCheckbox;
 
 const particleCount = 700;
 const particlePropCount = 9;
@@ -9,13 +30,10 @@ const baseSpeed = 0.1;
 const rangeSpeed = 1;
 const baseSize = 2;
 const rangeSize = 10;
-const baseHue = 240;
-const rangeHue = 60;
 const noiseSteps = 2;
 const xOff = 0.0025;
 const yOff = 0.005;
 const zOff = 0.0005;
-const backgroundColor = 'hsla(240,100%,3%,1)';
 
 let container;
 let canvas;
@@ -32,10 +50,27 @@ let sizes;
 let hues;
 
 function setup() {
-	createCanvas();
+  createCanvas();
+  setupToggleSwitch();
   resize();
   initParticles();
-	draw();
+  draw();
+}
+
+function setupToggleSwitch() {
+  // Find the toggle checkbox
+  toggleCheckbox = document.querySelector('.checkbox');
+  
+  // Add event listener to toggle theme
+  toggleCheckbox.addEventListener('change', toggleTheme);
+}
+
+function toggleTheme() {
+  // Switch between dark and light mode based on checkbox state
+  currentMode = toggleCheckbox.checked ? 'light' : 'dark';
+  
+  // Optionally, you can add a class to the body to style other elements
+  document.body.classList.toggle('light-mode', currentMode === 'light');
 }
 
 function initParticles() {
@@ -61,7 +96,7 @@ function initParticle(i) {
   ttl = baseTTL + rand(rangeTTL);
   speed = baseSpeed + rand(rangeSpeed);
   size = baseSize + rand(rangeSize);
-  hue = baseHue + rand(rangeHue);
+  hue = config[currentMode].baseHue + rand(config[currentMode].rangeHue);
 
   particleProps.set([x, y, vx, vy, life, ttl, speed, size, hue], i);
 }
@@ -110,7 +145,8 @@ function drawParticle(x, y, theta, life, ttl, size, hue) {
   ctx.a.save();
   ctx.a.lineCap = 'round';
   ctx.a.lineWidth = 1;
-  ctx.a.strokeStyle = `hsla(${hue},100%,60%,${fadeInOut(life, ttl)})`;
+  // Use the mode-specific color template
+  ctx.a.strokeStyle = config[currentMode].particleColorTemplate(hue, fadeInOut(life, ttl));
   ctx.a.beginPath();
   ctx.a.translate(xRel, yRel);
   ctx.a.rotate(theta);
@@ -122,34 +158,34 @@ function drawParticle(x, y, theta, life, ttl, size, hue) {
 
 function createCanvas() {
   container = document.querySelector('.content--canvas');
-	canvas = {
-		a: document.createElement('canvas'),
-		b: document.createElement('canvas')
-	};
-	canvas.b.style = `
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	`;
-	container.appendChild(canvas.b);
-	ctx = {
-		a: canvas.a.getContext('2d'),
-		b: canvas.b.getContext('2d')
+  canvas = {
+    a: document.createElement('canvas'),
+    b: document.createElement('canvas')
+  };
+  canvas.b.style = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  `;
+  container.appendChild(canvas.b);
+  ctx = {
+    a: canvas.a.getContext('2d'),
+    b: canvas.b.getContext('2d')
   };
   center = [];
 }
 
 function resize() {
-	const { innerWidth, innerHeight } = window;
-	
-	canvas.a.width = innerWidth;
+  const { innerWidth, innerHeight } = window;
+  
+  canvas.a.width = innerWidth;
   canvas.a.height = innerHeight;
 
   ctx.a.drawImage(canvas.b, 0, 0);
 
-	canvas.b.width = innerWidth;
+  canvas.b.width = innerWidth;
   canvas.b.height = innerHeight;
   
   ctx.b.drawImage(canvas.a, 0, 0);
@@ -160,21 +196,27 @@ function resize() {
 
 function renderGlow() {
   ctx.b.save();
-  ctx.b.filter = 'blur(8px) brightness(200%)';
-  ctx.b.globalCompositeOperation = 'lighter';
+  ctx.b.filter = 'blur(8px)';
+  if (currentMode === 'dark') {
+    ctx.b.filter += ' brightness(200%)';
+  }
+  ctx.b.globalCompositeOperation = config[currentMode].compositeOperation;
   ctx.b.drawImage(canvas.a, 0, 0);
   ctx.b.restore();
 
   ctx.b.save();
-  ctx.b.filter = 'blur(4px) brightness(200%)';
-  ctx.b.globalCompositeOperation = 'lighter';
+  ctx.b.filter = 'blur(4px)';
+  if (currentMode === 'dark') {
+    ctx.b.filter += ' brightness(200%)';
+  }
+  ctx.b.globalCompositeOperation = config[currentMode].compositeOperation;
   ctx.b.drawImage(canvas.a, 0, 0);
   ctx.b.restore();
 }
 
-function render() {
+function renderToScreen() {
   ctx.b.save();
-  ctx.b.globalCompositeOperation = 'lighter';
+  ctx.b.globalCompositeOperation = currentMode === 'dark' ? 'lighter' : 'source-over';
   ctx.b.drawImage(canvas.a, 0, 0);
   ctx.b.restore();
 }
@@ -184,14 +226,15 @@ function draw() {
 
   ctx.a.clearRect(0, 0, canvas.a.width, canvas.a.height);
 
-  ctx.b.fillStyle = backgroundColor;
+  // Use the correct background color from config
+  ctx.b.fillStyle = config[currentMode].backgroundColor;
   ctx.b.fillRect(0, 0, canvas.a.width, canvas.a.height);
 
   drawParticles();
   renderGlow();
-  render();
+  renderToScreen();
 
-	window.requestAnimationFrame(draw);
+  window.requestAnimationFrame(draw);
 }
 
 window.addEventListener('load', setup);
