@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function(){
         '--dark-background': '#222222',
         '--purple': '#8A2BE2'
       },
-    light: {
+      light: {
         '--primary': '#1E90FF', 
         '--secondary': '#6A0DAD', 
         '--accent': '#FF1493',
@@ -29,6 +29,13 @@ document.addEventListener('DOMContentLoaded', function(){
         body.style.setProperty(property, customProperties[property]);
       });
       localStorage.setItem('mode-theme', theme);
+      
+      // Ajouter ou retirer la classe light-mode
+      if (theme === 'light') {
+        body.classList.add('light-mode');
+      } else {
+        body.classList.remove('light-mode');
+      }
     }
     
 

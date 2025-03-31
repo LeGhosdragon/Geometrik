@@ -3,19 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A propos</title>
+    <!--Titre de la page--> 
+    <title>À propos</title>
+    <!--Lien vers le fichier CSS-->
     <link rel="stylesheet" href="../styles/styles.css">
+    <!--Lien vers l'icône de la page-->
     <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!--Lien vers les polices de caractères-->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!--Lien vers les scripts-->
     <script src="../scripts/about.js"></script>
     <script src="../scripts/navAuth.js"></script>
+    <style>
+      /* Styles communs pour les sections */
+section {
+    padding: 3rem 2rem;
+    margin: 2rem 0;
+    background-color: var(--dark-background);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+section h2 {
+    color: var(--primary);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent);
+}
+
+section h3 {
+    color: var(--primary);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+
+section p {
+    color: var(--text);
+    font-family: 'Work Sans', sans-serif;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+section ul {
+    list-style-type: none;
+    padding-left: 1rem;
+}
+
+section ul li {
+    color: var(--text);
+    font-family: 'Work Sans', sans-serif;
+    margin: 0.5rem 0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+section ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    background-image: url('../images/turn-right.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Styles spécifiques pour la section Description */
+.game-description {
+    background: linear-gradient(145deg, var(--dark-background), rgba(34, 34, 34, 0.8));
+}
+
+.description-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .description-content {
+        flex-direction: row;
+    }
+    
+    .description-text {
+        flex: 3;
+    }
+    
+    .description-features {
+        flex: 2;
+    }
+}
+
+.description-features ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 20px;
+    height: 20px;
+    background-image: url('../images/accept.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Styles spécifiques pour la section Technologies */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.tech-card {
+    background-color: rgba(26, 26, 26, 0.5);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 3px solid var(--primary);
+}
+
+.tech-card:nth-child(2) {
+    border-left-color: var(--secondary);
+}
+
+.tech-card:nth-child(3) {
+    border-left-color: var(--accent);
+}
+
+.tech-card:nth-child(4) {
+    border-left-color: var(--purple);
+}
+
+.tech-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.tech-card h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Styles spécifiques pour la section Remerciements */
+.acknowledgements {
+    background: linear-gradient(to bottom, var(--dark-background), rgba(34, 34, 34, 0.9));
+}
+
+.thanks-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.thanks-content p:last-child {
+    margin-top: 2rem;
+    font-style: italic;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+}
+    </style>
 </head>
-<body>
+  <body>
+
+    <!--Barre de Navigation-->
     <nav>
         <ul class="nav-left">
             <li>
@@ -61,89 +232,170 @@
               </div>
         </ul>
     </nav>
+     
+    <!-- Section Description du jeu -->
+    <section class="game-description">
+      <h2>Geometrik : Le jeu qui défie vos capacités comme joueur</h2>
+      <div class="description-content">
+          <div class="description-text">
+            <p>Geometrik est un jeu d'action inspiré du jeu populaire "Vampire Survivors", où vous contrôlez des héros géométriques dans un monde envahi par des formes ennemies. Choisissez votre champion - un guerrier ou un tireur - et affrontez des vagues d'adversaires de plus en plus difficiles.</p>
+            <p>Dans cet univers minimaliste mais captivant, chaque entité est représentée par des formes géométriques distinctives. Les héros, ennemis et boss possèdent des capacités uniques liées à leur forme, créant une expérience de jeu à la fois simple visuellement et stratégiquement profonde.</p>
+            <p>Collectez des améliorations, développez votre personnage et tentez de survivre le plus longtemps possible face à l'assaut implacable des formes géométriques hostiles. Affrontez des boss impressionnants et découvrez jusqu'où vos compétences peuvent vous mener!</p>
+          </div>
+          <div class="description-features">
+              <h3>Caractéristiques principales :</h3>
+              <ul>
+                <li>Un Client Web et un Client Desktop!</li>
+                <li>Système de score et classement des meilleurs joueurs</li>
+                <li>Système de score pour prouver votre performance!</li>
+                <li>Des ennemies pour vous défier et vous mettre a l'épreuve!</li>
+                <li>Des améliorations personnalisées pour vous offrir une experience unique!</li>
+                <li>Ennemis et boss variés représentés par différentes formes géométriques</li>
+                <li>Mode survie avec difficulté croissante</li>
+              </ul>
+          </div>
+      </div>
+    </section>
 
-    
-<div class="team-container">
-    <div class="cardBox">
-        <div class="card">
-           <div class="h4">Simon Boudreau</div>
+    <!--Section Équipe-->
+    <section>
+      <div class="team-container">
+          <div class="cardBox">
+              <div class="card">
+                <div class="h4">Simon Boudreau</div>
+                      <div class="content">
+                          <div class="h3">Lorem ipsum dolor sit amet</div>
+                          <p>Lorem ipsum dolor sit amet</p>
+
+                          <div class="github-link">
+                              <a href="https://github.com/LeGhosdragon">
+                                  Mon Github
+                              </a>
+                          </div>
+                      </div>
+
+              </div>
+          </div>
+
+          <div class="cardBox">
+              <div class="card">
+                <div class="h4">Alexandre Gamache</div>
+              
                 <div class="content">
-                    <div class="h3">Lorem ipsum dolor sit amet</div>
-                    <p>Lorem ipsum dolor sit amet</p>
-
-                    <div class="github-link">
-                        <a href="https://github.com/LeGhosdragon">
-                            Mon Github
-                        </a>
-                    </div>
+                  <div class="h3">Lorem ipsum dolor sit amet</div>
+                  <p>Lorem ipsum dolor sit amet</p>
+                  <div class="github-link">
+                      <a href="https://github.com/AlexandreG17">
+                          Mon Github
+                      </a>
+                  </div>
                 </div>
-
-        </div>
-    </div>
-
-    <div class="cardBox">
-        <div class="card">
-           <div class="h4">Alexandre Gamache</div>
-         
-          <div class="content">
-            <div class="h3">Lorem ipsum dolor sit amet</div>
-            <p>Lorem ipsum dolor sit amet</p>
-            <div class="github-link">
-                <a href="https://github.com/AlexandreG17">
-                    Mon Github
-                </a>
-            </div>
+              </div>
           </div>
-        </div>
-    </div>
 
-    <div class="cardBox">
-        <div class="card">
-           <div class="h4">Antoine Larocque</div>
-         
-          <div class="content">
-            <div class="h3">Lorem ipsum dolor sit amet</div>
-            <p>Lorem ipsum dolor sit amet</p>
-            <div class="github-link">
-                <a href="https://github.com/Toni300096">
-                    Mon Github
-                </a>
-            </div>
+          <div class="cardBox">
+              <div class="card">
+                <div class="h4">Antoine Larocque</div>
+              
+                <div class="content">
+                  <div class="h3">Lorem ipsum dolor sit amet</div>
+                  <p>Lorem ipsum dolor sit amet</p>
+                  <div class="github-link">
+                      <a href="https://github.com/Toni300096">
+                          Mon Github
+                      </a>
+                  </div>
+                </div>
+              </div>
           </div>
-        </div>
-    </div>
 
-    <div class="cardBox">
-        <div class="card">
-           <div class="h4">Brian Nguyen</div>
-         
-          <div class="content">
-            <div class="h3">Lorem ipsum dolor sit amet</div>
-            <p>Lorem ipsum dolor sit amet</p>
-            <div class="github-link">
-                <a href="https://github.com/oSetsunai">
-                    Mon Github
-                </a>
-            </div>
+          <div class="cardBox">
+              <div class="card">
+                <div class="h4">Brian Nguyen</div>
+              
+                <div class="content">
+                  <div class="h3">Lorem ipsum dolor sit amet</div>
+                  <p>Lorem ipsum dolor sit amet</p>
+                  <div class="github-link">
+                      <a href="https://github.com/oSetsunai">
+                          Mon Github
+                      </a>
+                  </div>
+                </div>
+              </div>
           </div>
-        </div>
-    </div>
 
-    <div class="cardBox">
-        <div class="card">
-           <div class="h4">Naya Wakim</div>
-         
-          <div class="content">
-            <div class="h3">Lorem ipsum dolor sit amet</div>
-            <p>Lorem ipsum dolor sit amet</p>
-            <div class="github-link">
-                <a href="https://github.com/Nayawakim">
-                    Mon Github
-                </a>
-            </div>
+          <div class="cardBox">
+              <div class="card">
+                <div class="h4">Naya Wakim</div>
+              
+                <div class="content">
+                  <div class="h3">Lorem ipsum dolor sit amet</div>
+                  <p>Lorem ipsum dolor sit amet</p>
+                  <div class="github-link">
+                      <a href="https://github.com/Nayawakim">
+                          Mon Github
+                      </a>
+                  </div>
+                </div>
+              </div>
           </div>
-        </div>
-    </div>
-</div>
-</body>
+      </div>
+    </section> 
+    
+    <!-- Section Technologies utilisées -->
+    <section class="technologies">
+      <h2>Technologies utilisées</h2>
+      <div class="tech-grid">
+          <div class="tech-card">
+              <h3>Front-end</h3>
+              <ul>
+                  <li>HTML5</li>
+                  <li>CSS3</li>
+                  <li>JavaScript</li>
+                  <li>Canvas API</li>
+              </ul>
+          </div>
+          <div class="tech-card">
+              <h3>Back-end</h3>
+              <ul>
+                  <li>PHP</li>
+                  <li>MySQL</li>
+              </ul>
+          </div>
+          <div class="tech-card">
+              <h3>Outils de développement</h3>
+              <ul>
+                  <li>Git & GitHub</li>
+                  <li>Visual Studio Code</li>
+                  <li>Figma pour le design</li>
+                  <li>Uiverse pour la librairie d'interface utilisateur</li>
+              </ul>
+          </div>
+          <div class="tech-card">
+              <h3>Bibliothèques</h3>
+              <ul>
+                  <li>Pixi.js pour créer le jeu</li>
+                  <li>Simplex.js pour le fond</li>
+                  <li>Ambient Canvas Backgrounds pour le fond</li>
+              </ul>
+          </div>
+      </div>
+    </section>
+
+    <!-- Section Remerciements -->
+    <section class="acknowledgements">
+      <h2>Remerciements</h2>
+      <div class="thanks-content">
+          <p>Le développement de Geometrik n'aurait pas été possible sans le soutien et le travail de nombreuses personnes :</p>
+          <ul>
+              <li>Nos professeurs qui nous ont guidés tout au long du projet</li>
+              <li>La communauté open-source dont les outils et les bibliothèques ont été essentiels à notre travail</li>
+              <li>Du soutien d'entre nous dans le sein de l'équipe</li>
+          </ul>
+          <p>Un merci tout particulier à Iannick Gagnon et Amal Ben Abdellah pour leurs connaissances et conseils qui ont grandement contribué à la qualité finale du jeu et du développement.</p>
+      </div>
+    </section>
+
+  </body>
 </html>

@@ -20,13 +20,9 @@ function showPassword(passwordToggle, passwordInput){
         if(passwordInput.type === 'password'){
             passwordInput.type = 'text';
             showImage('../images/show.png', 20, 20, 'show password');
-            console.log('show password');
-            //this.textContent = '../images/hide.png';
         } else {
             passwordInput.type = 'password';
             showImage('../images/hide.png', 20, 20, 'hide password');
-            console.log('hide password');
-            //this.textContent = '../images/show.png';
         }
     });
 }
@@ -79,29 +75,3 @@ async function createAccount(username, password) {
         alert('Une erreur est survenue lors de la connexion: ' + error.message);
     }
 }
-
-// function validerMotDePasse(mdp) {
-//     const erreurs = [];
-
-//     // Au moins une majuscule
-//     if (!/[A-Z]/.test(mdp)) {
-//         erreurs.push("Mettez une lettre majuscule pour votre mot de passe.");
-//     }
-
-//     // Au moins une minuscule
-//     if (!/[a-z]/.test(mdp)) {
-//         erreurs.push("Mettez une lettre minuscule pour votre mot de passe.");
-//     }
-
-//     // Au moins un chiffre
-//     if (!/[0-9]/.test(mdp)) {
-//         erreurs.push("Il manque un nombre dans votre mot de passe.");
-//     }
-
-//     // Entre 8 et 32 caractères
-//     if (mdp.length < 8 || mdp.length > 32) {
-//         erreurs.push("Mettez un mot de passe entre 8 et 32 caractères inclusivement.");
-//     }
-
-//     return erreurs;
-// }

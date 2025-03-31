@@ -72,98 +72,98 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             name: "Point de vie",
             description: "Joueur",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/Health.gif",
             effect: "Augmente les points de vies du joueur"
            
         },
         {
             name: "Vitesse",
             description: "Joueur",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/MovementSpeed.gif",
             effect: "Augmente la vitesse du joueur"
             
         },
         {
             name: "Zone de Collection",
             description: "Joueur",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/Magnet.gif",
             effect: "Augmente la zone de collection d'expérience du joueur"
             
         },
         {
             name: "Explosion de joueur",
             description: "Joueur",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/PlayerBoom.gif",
             effect: "Le joueur cause une explosion autour de lui lorsqu'un ennemie le touche"
             
         },
         {
             name: "Zone d'explosion",
             description: "Joueur",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/PlayerBoom.gif",
             effect: "Augmente la zone d'explosion du joueur"
             
         },
         {
             name: "Chance de coup critique",
             description: "Joueur",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/CritChance.gif",
             effect: "Augmente les chances de coup critique du joueur"
             
         },
         {
             name: "Augmentation de dégâts critiques",
             description: "Joueur",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/CritDMG.gif",
             effect: "Augmente les dégâts critiques du joueur"
             
         },
         {
             name: "Temps de recharge",
             description: "Guerrier et Tireur d'élite",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/Cooldown.gif",
             effect: "Diminue le temps de recharge des attaques du joueur"
             
         },
         {
             name: "Dégâts",
             description: "Guerrier et Tireur d'élite",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/Dmg.gif",
             effect: "Augmente les dégâts du joueur"
             
         },
         {
             name: "Recul",
             description: "Guerrier et Tireur d'élite",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/Knockback.gif",
             effect: "Augmente le recul des ennemis touchés par l'arme du joueur"
             
         },
         {
             name: "Piercing",
             description: "Tireur d'élite",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/Pierce.gif",
             effect: "Augmente le nombre d'ennemis touchés par les balles du joueur"
             
         },
         {
             name: "Grandeur de la balle",
             description: "Tireur d'élite",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/BulletSize.gif",
             effect: "Augmente la taille des balles du Tireur d'élite"
             
         },
         {
             name: "Largeur de l'epée",
             description: "Guerrier",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/SwordWidth.gif",
             effect: "Augmente la largeur de l'épée du Guerrier"
             
         },
         {
             name: "Longueur de l'epée",
             description: "Guerrier",
-            image: "../images/logo.png",
+            image: "../../Jeu/assets/images/BulletSize.gif",
             effect: "Augmente la longueur de l'épée du Guerrier"
             
         }
