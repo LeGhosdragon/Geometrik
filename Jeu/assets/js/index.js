@@ -56,6 +56,14 @@ const app = new Application({
     backgroundColor: 0x000000,
     x: 200
 });
+let crossHair = new PIXI.Sprite.from("../images/crossHair.png");
+crossHair.width = crossHair.height = 30;
+crossHair.zIndex = 1000000;
+let colorFilter = new PIXI.filters.ColorMatrixFilter();
+crossHair.filters = [colorFilter];
+app.stage.addChild(crossHair);
+cursorX = crossHair.x, cursorY = crossHair.y;
+
 app.ennemiColor = 0x0000ff
 app.backColor = 0x000000;
 app.pause = false;
@@ -241,7 +249,17 @@ function play(delta) {
             //console.log(swinging);
             sword.playSwordSwing(delta, cursorX, cursorY);
         }
-
+        if(joueur.hasSword)
+        {
+            if(swinging == 0) colorFilter.hue(90, false);
+            else colorFilter.hue(0, false);
+            
+        }
+        else if(gun.hasGun)
+        {
+            if(gun.cooldownTimeLeft <= 0) colorFilter.hue(90, false);
+            else colorFilter.hue(0, false);
+        }
         
         (gun.cooldownTimeLeft-=delta) <= 0 ? gun.isOnCooldown = false : gun.isOnCooldown = true;
         if(joueur.hold && !gun.isOnCooldown || joueur.clickLock && !gun.isOnCooldown){gun.shoot();}
@@ -280,7 +298,8 @@ function play(delta) {
         
         joueur.onPlayerCollision(monstres);
     }
-    
+    crossHair.x += (cursorX-20 - crossHair.x) * 0.3;
+    crossHair.y += (cursorY-20 - crossHair.y) * 0.3;
     app.ennemiColor = updateBackgroundColor(app, Monstre);
     document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
     Shape3D.shapes.forEach(shape => shape.draw());
@@ -492,6 +511,8 @@ document.addEventListener('keydown', event =>
         //afficherMenu();
     }
 });
+
+
 
 // Ajouter le canvas que PIXI a automatiquement créé pour vous au document HTML
 document.body.appendChild(app.view);

@@ -37,6 +37,7 @@ export class Monstre {
         this.hasSwordHit = false;
         this.hasExplHit = false;
         this.hasBulletHit = false;
+        this.radius = 0;
     }
 
     // Méthodes statiques pour configurer les réf globals pour l'app pixi,
@@ -167,7 +168,7 @@ export class Monstre {
             let dy = this.getY() - otherMonstre.getY();
             let distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < minDistance) {
+            if (distance < minDistance && this.type != "err404" && this.type != "bossTank") {
                 let angle = Math.atan2(dy, dx);
                 let avoidX = Math.cos(angle) * avoidFactor;
                 let avoidY = Math.sin(angle) * avoidFactor;
@@ -354,8 +355,8 @@ export class Monstre {
     
     // Gestion de la perte de HP par le monstre selon le type de d'arme utilisé
     endommagé(dmg, weapon, crit) {
-        crit ? dmg *= Monstre.joueur.critDMG : 0;
-        Monstre.joueur.statistics.dmgDealt += dmg;
+        crit ?  dmg *= Math.round(Monstre.joueur.critDMG) : 0;
+        Monstre.joueur.statistics.dmgDealt = Math.round( Monstre.joueur.statistics.dmgDealt + dmg);
         this.setHP(this.getHP() - dmg);
         this.createHitEffect(this, dmg, crit);
         
@@ -854,6 +855,7 @@ export class BossNormal extends Monstre {
             this.hpText = null;
             this.body = null;
             Monstre.Event.boss["bossNormal"] = null;
+            Monstre.Event.nextSong = true; 
             return;
         }
     
@@ -868,17 +870,76 @@ export class BossNormal extends Monstre {
     }
 }
 export class BossTank extends Monstre {
+
+
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "bossTank";
-        const size = 1.2;
-        const speed = 2;
-        const spinSpeed = 0.01;
-        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
-        const exp = Math.round(2 * ennemiDifficultee/3)*100;
-        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
-        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        const size = 3;
+        const speed = 1.3;
+        const spinSpeed = 0.005;
+        const baseHP = Math.round(50 * ennemiDifficultee**1.2)*25;
+        const exp = Math.round(4 + 4 * ennemiDifficultee/3)*100;
+        const baseDMG = Math.round(2 * ennemiDifficultee);
+        super(x, y, 8, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        this.baseBaseDMG = this.baseDMG;
+        this.baseExp = this.exp;
+        this.baseBaseHP = this.baseHP;
     }
 
+
+    // mise a jour de l'apparence du monstre
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        // gérer les couleurs selon le thème ?
+        if (Monstre.app.space) {
+            this.body.lineStyle(3, ennemiColor, 1);
+            this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
+        } else {
+            this.body.lineStyle(3, 0x000000, 1);
+            this.body.beginFill(ennemiColor);
+        }
+        this.size += 0.001;
+        this.radius = newSize * 15;
+        const angleStep = (2 * Math.PI) / this.sides;
+    
+        this.body.moveTo(this.radius, 0);
+        for (let i = 1; i <= this.sides; i++) {
+            let angle = i * angleStep;
+            let x = this.radius * Math.cos(angle);
+            let y = this.radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+
+        this.baseDMG = this.baseBaseDMG * this.size;
+        this.exp = this.baseExp  * this.size;
+        this.baseHP = this.baseBaseHP  * this.size;
+
+        // inner shape of tank
+        this.body.moveTo(0.5*this.radius, 0);
+        for (let i = 0; i <= this.sides; i++) {
+            let angle = i * angleStep;
+            let x = 0.5*this.radius * Math.cos(angle);
+            let y = 0.5*this.radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+        for (let i = 0; i < this.sides; i++) {
+            let angle = i * angleStep;
+            this.body.moveTo(0.5*this.radius * Math.cos(angle), 0.5*this.radius * Math.sin(angle));
+            let x = this.radius * Math.cos(angle);
+            let y = this.radius * Math.sin(angle);
+            this.body.lineTo(x, y);
+        }
+
+        this.body.closePath();
+        this.body.endFill();
+        
+        // S'assurer que le HP reste à jour
+        this.updateHP();
+    }
     updateHP() {
         if (this.currentHP <= 0) {
 
@@ -908,6 +969,7 @@ export class BossTank extends Monstre {
             this.hpText = null;
             this.body = null;
             Monstre.Event.boss["bossTank"] = null;
+            Monstre.Event.nextSong = true; 
             return;
         }
     
@@ -963,6 +1025,7 @@ export class BossRunner extends Monstre {
             this.hpText = null;
             this.body = null;
             Monstre.Event.boss["bossRunner"] = null;
+            Monstre.Event.nextSong = true; 
             return;
         }
     
@@ -1018,6 +1081,7 @@ export class MilkMan extends Monstre {
             this.hpText = null;
             this.body = null;
             Monstre.Event.boss["milkMan"] = null;
+            Monstre.Event.nextSong = true; 
             return;
         }
     
@@ -1032,18 +1096,173 @@ export class MilkMan extends Monstre {
     }
 }
 
+
 export class BossGunner extends Monstre {
+    static bullets = [];
+    
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "bossGunner";
-        const size = 1.2;
-        const speed = 2;
-        const spinSpeed = 0.01;
-        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
-        const exp = Math.round(2 * ennemiDifficultee/3)*100;
-        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
+        const size = 1;
+        const speed = 0.7;
+        const spinSpeed = 0;
+        const baseHP = Math.round(15 * ennemiDifficultee**1.2 * 100);
+        const exp = Math.round(4 + 4 * ennemiDifficultee/3) * 100;
+        const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        this.shootInterval = 25;
+        this.lastShotTime = 0;
+        this.currentTime = 0;
+        this.isOnCooldown = false;
+        this.bulletSize = 8*3;
     }
 
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        if(Monstre.app.space) {
+            this.body.lineStyle(3, ennemiColor, 1);
+            this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
+        } else {
+            this.body.lineStyle(3, 0x000000, 1);
+            this.body.beginFill(ennemiColor);
+        }
+
+        this.body.rotation = Math.atan2((Monstre.joueur.getY() + Monstre.joueur.size) - this.getY(), (Monstre.joueur.getX() + Monstre.joueur.size) - this.getX());
+        const r = newSize * 50;
+    
+        this.body.moveTo(r*0.5, r*0.6);
+        this.body.lineTo(r*0.5, r*-0.6);
+        this.body.lineTo(r*1.4, r*-0.8);
+        this.body.lineTo(r*1.4, r*0.8);
+        this.body.lineTo(r*0.5, r*0.6);
+        this.body.lineTo(r*-0.3, r*1.1);
+        this.body.lineTo(r*-1.1, r*0);
+        this.body.lineTo(r*-0.3, r*-1.1);
+        this.body.lineTo(r*0.5, r*-0.6);
+
+        this.body.closePath();
+        this.body.endFill();
+
+        // S'assurer que le HP reste à jour
+        this.updateHP();
+    }
+
+    bouger(joueur, delta, deltaX, deltaY, ennemiColor) {
+        this.currentTime++;
+        const screenHeight = Monstre.app.view.height;
+        let moveVector = this.vecteurVersLeJoueur(joueur);
+
+        // Arrête de bouger si le monstre est trop proche du joueur
+        if (screenHeight / 2 < Math.sqrt((joueur.getX() - this.getX()) ** 2 + (joueur.getY() - this.getY()) ** 2)) {
+            this.setX(this.getX() + (moveVector.x) * delta + deltaX);
+            this.setY(this.getY() + (moveVector.y) * delta + deltaY);
+        } else {
+            this.setX(this.getX() + deltaX);
+            this.setY(this.getY() + deltaY);
+
+            if (this.currentTime - this.lastShotTime >= this.shootInterval && !this.isOnCooldown) {
+                this.shoot(joueur, delta, deltaX, deltaY);
+                this.lastShotTime = this.currentTime;
+                this.isOnCooldown = true;
+
+                // Reset cooldown after the interval
+                setTimeout(() => { this.isOnCooldown = false }, this.shootInterval);
+            }
+        }
+
+        this.spins ? this.body.rotation += this.spinSpeed * delta : 0;
+        this.avoidMonsterCollision();
+        this.actualiserPolygone(delta, ennemiColor);
+
+        if (this.showLife && this.currentHP > 0) {
+            // Mise a jour de la position du HP text
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+            this.hpText.text = this.currentHP;
+        }
+    }
+
+    shoot(joueur) {
+        if (this.isOnCooldown) return;
+        this.isOnCooldown = true;
+
+        // Calcul de l'angle vers le joueur
+        const angleToPlayer = Math.atan2((joueur.getY() + joueur.size) - this.getY(), (joueur.getX() + joueur.size) - this.getX());
+
+        // Créer une balle et inisialiser ses propriétés
+        const bullet = new PIXI.Graphics();
+        bullet.radius = this.bulletSize;
+        bullet.lineStyle(3, 0xFFFFFF, 1);
+        bullet.beginFill(0xFF0000);
+        bullet.drawCircle(0, 0, bullet.radius);
+        bullet.endFill();
+        
+        const gunLength = 30;
+        bullet.x = this.getX() + Math.cos(angleToPlayer) * gunLength;
+        bullet.y = this.getY() + Math.sin(angleToPlayer) * gunLength;
+
+        // Inisiliser l'angle et la direction de la balle
+        bullet.angle = angleToPlayer;
+        bullet.speed = 5;
+
+        Monstre.app.stage.addChild(bullet);
+        MonstreGunner.bullets.push(bullet);
+
+        setTimeout(() => (this.isOnCooldown = false), 1000 * this.shootInterval);
+    }
+
+    static updateBullets(delta, deltaX, deltaY, joueur) {
+        for (let i = MonstreGunner.bullets.length - 1; i >= 0; i--) {
+            let b = MonstreGunner.bullets[i];
+
+            // Mise a jour de la position de la nalle selon son angle
+            b.x += Math.cos(b.angle) * b.speed * delta + deltaX;
+            b.y += Math.sin(b.angle) * b.speed * delta + deltaY;
+
+            // Enlever les balles qui sont off-screen
+            if (b.x < -b.radius || b.x > Monstre.app.view.width + b.radius ||
+                b.y < -b.radius || b.y > Monstre.app.view.height + b.radius || MonstreGunner.isBulletCollidingWithJoueur(joueur)) {
+                Monstre.app.stage.removeChild(b);
+                b.destroy({ children: true, texture: true, baseTexture: true });
+                MonstreGunner.bullets.splice(i, 1);
+            }
+        }
+    }
+
+    // Méthode pout vérifier si une balle entre en collision avec le joueur 
+    static isBulletCollidingWithJoueur(joueur) {
+        for (let i = MonstreGunner.bullets.length - 1; i >= 0; i--) {
+            let bullet = MonstreGunner.bullets[i];
+            if (!bullet) continue;
+
+            const bulletBounds = bullet.getBounds();
+            const joueurBounds = joueur.body.getBounds();
+            if (
+                bulletBounds.x < joueurBounds.x + joueurBounds.width &&
+                bulletBounds.x + bulletBounds.width > joueurBounds.x &&
+                bulletBounds.y < joueurBounds.y + joueurBounds.height &&
+                bulletBounds.y + bulletBounds.height > joueurBounds.y
+            ) {
+                MonstreGunner.onBulletHitPlayer(joueur);
+                Monstre.app.stage.removeChild(bullet);
+                bullet.destroy({ children: true, texture: true, baseTexture: true });
+                MonstreGunner.bullets.splice(i, 1);
+            }
+        }
+    }
+    
+    // Gestion des effets quand une balle touche le joueur
+    static onBulletHitPlayer(joueur) {
+        if(!joueur.isImmune)
+        {
+            joueur.endommagé(1);
+            joueur.isImmune = true;
+            setTimeout(() => {joueur.isImmune = false;}, 750);
+        }
+    }
     updateHP() {
         if (this.currentHP <= 0) {
 
@@ -1073,6 +1292,7 @@ export class BossGunner extends Monstre {
             this.hpText = null;
             this.body = null;
             Monstre.Event.boss["bossGunner"] = null;
+            Monstre.Event.nextSong = true; 
             return;
         }
     
@@ -1090,12 +1310,12 @@ export class Err404 extends Monstre {
     static shapes = [];
     
     constructor(x, y, sides = 10, ennemiDifficultee) {
-        const shapeNum = 100;
+        const shapeNum = 10;
         const type = "err404";
         const size = 2;
         const speed = 2;
         const spinSpeed = 0.01;
-        const baseHP = Math.round(25 * ennemiDifficultee**1.2) * 125;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2) * 20;
         const exp = Math.round(2 * ennemiDifficultee / 3) * 100;
         const baseDMG = Math.round(1 * ennemiDifficultee);
         
@@ -1123,12 +1343,11 @@ export class Err404 extends Monstre {
         if (this.sides < 3) return;
         if(this.count > 20)
         {
-            this.vitesse = Math.random() * 10;
+            this.vitesse = Math.random() * 4;
             this.count = 0;
         }
         this.count+=1*delta;
 
-        this.couleur = ennemiColor;
         this.elapsedTime += 3 * delta;
 
         this.body.clear();
@@ -1176,6 +1395,7 @@ export class Err404 extends Monstre {
                 if (shapeIndex !== -1) {
                     Monstre.Shape3D.shapes.splice(shapeIndex, 1);
                 }
+                shape.graphics.clear();
             }
             this.attachedShapes = [];
 
@@ -1193,6 +1413,7 @@ export class Err404 extends Monstre {
             this.hpText = null;
             this.body = null;
             Monstre.Event.boss["err404"] = null;
+            Monstre.Event.nextSong = true; 
             return;
         }
 

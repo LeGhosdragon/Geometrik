@@ -40,7 +40,8 @@ export class Joueur {
         this.numChoix = 3;
         this.bulletHit = false;
         this.body = this.faireJoueur();
-        
+
+        this.createResolver();
         this.hpText = this.createHPText();
         this.healthBar = this.createHealthBar();
         this.updateHealthBar();
@@ -308,34 +309,50 @@ export class Joueur {
     
 
     playerDied() {  
-        
+        console.log("Player died!");
         Joueur.Grid.pauseGrid(this.app);
         this.app.pause = true;
-        this.statistics.score = ((this.statistics.kills <= 0 ? 1:this.statistics.kills) * (this.statistics.expGained <= 0 ? 1:this.statistics.expGained)  * this.statistics.timePlayed).toFixed(0);
-        const seconde = ((this.statistics.timePlayed%60000)/1000);
-        const minute = ((this.statistics.timePlayed%3600000)/1000 - seconde);
-        const heure = ((this.statistics.timePlayed%(3600000 * 60))/1000 - minute - seconde);
-        this.statistics.timePlayed = this.statistics.timePlayed.toFixed(0) + "( " + Math.abs(heure.toFixed(0)) + "h " + minute.toFixed(0)/60 + "min " + seconde.toFixed(2) + "s "+ ")";
-        const gameOverText = new PIXI.Text("Game Over", {
+        this.statistics.score = ((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
+                                (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * 
+                                this.statistics.timePlayed).toFixed(0);
+    
+        // Log statistics for debugging
+        console.log("Statistics:", this.statistics);
+    
+        const seconde = ((this.statistics.timePlayed % 60000) / 1000);
+        const minute = ((this.statistics.timePlayed % 3600000) / 1000 - seconde);
+        const heure = ((this.statistics.timePlayed % (3600000 * 60)) / 1000 - minute - seconde);
+        this.statistics.timePlayed = this.statistics.timePlayed.toFixed(0) + 
+                                    "( " + Math.abs(heure.toFixed(0)) + "h " + 
+                                    (minute.toFixed(0) / 60) + "min " + 
+                                    seconde.toFixed(2) + "s )";
+    
+        // Create PIXI text object
+        const gameOverText = new PIXI.Text("", {  
             fontFamily: 'calibri',
-            stroke: 'black',      // Black outline
+            stroke: 'white',      
             strokeThickness: 4, 
             fontSize: 72,
-            weight: 'bold',
+            fontWeight: 'bold',
             fill: 0xFF0000,
             align: 'center'
-        });
+        }); 
         gameOverText.anchor.set(0.5);
         gameOverText.x = this.app.renderer.width / 2;
         gameOverText.y = this.app.renderer.height / 2;
         gameOverText.zIndex = 10000;
-        this.app.stage.addChild(gameOverText);
+        Joueur.Event.currentMusic.stop();
+        Joueur.Event.nextSongIs = "gameOver";
+        Joueur.Event.nextSong = true;
         
+        let text2 = "Game Over";
+        this.app.stage.addChild(gameOverText);
+        this.createResolver(gameOverText, text2);
+    
         let targetY = this.app.renderer.height / 20;
         let speed = 2; 
-        
+    
         setTimeout(() => {
-            
             const ticker = new PIXI.Ticker();
             ticker.add(() => {
                 speed += 0.1;
@@ -350,12 +367,108 @@ export class Joueur {
             });
             ticker.start(); 
         }, 2000);
-        
-
-        return "";
-
     }
-
+    
+    
+    createResolver(object, text1) {
+        let text = text1 || "";
+        let options = {
+            offset: 0,
+            timeout: 15, 
+            iterations: 10, 
+            characters: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'x', '#', '%', '&', '-', '+', '_', '?', '/', '\\', '='],
+            resolveString: text || "",  
+            element: object  // This will be the PIXI Text or HTML element
+        };
+    
+        const resolver = {
+            resolve: (options, callback) => this.resolve(options, callback) // Ensuring 'this' is preserved
+        };
+    
+        resolver.resolve(options, () => {
+            console.log("Resolver effect finished!"); // Callback for when effect finishes
+        });
+    }
+    
+    resolve(options, callback) {
+        const resolveString = options.resolveString;
+        const combinedOptions = Object.assign({}, options, { resolveString: resolveString });
+        this.doResolverEffect(combinedOptions, callback);
+    }
+    
+    doResolverEffect(options, callback) {
+        const resolveString = options.resolveString;
+        const characters = options.characters;
+        const offset = options.offset;
+        const partialString = resolveString.substring(0, offset);
+    
+        const combinedOptions = Object.assign({}, options, { partialString: partialString });
+    
+        this.doRandomiserEffect(combinedOptions, () => {
+            const nextOptions = Object.assign({}, options, { offset: offset + 1 });
+    
+            if (offset <= resolveString.length) {
+                this.doResolverEffect(nextOptions, callback);
+            } else if (typeof callback === "function") {
+                callback();  // Fixing callback invocation here
+            }
+        });
+    }
+    
+    getRandomInteger(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    
+    randomCharacter(characters) {
+        return characters[this.getRandomInteger(0, characters.length - 1)];
+    }
+    
+    doRandomiserEffect(options, callback) {
+        const characters = options.characters;
+        const timeout = options.timeout;
+        const element = options.element;  // PIXI Text or HTML element
+        const partialString = options.partialString;
+    
+        if (!element) {
+            console.error("Element is undefined in doRandomiserEffect:", options);
+            return;
+        }
+    
+        let iterations = options.iterations;
+    
+        setTimeout(() => {
+            if (iterations >= 0) {
+                const nextOptions = Object.assign({}, options, { iterations: iterations - 1 });
+    
+                if (element instanceof PIXI.Text) {
+                    element.text = "";  // Clear the text first for PIXI Text
+                } else {
+                    element.textContent = "";  // Clear the text first for HTML elements
+                }
+    
+                if (iterations === 0) {
+                    if (element instanceof PIXI.Text) {
+                        element.text = partialString;  // Update PIXI text
+                    } else {
+                        element.textContent = partialString;  // Update HTML element's text
+                    }
+                } else {
+                    const randomChar = this.randomCharacter(characters);
+                    if (element instanceof PIXI.Text) {
+                        element.text = partialString.substring(0, partialString.length - 1) + randomChar;  // Update PIXI text
+                    } else {
+                        element.textContent = partialString.substring(0, partialString.length - 1) + randomChar;  // Update HTML element's text
+                    }
+                }
+    
+                this.doRandomiserEffect(nextOptions, callback);
+            } else if (typeof callback === "function") {
+                callback();
+            }
+        }, timeout);
+    }
+    
+    
 
     chooseClass()
     {
@@ -372,6 +485,7 @@ export class Joueur {
         
         this.weapons.forEach((weapon) => {
             const card = document.createElement("div");
+            this.createResolver(card, weapon);
             card.className = "card";
             card.style.width = "200px";
             card.style.borderRadius = "15px";
@@ -417,11 +531,16 @@ export class Joueur {
         //à faire
     }
 
+    
+          
+          
+
+
 
     createStatsBoards() {
         const container = document.createElement("div");
         container.id = "stats-container";
-        container.style.position = "absolute";
+        container.style.position = "fixed";
         container.style.width = "40%";
         container.style.top = "50%";
         container.style.left = "50%";
@@ -463,7 +582,8 @@ export class Joueur {
     
         // Loop through statistics object and create text for each
         for (let [statName, statValue] of Object.entries(this.statistics)) {
-            
+
+
             const statRow = document.createElement("div");
             statRow.style.display = "flex";
             statRow.style.justifyContent = "space-between";
@@ -473,7 +593,8 @@ export class Joueur {
             statRow.style.borderRadius = "10px";
     
             // Stat name
-            const name = document.createElement("body");
+            const name = document.createElement("div");
+            this.createResolver(name, this.formatStatName(statName));
             name.textContent = this.formatStatName(statName);
             name.style.fontFamily = "courier new";
             name.style.fontSize = "18px";
@@ -481,11 +602,13 @@ export class Joueur {
     
             // Stat value
             const value = document.createElement("body");
+            this.createResolver(value, statValue);
             value.textContent = statValue;
             value.style.fontFamily = "courier new";
             value.style.fontSize = "18px";
             value.style.fontWeight = "bold";
             value.style.color = "white";
+
     
             // Append to statRow
             statRow.appendChild(name);

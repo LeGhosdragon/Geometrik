@@ -26,6 +26,8 @@ body {
     animation-fill-mode: forwards;
 }
 
+
+
 @keyframes fadeInAnimation {
     0% {
         opacity: 0;
