@@ -298,8 +298,8 @@ function play(delta) {
         
         joueur.onPlayerCollision(monstres);
     }
-    crossHair.x += (cursorX-20 - crossHair.x) * 0.3;
-    crossHair.y += (cursorY-20 - crossHair.y) * 0.3;
+    crossHair.x += (cursorX-20 - crossHair.x) * 1;
+    crossHair.y += (cursorY-20 - crossHair.y) * 1;
     app.ennemiColor = updateBackgroundColor(app, Monstre);
     document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
     Shape3D.shapes.forEach(shape => shape.draw());

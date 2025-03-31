@@ -820,7 +820,7 @@ export class BossNormal extends Monstre {
         const size = 1.2;
         const speed = 2;
         const spinSpeed = 0.01;
-        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*100;
         const exp = Math.round(2 * ennemiDifficultee/3)*100;
         const baseDMG = Math.round(1 * ennemiDifficultee)*10;
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
@@ -977,7 +977,7 @@ export class BossTank extends Monstre {
         if (this.showLife) {
             this.hpText.text = this.currentHP;
             this.hpText.x = this.getX();
-            this.hpText.y = this.getY() - 10;
+            this.hpText.y = this.getY() - this.size;
         } else {
             Monstre.app.stage.removeChild(this.hpText);
         }
@@ -1206,7 +1206,7 @@ export class BossGunner extends Monstre {
 
         // Inisiliser l'angle et la direction de la balle
         bullet.angle = angleToPlayer;
-        bullet.speed = 5;
+        bullet.speed = 7;
 
         Monstre.app.stage.addChild(bullet);
         MonstreGunner.bullets.push(bullet);
@@ -1310,7 +1310,7 @@ export class Err404 extends Monstre {
     static shapes = [];
     
     constructor(x, y, sides = 10, ennemiDifficultee) {
-        const shapeNum = 10;
+        const shapeNum = 50;
         const type = "err404";
         const size = 2;
         const speed = 2;
