@@ -397,7 +397,22 @@ export class Joueur {
     }
     
     doResolverEffect(options, callback) {
-        const resolveString = options.resolveString;
+        let resolveString = options.resolveString;
+    
+        // Ensure resolveString is a string before using substring()
+        if (typeof resolveString !== "string") {
+            if (resolveString && resolveString.text !== undefined) {
+                // If it's a PIXI.Text object, use its text content
+                resolveString = resolveString.text;
+            } else if (resolveString instanceof HTMLElement) {
+                // If it's an HTML element, use its innerText
+                resolveString = resolveString.innerText;
+            } else {
+                //console.error("Invalid resolveString type:", resolveString);
+                return;
+            }
+        }
+    
         const characters = options.characters;
         const offset = options.offset;
         const partialString = resolveString.substring(0, offset);
@@ -410,10 +425,11 @@ export class Joueur {
             if (offset <= resolveString.length) {
                 this.doResolverEffect(nextOptions, callback);
             } else if (typeof callback === "function") {
-                callback();  // Fixing callback invocation here
+                callback(); // Fixing callback invocation here
             }
         });
     }
+    
     
     getRandomInteger(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -601,7 +617,7 @@ export class Joueur {
             name.style.color = "#ccc";
     
             // Stat value
-            const value = document.createElement("body");
+            const value = document.createElement("div");
             this.createResolver(value, statValue);
             value.textContent = statValue;
             value.style.fontFamily = "courier new";
