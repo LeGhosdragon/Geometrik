@@ -133,7 +133,7 @@ function setup() {
     // }, 10);
 
     setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur, Event);
-    if(isMobile())
+    //if(isMobile())
     {
         joueur.hold = true;
         joueur.clickLock = true;
@@ -544,7 +544,7 @@ function addJoysticks() {
     leftJoystick.style = `
         position: absolute;
         bottom: 10%;
-        left: 10%;
+        left: 20%;
         width: 100px;
         height: 100px;
         background: rgba(47, 139, 155, 0.5);
@@ -558,7 +558,7 @@ function addJoysticks() {
     rightJoystick.style = `
         position: absolute;
         bottom: 10%;
-        right: 10%;
+        right: 20%;
         width: 100px;
         height: 100px;
         background: rgba(47, 139, 155, 0.5);
