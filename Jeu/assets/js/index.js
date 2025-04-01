@@ -663,8 +663,8 @@ function setupJoystickControls() {
             let angle = Math.atan2(rightJoystickData.y, rightJoystickData.x); // Get angle from joystick
             let aimDistance = Math.min(joystickMagnitude, 100); // Limit aim distance
 
-            let cursorX = joueur.x + Math.cos(angle) * aimDistance;
-            let cursorY = joueur.y + Math.sin(angle) * aimDistance;
+            cursorX = joueur.x + Math.cos(angle) * aimDistance;
+            cursorY = joueur.y + Math.sin(angle) * aimDistance;
 
             virtualCursor.style.left = `${cursorX}px`;
             virtualCursor.style.top = `${cursorY}px`;
