@@ -133,7 +133,7 @@ function setup() {
     // }, 10);
 
     setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur, Event);
-    //if(isMobile())
+    if(isMobile())
     {
         joueur.hold = true;
         joueur.clickLock = true;
