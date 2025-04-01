@@ -964,7 +964,7 @@ export class MilkMan extends Monstre {
         const baseDMG = Math.round(1 * ennemiDifficultee)*1;
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
         this.milkBody = this.createBody();
-        this.shootInterval = 50;
+        this.shootInterval = 40;
         this.lastShotTime = 0;
         this.currentTime = 0;
         this.isOnCooldown = false;
@@ -1059,7 +1059,7 @@ export class MilkMan extends Monstre {
     
         const bullet = new PIXI.Container(); // Use a container to hold both graphics and sprite
         bullet.radius = this.bulletSize;
-        bullet.speed = 7;
+        bullet.speed = 4;
         bullet.angle = angleToPlayer;
         bullet.x = this.getX() + Math.cos(angleToPlayer) * 30; // Gun length offset
         bullet.y = this.getY() + Math.sin(angleToPlayer) * 30;
