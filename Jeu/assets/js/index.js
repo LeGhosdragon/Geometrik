@@ -597,48 +597,75 @@ function setupJoystickControls() {
     let rightJoystick = document.getElementById("rightJoystick");
     let virtualCursor = document.getElementById("virtualCursor");
 
-    function handleJoystickMove(event, joystick, joystickData) {
-        let clientX, clientY;
+    let activeTouches = {}; // Store active touches (left & right joysticks)
 
-        if (event.touches) {
-            clientX = event.touches[0].clientX;
-            clientY = event.touches[0].clientY;
-        } else {
-            clientX = event.clientX;
-            clientY = event.clientY;
+    function handleJoystickMove(event) {
+        event.preventDefault();
+
+        let touches = event.touches;
+
+        for (let i = 0; i < touches.length; i++) {
+            let touch = touches[i];
+            let touchX = touch.clientX;
+            let touchY = touch.clientY;
+
+            // Identify if the touch belongs to the left or right joystick
+            if (!activeTouches.left && touchX < window.innerWidth / 2) {
+                activeTouches.left = touch.identifier;
+            }
+            if (!activeTouches.right && touchX > window.innerWidth / 2) {
+                activeTouches.right = touch.identifier;
+            }
+
+            // Update joystick positions based on assigned touch
+            if (touch.identifier === activeTouches.left) {
+                leftJoystickData.x = touchX - leftJoystick.offsetLeft - 50;
+                leftJoystickData.y = touchY - leftJoystick.offsetTop - 50;
+            }
+            if (touch.identifier === activeTouches.right) {
+                rightJoystickData.x = touchX - rightJoystick.offsetLeft - 50;
+                rightJoystickData.y = touchY - rightJoystick.offsetTop - 50;
+            }
         }
-
-        joystickData.x = clientX - joystick.offsetLeft - 50; // Centered position
-        joystickData.y = clientY - joystick.offsetTop - 50;
     }
 
-    function resetJoystick(joystickData) {
-        joystickData.x = 0;
-        joystickData.y = 0;
+    function resetJoystick(event) {
+        let touches = event.changedTouches;
+        for (let i = 0; i < touches.length; i++) {
+            let touch = touches[i];
+
+            // Reset joystick if the associated touch is removed
+            if (touch.identifier === activeTouches.left) {
+                leftJoystickData.x = 0;
+                leftJoystickData.y = 0;
+                delete activeTouches.left;
+            }
+            if (touch.identifier === activeTouches.right) {
+                rightJoystickData.x = 0;
+                rightJoystickData.y = 0;
+                delete activeTouches.right;
+            }
+        }
     }
 
-    // Handle Touch & Mouse Events
-    ["touchmove", "mousemove"].forEach(eventType => {
-        leftJoystick.addEventListener(eventType, (event) => handleJoystickMove(event, leftJoystick, leftJoystickData));
-        rightJoystick.addEventListener(eventType, (event) => handleJoystickMove(event, rightJoystick, rightJoystickData));
-    });
+    // Attach listeners for multi-touch handling
+    leftJoystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
+    rightJoystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
 
-    ["touchend", "mouseup"].forEach(eventType => {
-        leftJoystick.addEventListener(eventType, () => resetJoystick(leftJoystickData));
-        rightJoystick.addEventListener(eventType, () => resetJoystick(rightJoystickData));
-    });
+    leftJoystick.addEventListener("touchend", resetJoystick);
+    rightJoystick.addEventListener("touchend", resetJoystick);
 
     function updateCursorPosition() {
         let joueur = { x: window.innerWidth / 2, y: window.innerHeight / 2 }; // Replace with actual player position
         let joystickMagnitude = Math.sqrt(rightJoystickData.x ** 2 + rightJoystickData.y ** 2);
-        
+
         if (joystickMagnitude > 10) { // Prevent noise when joystick is at rest
             let angle = Math.atan2(rightJoystickData.y, rightJoystickData.x); // Get angle from joystick
             let aimDistance = Math.min(joystickMagnitude, 100); // Limit aim distance
-            
-            cursorX = joueur.x + Math.cos(angle) * aimDistance;
-            cursorY = joueur.y + Math.sin(angle) * aimDistance;
-            
+
+            let cursorX = joueur.x + Math.cos(angle) * aimDistance;
+            let cursorY = joueur.y + Math.sin(angle) * aimDistance;
+
             virtualCursor.style.left = `${cursorX}px`;
             virtualCursor.style.top = `${cursorY}px`;
         }
@@ -648,6 +675,7 @@ function setupJoystickControls() {
 
     updateCursorPosition(); // Start cursor update loop
 }
+
 
 function updatePlayerMovement() {
     if(isMobile()){
