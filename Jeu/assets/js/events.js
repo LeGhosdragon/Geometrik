@@ -17,6 +17,7 @@ export class Event{
     static BossTank = null;
     static BossGunner = null;
     static MilkMan = null;
+    static BossBunny = null;
     static Err404 = null;
     static monstres = null;
     static app = null;
@@ -30,7 +31,7 @@ export class Event{
     static currentMusic = null;
     static nextSong = false;
     static nextSongIs = null;
-    static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "bossGunner":null, "milkMan":null, "err404":null};
+    static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "bossGunner":null, "milkMan":null, "err404":null, "bossBunny":null};
 
     constructor(type)
     {
@@ -58,30 +59,39 @@ export class Event{
                 // }
 
 
-                while(bossChoose)
-                {
-                    if (compteur == 10) {break;}
-                    if(compteur >= 10){break;}
-                    num = Math.floor(Math.random() * 2);
+                while(bossChoose) {
+                    if (compteur >= 10) { break; }
+                    num = Math.floor(Math.random() * 3); // Passage de 2 à 3 pour trois options
                     switch (num) {
                         case 0:
-                            if(Event.boss["bossNormal"] != null) {compteur++;compteur++;}
+                            if(Event.boss["bossNormal"] != null) { compteur++; }
                             else {
-                                event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
+                                event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss");
                                 Event.currentMusic.stop();
-                                Event.nextSong = true; 
+                                Event.nextSong = true;
                                 Event.nextSongIs = "boss";
                                 bossChoose = false;
                                 compteur = 0;
                             }
                             break;
                         case 1:
-                            if(Event.boss["err404"] != null) {compteur++;}
+                            if(Event.boss["err404"] != null) { compteur++; }
                             else {
-                                event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
+                                event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss");
                                 Event.currentMusic.stop();
-                                Event.nextSong = true; 
+                                Event.nextSong = true;
                                 Event.nextSongIs = "404Boss";
+                                bossChoose = false;
+                                compteur = 0;
+                            }
+                            break;
+                        case 2:
+                            if(Event.boss["bossBunny"] != null) { compteur++; }
+                            else {
+                                event.ajouterMONSTRE(1, "bossBunny", 2 + Event.difficultyDegree, "boss");
+                                Event.currentMusic.stop();
+                                Event.nextSong = true;
+                                Event.nextSongIs = "boss"; // Vous pouvez définir une musique spécifique pour BossBunny si vous le souhaitez
                                 bossChoose = false;
                                 compteur = 0;
                             }
@@ -90,6 +100,7 @@ export class Event{
                             break;
                     }
                 }
+                
 
                 if (Event.boss["bossNormal"] != null) { event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( 1, "normal", 2 + Event.difficultyDegree, "normal") :0;}
             } 
@@ -253,6 +264,12 @@ export class Event{
             Event.boss[type] = monstre;
             Event.app.stage.addChild(monstre.body);
             Event.monstres.push(monstre);}
+        if(type == "bossBunny"){
+                monstre = new Event.BossBunny(rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
+                Event.boss[type] = monstre;
+                Event.app.stage.addChild(monstre.body);
+                Event.monstres.push(monstre);
+            }            
         else if(code == "normal"){
             monstre = new Event.MonstreNormal( Event.boss["bossNormal"].getX(), Event.boss["bossNormal"].getY(), sides, Event.ennemiDifficultee);
             Event.app.stage.addChild(monstre.body);
@@ -332,7 +349,7 @@ export class Event{
     }
 
     // ajoute une réf aux différents type de monstres
-    static addMonstres(monstresInput,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12)
+    static addMonstres(monstresInput,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13)
     {
         Event.Monstre = monstresInput;
         Event.monstres = Event.Monstre.monstres;
@@ -347,6 +364,7 @@ export class Event{
         Event.BossGunner = m10;
         Event.Err404 = m11;
         Event.MilkMan = m12;
+        Event.BossBunny = m13;
     }
     // ajoute une réf a l'app PIXI
     static addApp(appInput) {
@@ -372,7 +390,8 @@ export class Event{
             "boss": new Event.Music("boss"),
             "404Boss": new Event.Music("404Boss"),
             "milkMan": new Event.Music("milkMan"),
-            "speed": new Event.Music("speed")
+            "speed": new Event.Music("speed"),
+            "bunny": new Event.Music("bunny")
         };
         Event.currentMusic = new Event.Music("space2");
     }

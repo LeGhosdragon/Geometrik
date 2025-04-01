@@ -1076,7 +1076,7 @@ export class BossGunner extends Monstre {
             return;
         }
     
-        // Mise a jour ud texte HP si le joueur est encore en vie
+        // Mise a jour du texte HP si le joueur est encore en vie
         if (this.showLife) {
             this.hpText.text = this.currentHP;
             this.hpText.x = this.getX();
@@ -1104,7 +1104,8 @@ export class Err404 extends Monstre {
         this.shapeNum = shapeNum;
         this.attachedShapes = [];
         this.createBody();
-    }    
+    }
+    
 
     createBody() {
         for (let i = 0; i < this.shapeNum; i++) {
@@ -1158,6 +1159,7 @@ export class Err404 extends Monstre {
         // S'assurer que le HP reste à jour
         this.updateHP();
     }
+    
 
     updateHP() {
         if (this.currentHP <= 0) {
@@ -1196,6 +1198,188 @@ export class Err404 extends Monstre {
             return;
         }
 
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
+}
+
+export class BossBunny extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "bossBunny";
+        const size = 1.2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee ** 1.2) * 125;
+        const exp = Math.round(2 * ennemiDifficultee / 3) * 100;
+        const baseDMG = Math.round(1 * ennemiDifficultee) * 10;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+
+        this.explosionInterval = 300; // Intervalle de temps pour les explosions 
+        this.lastExplosionTime = 0; // Temps de la dernière explosion
+        this.isStopped = false; // Indique si le boss est arrêté pour une explosion
+        this.stopDuration = 60; // Durée pendant laquelle le boss reste immobile 
+        this.stopTime = 0; // Temps écoulé depuis que le boss s'est arrêté
+
+        this.jumpInterval = 300; // Intervalle de temps pour les sauts (en frames)
+        this.lastJumpTime = 0; // Temps du dernier saut
+        this.jumpDistance = 200; // Distance parcourue par un saut
+    }
+    
+    // Crée une explosion autour du boss
+    createExplosion() {
+        const explosionRadius = this.body.width * 3;
+        const explosionDamage = 50;
+        const explosionColor = 0xFF00FF;
+        new Monstre.Explosion(this.getX(), this.getY(), explosionRadius, explosionDamage, explosionColor);
+    }
+
+    // Fait sauter le boss vers le joueur
+    jumpTowardsPlayer(joueur) {
+        // Calcul du vecteur directionnel vers le joueur
+        let dx = (joueur.getX() + joueur.getWidth() / 2) - this.getX();
+        let dy = (joueur.getY() + joueur.getHeight() / 2) - this.getY();
+        let magnitude = Math.sqrt(dx * dx + dy * dy);
+        if (magnitude === 0) return; // Évite la division par zéro
+        let jumpX = (dx / magnitude) * this.jumpDistance;
+        let jumpY = (dy / magnitude) * this.jumpDistance;
+        this.setX(this.getX() + jumpX);
+        this.setY(this.getY() + jumpY);
+    }
+
+    // Dessine le BossBunny en forme de lapin à l'aide de formes géométriques
+    actualiserPolygone(delta, ennemiColor) {
+        // Efface l’ancien dessin
+        this.body.clear();
+
+        // Définir le style de ligne et la couleur de remplissage
+        this.body.lineStyle(3, 0xFFFFFF, 1); // Lignes blanches
+        const base = this.size * 50;
+
+        // Oreille gauche
+        this.body.moveTo(-0.2 * base, -0.9 * base);
+        this.body.lineTo(-0.3 * base, -1.4 * base);
+        this.body.lineTo(-0.1 * base, -0.9 * base);
+        this.body.closePath();
+
+        // Oreille droite
+        this.body.moveTo(0.2 * base, -0.9 * base);
+        this.body.lineTo(0.3 * base, -1.4 * base);
+        this.body.lineTo(0.1 * base, -0.9 * base);
+        this.body.closePath();
+
+        // Tête (polygone anguleux)
+        this.body.moveTo(-0.4 * base, -0.7 * base);
+        this.body.lineTo(0.4 * base, -0.7 * base);
+        this.body.lineTo(0.5 * base, -0.4 * base);
+        this.body.lineTo(0.3 * base, -0.2 * base);
+        this.body.lineTo(-0.3 * base, -0.2 * base);
+        this.body.lineTo(-0.5 * base, -0.4 * base);
+        this.body.closePath();
+
+        // Corps
+        this.body.moveTo(-0.5 * base, -0.2 * base);
+        this.body.lineTo(-0.7 * base, 0.4 * base);
+        this.body.lineTo(-0.4 * base, 0.8 * base);
+        this.body.lineTo(0.4 * base, 0.8 * base);
+        this.body.lineTo(0.7 * base, 0.4 * base);
+        this.body.lineTo(0.5 * base, -0.2 * base);
+        this.body.closePath();
+
+        // Patte avant gauche
+        this.body.moveTo(-0.4 * base, 0.6 * base);
+        this.body.lineTo(-0.5 * base, 1.0 * base);
+        this.body.lineTo(-0.3 * base, 1.0 * base);
+        this.body.lineTo(-0.2 * base, 0.6 * base);
+        this.body.closePath();
+
+        // Patte avant droite
+        this.body.moveTo(0.4 * base, 0.6 * base);
+        this.body.lineTo(0.5 * base, 1.0 * base);
+        this.body.lineTo(0.3 * base, 1.0 * base);
+        this.body.lineTo(0.2 * base, 0.6 * base);
+        this.body.closePath();
+
+        // Patte arrière gauche
+        this.body.moveTo(-0.6 * base, 0.4 * base);
+        this.body.lineTo(-0.8 * base, 0.9 * base);
+        this.body.lineTo(-0.5 * base, 0.9 * base);
+        this.body.lineTo(-0.4 * base, 0.4 * base);
+        this.body.closePath();
+
+        // Patte arrière droite
+        this.body.moveTo(0.6 * base, 0.4 * base);
+        this.body.lineTo(0.8 * base, 0.9 * base);
+        this.body.lineTo(0.5 * base, 0.9 * base);
+        this.body.lineTo(0.4 * base, 0.4 * base);
+        this.body.closePath();
+
+        // Queue
+        this.body.moveTo(0.7 * base, 0.3 * base);
+        this.body.lineTo(0.9 * base, 0.5 * base);
+        this.body.lineTo(0.8 * base, 0.2 * base);
+        this.body.closePath();
+
+        // Yeux rouges (losanges)
+        this.body.lineStyle(2, 0xFF0000, 1); // Lignes rouges pour les yeux
+        this.body.beginFill(0xFF0000);
+
+        // Œil gauche
+        this.body.moveTo(-0.2 * base, -0.5 * base);
+        this.body.lineTo(-0.15 * base, -0.55 * base);
+        this.body.lineTo(-0.1 * base, -0.5 * base);
+        this.body.lineTo(-0.15 * base, -0.45 * base);
+        this.body.closePath();
+
+        // Œil droit
+        this.body.moveTo(0.2 * base, -0.5 * base);
+        this.body.lineTo(0.15 * base, -0.55 * base);
+        this.body.lineTo(0.1 * base, -0.5 * base);
+        this.body.lineTo(0.15 * base, -0.45 * base);
+        this.body.closePath();
+
+        this.body.endFill();
+
+        // Mise à jour des points de vie
+        this.updateHP();
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+
+            // Supprimer le monstre de l'array
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+
+            // Supprimer les graphiques du stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+
+            // Arrêt de toute animation ticker-based
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null;
+            }
+
+            // Clean up des références pour le garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["bossBunny"] = null;
+            return;
+        }
+
+        // Mise à jour du texte HP si le joueur est encore en vie
         if (this.showLife) {
             this.hpText.text = this.currentHP;
             this.hpText.x = this.getX();
