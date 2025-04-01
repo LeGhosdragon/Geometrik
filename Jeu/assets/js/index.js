@@ -69,7 +69,7 @@ app.backColor = 0x000000;
 app.pause = false;
 app.space = false;
 
-if(isMobile())
+if(!isMobile())
 {
     addJoysticks();
 }
@@ -308,8 +308,8 @@ function play(delta) {
         
         joueur.onPlayerCollision(monstres);
     }
-    crossHair.x += (cursorX-20 - crossHair.x) * 1;
-    crossHair.y += (cursorY-20 - crossHair.y) * 1;
+    crossHair.x += (cursorX-30 - crossHair.x) * 1;
+    crossHair.y += (cursorY-33 - crossHair.y) * 1;
     app.ennemiColor = updateBackgroundColor(app, Monstre);
     document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
     Shape3D.shapes.forEach(shape => shape.draw(Monstre));
@@ -534,8 +534,33 @@ function addJoysticks() {
     leftJoystick.id = "leftJoystick";
     rightJoystick.id = "rightJoystick";
 
-    leftJoystick.style = "position: absolute; bottom: 10%; left: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
-    rightJoystick.style = "position: absolute; bottom: 10%; right: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
+    leftJoystick.style = `
+        position: absolute;
+        bottom: 10%;
+        left: 10%;
+        width: 100px;
+        height: 100px;
+        background: rgba(47, 139, 155, 0.5);
+        border-radius: 50%;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    rightJoystick.style = `
+        position: absolute;
+        bottom: 10%;
+        right: 10%;
+        width: 100px;
+        height: 100px;
+        background: rgba(47, 139, 155, 0.5);
+        border-radius: 50%;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
 
     document.body.appendChild(leftJoystick);
     document.body.appendChild(rightJoystick);
@@ -588,11 +613,10 @@ function isMobile() {
 
 // Call this function in your game loop to update movement
 function updatePlayerMovement() {
-    if (isMobile()) { // Force activation on PC for testing
-        let x = (3 * (leftJoystickData.x > 0 ? 1 : -1));
-        let y = (3 * (leftJoystickData.y > 0 ? 1 : -1));
-        joueur.setVX(Math.max(Math.abs(leftJoystickData.x/15 * joueur.vitesse), x));
-        joueur.setVY(Math.max(Math.abs(leftJoystickData.y/15 * joueur.vitesse), y));
+    if (!isMobile()) { // Force activation on PC for testing
+
+        joueur.setVX(Math.min(Math.abs(leftJoystickData.x/5), joueur.vitesse*3) * (leftJoystickData.x > 0 ? 1 : -1));
+        joueur.setVY(Math.min(Math.abs(leftJoystickData.y/5), joueur.vitesse*3) * (leftJoystickData.y > 0 ? 1 : -1));
         console.log(joueur.getVX());
     }
 }
