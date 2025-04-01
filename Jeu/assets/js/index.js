@@ -69,10 +69,7 @@ app.backColor = 0x000000;
 app.pause = false;
 app.space = false;
 
-// if(!isMobile())
-{
-    addJoysticks();
-}
+
 let debugText = new Text('', {
     fontFamily: 'Arial',
     fontSize: 16,
@@ -136,7 +133,12 @@ function setup() {
     // }, 10);
 
     setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur, Event);
-
+    if(isMobile())
+    {
+        joueur.hold = true;
+        joueur.clickLock = true;
+        addJoysticks();
+    }
 
     // Set le statut du jeu
     state = play;
@@ -489,8 +491,11 @@ function activerSpace()
 }
 // Update position du curseur avec le mouvement de la souris
 document.addEventListener("mousemove", (event) => {
-    cursorX = event.clientX;
-    cursorY = event.clientY;
+    if(!isMobile())
+    {
+        cursorX = event.clientX;
+        cursorY = event.clientY;
+    }
 });
 
 document.addEventListener("mousedown", (event) =>
@@ -523,16 +528,18 @@ document.addEventListener('keydown', event =>
 });
 
 
-
 // Ajouter le canvas que PIXI a automatiquement créé pour vous au document HTML
 document.body.appendChild(app.view);
 loader.add("index.html").load(setup);
+
 function addJoysticks() {
     let leftJoystick = document.createElement("div");
     let rightJoystick = document.createElement("div");
+    let virtualCursor = document.createElement("div"); // Simulated aiming cursor
 
     leftJoystick.id = "leftJoystick";
     rightJoystick.id = "rightJoystick";
+    virtualCursor.id = "virtualCursor";
 
     leftJoystick.style = `
         position: absolute;
@@ -562,10 +569,24 @@ function addJoysticks() {
         justify-content: center;
     `;
 
+    virtualCursor.style = `
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: red;
+        border-radius: 50%;
+        z-index: 200;
+        pointer-events: none;
+    `;
+
     document.body.appendChild(leftJoystick);
     document.body.appendChild(rightJoystick);
+    document.body.appendChild(virtualCursor); // Add aiming cursor
 
     setupJoystickControls();
+}
+function isMobile() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 }
 
 let leftJoystickData = { x: 0, y: 0 };
@@ -574,6 +595,7 @@ let rightJoystickData = { x: 0, y: 0 };
 function setupJoystickControls() {
     let leftJoystick = document.getElementById("leftJoystick");
     let rightJoystick = document.getElementById("rightJoystick");
+    let virtualCursor = document.getElementById("virtualCursor");
 
     function handleJoystickMove(event, joystick, joystickData) {
         let clientX, clientY;
@@ -586,7 +608,7 @@ function setupJoystickControls() {
             clientY = event.clientY;
         }
 
-        joystickData.x = clientX - joystick.offsetLeft - 50;
+        joystickData.x = clientX - joystick.offsetLeft - 50; // Centered position
         joystickData.y = clientY - joystick.offsetTop - 50;
     }
 
@@ -605,21 +627,37 @@ function setupJoystickControls() {
         leftJoystick.addEventListener(eventType, () => resetJoystick(leftJoystickData));
         rightJoystick.addEventListener(eventType, () => resetJoystick(rightJoystickData));
     });
+
+    function updateCursorPosition() {
+        let joueur = { x: window.innerWidth / 2, y: window.innerHeight / 2 }; // Replace with actual player position
+        let joystickMagnitude = Math.sqrt(rightJoystickData.x ** 2 + rightJoystickData.y ** 2);
+        
+        if (joystickMagnitude > 10) { // Prevent noise when joystick is at rest
+            let angle = Math.atan2(rightJoystickData.y, rightJoystickData.x); // Get angle from joystick
+            let aimDistance = Math.min(joystickMagnitude, 100); // Limit aim distance
+            
+            cursorX = joueur.x + Math.cos(angle) * aimDistance;
+            cursorY = joueur.y + Math.sin(angle) * aimDistance;
+            
+            virtualCursor.style.left = `${cursorX}px`;
+            virtualCursor.style.top = `${cursorY}px`;
+        }
+
+        requestAnimationFrame(updateCursorPosition);
+    }
+
+    updateCursorPosition(); // Start cursor update loop
 }
 
-function isMobile() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
-
-// Call this function in your game loop to update movement
 function updatePlayerMovement() {
-    // if (!isMobile()) { // Force activation on PC for testing
-
-        joueur.setVX(Math.min(Math.abs(leftJoystickData.x/5), joueur.vitesse*3) * (leftJoystickData.x > 0 ? 1 : -1));
-        joueur.setVY(Math.min(Math.abs(leftJoystickData.y/5), joueur.vitesse*3) * (leftJoystickData.y > 0 ? 1 : -1));
-        console.log(joueur.getVX());
-    // }
+    if(isMobile()){
+        joueur.setVX(Math.min(Math.abs(leftJoystickData.x / 5), joueur.vitesse * 3) * (leftJoystickData.x > 0 ? 1 : -1));
+        joueur.setVY(Math.min(Math.abs(leftJoystickData.y / 5), joueur.vitesse * 3) * (leftJoystickData.y > 0 ? 1 : -1));
+    }
 }
+
+// Prevent scrolling when touching joysticks
 document.addEventListener("touchmove", (event) => {
     event.preventDefault();
 }, { passive: false });
+
