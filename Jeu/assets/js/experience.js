@@ -1,5 +1,5 @@
 /**
- * La classe Exp permet de créer, mettre à jour et gérer les intéractions
+ * La classe Exp permet de créer, mettre à jour et gérer les intération
  * entre les sphères d'expérience et le joueur.
 */ 
 
@@ -9,7 +9,7 @@ export class Exp {
     static joueur = null;
     static expBuildUp = 0;
 
-    constructor(x, y, qty = 1) { // Valeur par défaut pour qty
+    constructor(x, y, qty) {
         this.qty = qty;
         this.body = this.createEXP(x, y);
         this.color = 0x000000;
@@ -21,6 +21,7 @@ export class Exp {
 
         Exp.exps.push(this);
     }
+
 
     // Création du EXP
     createEXP(x = 0, y = 0) {
@@ -80,17 +81,16 @@ export class Exp {
         }
     }
 
+    // Fonction qui gère les interactions entre les spheres EX
     static cleanup(delta) {
-        let toRemove = new Set();
-    
         Exp.exps.forEach((exp1, i) => {
             Exp.exps.forEach((exp2, j) => {
-                if (i >= j || !exp1.body || !exp2.body || toRemove.has(j)) return;
-    
+                if (i >= j || !exp1.body || !exp2.body) return;
+
                 let dx = exp2.getX() - exp1.getX();
                 let dy = exp2.getY() - exp1.getY();
                 let distance = Math.hypot(dx, dy);
-    
+
                 if (distance < 100) { // Attraction entre les EXPs
                     let attraction = 0.2 / Math.max(distance, 10);
                     exp1.vx += dx * attraction * delta;
@@ -98,33 +98,46 @@ export class Exp {
                     exp2.vx -= dx * attraction * delta;
                     exp2.vy -= dy * attraction * delta;
                 }
-    
+
                 if (distance < 10 + exp1.size + exp2.size) { // Fusion
-                    if (!Number.isFinite(exp2.qty)) return;
-    
-                    exp1.qty = (Number.isFinite(exp1.qty) ? exp1.qty : 0) + exp2.qty;
+                    exp1.qty += exp2.qty;
                     exp1.size = Math.max(exp1.qty / (Exp.joueur?.lvl + 20), 5);
-    
                     Exp.app.stage.removeChild(exp2.body);
                     exp2.body.destroy({ children: true });
                     exp2.body = null;
-                    toRemove.add(j);
+                    Exp.exps.splice(j, 1);
                 }
             });
+            // Supprime les sphères EXP qui sortent de l'écran + 40%
+            let screenWidth = Exp.app.renderer.width;
+            let screenHeight = Exp.app.renderer.height;
+            let marginX = screenWidth * 0.4;
+            let marginY = screenHeight * 0.4;
+
+            let x = exp1.getX();
+            let y = exp1.getY();
+            
+            if (x < -marginX || x > screenWidth + marginX || y < -marginY || y > screenHeight + marginY) {
+                Exp.expBuildUp += Math.round(exp1.qty/2);//pour que l'utilisateur veuille pareil aller chercher le EXP
+                let index = Exp.exps.indexOf(exp1);
+                Exp.app.stage.removeChild(exp1.body);
+                if (index !== -1) {
+                    Exp.exps.splice(index, 1);
+                }
+                exp1.body.destroy({ children: true });
+                exp1.body = null;
+            }
         });
-    
-        // Remove all marked elements
-        Exp.exps = Exp.exps.filter((_, index) => !toRemove.has(index));
     }
 
-    // Fonction qui gère la collecte des sphères EXP
+    // Fonction qui gère la collecte des spheres EXP
     collect() {
-        if (!this.body || !Exp.joueur) return;
+        if (!this.body) return;
         let index = Exp.exps.indexOf(this);
         if (index !== -1) {
             Exp.exps.splice(index, 1);
         }
-        Exp.joueur.addExp(this.qty || 0); // Ajoute 0 si qty est undefined
+        Exp.joueur.addExp(this.qty);
         Exp.app.stage.removeChild(this.body);
         this.body.destroy({ children: true });
         this.body = null;
