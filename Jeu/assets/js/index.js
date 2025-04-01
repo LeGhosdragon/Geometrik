@@ -591,8 +591,8 @@ function updatePlayerMovement() {
     if (isMobile()) { // Force activation on PC for testing
         let x = (3 * (leftJoystickData.x > 0 ? 1 : -1));
         let y = (3 * (leftJoystickData.y > 0 ? 1 : -1));
-        joueur.setVX(Math.max(leftJoystickData.x/15 * joueur.vitesse, x));
-        joueur.setVY(Math.max(leftJoystickData.y/15 * joueur.vitesse, y));
+        joueur.setVX(Math.max(Math.abs(leftJoystickData.x/15 * joueur.vitesse), x));
+        joueur.setVY(Math.max(Math.abs(leftJoystickData.y/15 * joueur.vitesse), y));
         console.log(joueur.getVX());
     }
 }

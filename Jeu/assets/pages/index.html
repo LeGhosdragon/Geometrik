@@ -14,7 +14,13 @@
 
 <style>
 
-  #bod { cursor: none;}
+  #leftJoystick, #rightJoystick
+  {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  #bod { cursor: none; }
   #expBar {
     position: fixed;
     bottom: 0;

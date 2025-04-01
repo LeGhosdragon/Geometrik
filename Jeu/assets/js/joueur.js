@@ -608,7 +608,7 @@ export class Joueur {
         card.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
         card.style.cursor = "default";
         card.style.userSelect = "none"; 
-    
+        card.style.overscrollBehavior = "none";
         // Title for the card
         const cardTitle = document.createElement("h2");
         cardTitle.textContent = "Statistics";
@@ -616,6 +616,7 @@ export class Joueur {
         cardTitle.style.fontSize = "32px";
         cardTitle.style.marginBottom = "20px";
         cardTitle.style.textAlign = "center";
+        cardTitle.style.overscrollBehavior = "none";
         card.appendChild(cardTitle);
     
         // Loop through statistics object and create text for each
@@ -630,7 +631,7 @@ export class Joueur {
                 statRow.style.padding = "5px 10px";
                 statRow.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
                 statRow.style.borderRadius = "10px";
-        
+                statRow.style.overscrollBehavior = "none";
                 // Stat name
                 const name = document.createElement("div");
                 this.createResolver(name, this.formatStatName(statName));
