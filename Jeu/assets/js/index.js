@@ -173,17 +173,18 @@ function play(delta) {
             hour += 1;
         }    
 
-
-        
+        if (isMobile()) {
+            joueur.setVX(leftJoystickData.x * joueur.vitesse);
+            joueur.setVY(leftJoystickData.y * joueur.vitesse);
+        }
         let xI = xF;
         let yI = yF;
+
         xF += joueur.getVX();
         yF += joueur.getVY();
         
-        if (isMobile()) {
-            xF += leftJoystickData.x * speed / 50;
-            yF += leftJoystickData.y * speed / 50;
-        }
+
+        
 
         const deltaX = -(xF - xI) * delta;
         const deltaY = -(yF - yI) * delta;
@@ -533,20 +534,32 @@ loader.add("index.html").load(setup);
 
 
 function addJoysticks() {
-    let leftJoystick = document.createElement("div");
-    let rightJoystick = document.createElement("div");
+    let joystickContainer = document.createElement('div');
+    joystickContainer.id = "joystickContainer";
+    joystickContainer.style.position = "absolute";
+    joystickContainer.style.bottom = "10px";
+    joystickContainer.style.left = "10px";
+    joystickContainer.style.width = "150px";
+    joystickContainer.style.height = "150px";
+    document.body.appendChild(joystickContainer);
 
-    leftJoystick.id = "leftJoystick";
-    rightJoystick.id = "rightJoystick";
+    let joystick = nipplejs.create({
+        zone: joystickContainer,
+        mode: "dynamic",
+        color: "white"
+    });
 
-    leftJoystick.style = "position: absolute; bottom: 10%; left: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
-    rightJoystick.style = "position: absolute; bottom: 10%; right: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
+    joystick.on("move", (event, data) => {
+        leftJoystickData.x = data.vector.x; // Horizontal movement
+        leftJoystickData.y = data.vector.y; // Vertical movement
+    });
 
-    document.body.appendChild(leftJoystick);
-    document.body.appendChild(rightJoystick);
-
-    setupJoystickControls();
+    joystick.on("end", () => {
+        leftJoystickData.x = 0;
+        leftJoystickData.y = 0;
+    });
 }
+
 
 let leftJoystickData = { x: 0, y: 0 };
 let rightJoystickData = { x: 0, y: 0 };
