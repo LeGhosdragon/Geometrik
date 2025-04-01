@@ -53,7 +53,7 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;
+                event.timeElapsed % 200 == 0 ? bossChoose = true : 0;
                 let compteur = 0;
 
                 // if(Event.boss["milkMan"] == null){
