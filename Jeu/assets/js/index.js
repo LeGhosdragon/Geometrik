@@ -69,6 +69,10 @@ app.backColor = 0x000000;
 app.pause = false;
 app.space = false;
 
+if(isMobile())
+{
+    addJoysticks();
+}
 let debugText = new Text('', {
     fontFamily: 'Arial',
     fontSize: 16,
@@ -175,6 +179,11 @@ function play(delta) {
         let yI = yF;
         xF += joueur.getVX();
         yF += joueur.getVY();
+        
+        if (isMobile()) {
+            xF += leftJoystickData.x * speed / 50;
+            yF += leftJoystickData.y * speed / 50;
+        }
 
         const deltaX = -(xF - xI) * delta;
         const deltaY = -(yF - yI) * delta;
@@ -380,7 +389,7 @@ function afficherDebug() {
         // la touche Backspace commits ded
         // la touche E passe automatiquement au prochain Event
     `;
-    debugText.style.fill = app.ennemiColor;
+    debugText.style.fill = Monstre.dedMilkMan ? "black" : app.ennemiColor;
 
 }
 
@@ -523,3 +532,54 @@ document.body.appendChild(app.view);
 loader.add("index.html").load(setup);
 
 
+function addJoysticks() {
+    let leftJoystick = document.createElement("div");
+    let rightJoystick = document.createElement("div");
+
+    leftJoystick.id = "leftJoystick";
+    rightJoystick.id = "rightJoystick";
+
+    leftJoystick.style = "position: absolute; bottom: 10%; left: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
+    rightJoystick.style = "position: absolute; bottom: 10%; right: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
+
+    document.body.appendChild(leftJoystick);
+    document.body.appendChild(rightJoystick);
+
+    setupJoystickControls();
+}
+
+let leftJoystickData = { x: 0, y: 0 };
+let rightJoystickData = { x: 0, y: 0 };
+
+function setupJoystickControls() {
+    let leftJoystick = document.getElementById("leftJoystick");
+    let rightJoystick = document.getElementById("rightJoystick");
+
+    leftJoystick.addEventListener("touchmove", (event) => {
+        let touch = event.touches[0];
+        leftJoystickData.x = touch.clientX - leftJoystick.offsetLeft - 50;
+        leftJoystickData.y = touch.clientY - leftJoystick.offsetTop - 50;
+    });
+
+    rightJoystick.addEventListener("touchmove", (event) => {
+        let touch = event.touches[0];
+        rightJoystickData.x = touch.clientX - rightJoystick.offsetLeft - 50;
+        rightJoystickData.y = touch.clientY - rightJoystick.offsetTop - 50;
+    });
+
+    leftJoystick.addEventListener("touchend", () => {
+        leftJoystickData.x = 0;
+        leftJoystickData.y = 0;
+    });
+
+    rightJoystick.addEventListener("touchend", () => {
+        rightJoystickData.x = 0;
+        rightJoystickData.y = 0;
+    });
+}
+function isMobile() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
+
+// Call updatePlayerMovement() in your game loop

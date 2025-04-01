@@ -1,5 +1,5 @@
 /**
- * La classe Upgrade permet de gérer tous les upgrades des dispoinible 
+ * La classe Upgrade permet de gérer tous les upgrades disponibles
  * dans le jeu (armes, vitesse, Health etc.) 
  */
 export class Upgrade

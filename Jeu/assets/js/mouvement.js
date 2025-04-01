@@ -115,6 +115,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
     }
     else
     {
+        
     // Arrow keys
     const leftArrow = keyboard(37),         // Left arrow
         upArrow = keyboard(38),            // Up arrow

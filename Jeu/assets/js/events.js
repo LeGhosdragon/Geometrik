@@ -74,7 +74,7 @@ export class Event{
                                 Event.nextSongIs = "boss";
                                 bossChoose = false;
                                 Event.updateMusic(); 
-                                Event.nextSong = false; 
+                         
                             }
                             break;
                         case 1:
@@ -86,7 +86,7 @@ export class Event{
                                 Event.nextSongIs = "404Boss";
                                 bossChoose = false;
                                 Event.updateMusic(); 
-                                Event.nextSong = false; 
+                               
                             }
                             break;
                         case 2:
@@ -98,7 +98,7 @@ export class Event{
                                 Event.nextSongIs = "kim";
                                 bossChoose = false;
                                 Event.updateMusic(); 
-                                Event.nextSong = false; 
+                              
                             }
                             break;
                         case 3:
@@ -110,22 +110,20 @@ export class Event{
                                 Event.nextSongIs = "difficulty";
                                 bossChoose = false;
                                 Event.updateMusic(); 
-                                Event.nextSong = false; 
                             }
                             break;
                         case 4:
                         if(Event.boss["milkMan"] != null) {compteur++;}
-                        else {
-                            event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
-                            Event.currentMusic.stop();
-                            Event.nextSong = true; 
-                            Event.nextSongIs = "milkMan";
-                            bossChoose = false;
-                            Event.updateMusic(); 
-                            Event.nextSong = false; 
-                            Event.milkMode(Event.app, Event.joueur, 0, Event.Monstre, Event.gun, 0, Event.Joueur, Event, true);
-                            
-                        }
+                            else {
+                                event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "milkMan";
+                                bossChoose = false;
+                                Event.updateMusic(); 
+              
+                                Event.milkMode(Event.app, Event.joueur, 0, Event.Monstre, Event.gun, 0, Event.Joueur, Event, true);    
+                            }
                         break;
                         default:
                             break;
