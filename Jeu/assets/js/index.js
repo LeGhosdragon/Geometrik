@@ -69,7 +69,7 @@ app.backColor = 0x000000;
 app.pause = false;
 app.space = false;
 
-if(!isMobile())
+// if(!isMobile())
 {
     addJoysticks();
 }
@@ -613,10 +613,13 @@ function isMobile() {
 
 // Call this function in your game loop to update movement
 function updatePlayerMovement() {
-    if (!isMobile()) { // Force activation on PC for testing
+    // if (!isMobile()) { // Force activation on PC for testing
 
         joueur.setVX(Math.min(Math.abs(leftJoystickData.x/5), joueur.vitesse*3) * (leftJoystickData.x > 0 ? 1 : -1));
         joueur.setVY(Math.min(Math.abs(leftJoystickData.y/5), joueur.vitesse*3) * (leftJoystickData.y > 0 ? 1 : -1));
         console.log(joueur.getVX());
-    }
+    // }
 }
+document.addEventListener("touchmove", (event) => {
+    event.preventDefault();
+}, { passive: false });
