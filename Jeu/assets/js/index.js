@@ -173,18 +173,14 @@ function play(delta) {
             hour += 1;
         }    
 
-        if (isMobile()) {
-            joueur.setVX(leftJoystickData.x * joueur.vitesse);
-            joueur.setVY(leftJoystickData.y * joueur.vitesse);
-        }
+        
+       updatePlayerMovement();
+        
         let xI = xF;
         let yI = yF;
-
         xF += joueur.getVX();
         yF += joueur.getVY();
-        
-
-        
+        console.log(joueur.getVX());
 
         const deltaX = -(xF - xI) * delta;
         const deltaY = -(yF - yI) * delta;
@@ -531,35 +527,21 @@ document.addEventListener('keydown', event =>
 // Ajouter le canvas que PIXI a automatiquement créé pour vous au document HTML
 document.body.appendChild(app.view);
 loader.add("index.html").load(setup);
-
-
 function addJoysticks() {
-    let joystickContainer = document.createElement('div');
-    joystickContainer.id = "joystickContainer";
-    joystickContainer.style.position = "absolute";
-    joystickContainer.style.bottom = "10px";
-    joystickContainer.style.left = "10px";
-    joystickContainer.style.width = "150px";
-    joystickContainer.style.height = "150px";
-    document.body.appendChild(joystickContainer);
+    let leftJoystick = document.createElement("div");
+    let rightJoystick = document.createElement("div");
 
-    let joystick = nipplejs.create({
-        zone: joystickContainer,
-        mode: "dynamic",
-        color: "white"
-    });
+    leftJoystick.id = "leftJoystick";
+    rightJoystick.id = "rightJoystick";
 
-    joystick.on("move", (event, data) => {
-        leftJoystickData.x = data.vector.x; // Horizontal movement
-        leftJoystickData.y = data.vector.y; // Vertical movement
-    });
+    leftJoystick.style = "position: absolute; bottom: 10%; left: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
+    rightJoystick.style = "position: absolute; bottom: 10%; right: 10%; width: 100px; height: 100px; background: rgba(0,0,0,0.5); border-radius: 50%; z-index: 100;";
 
-    joystick.on("end", () => {
-        leftJoystickData.x = 0;
-        leftJoystickData.y = 0;
-    });
+    document.body.appendChild(leftJoystick);
+    document.body.appendChild(rightJoystick);
+
+    setupJoystickControls();
 }
-
 
 let leftJoystickData = { x: 0, y: 0 };
 let rightJoystickData = { x: 0, y: 0 };
@@ -568,31 +550,49 @@ function setupJoystickControls() {
     let leftJoystick = document.getElementById("leftJoystick");
     let rightJoystick = document.getElementById("rightJoystick");
 
-    leftJoystick.addEventListener("touchmove", (event) => {
-        let touch = event.touches[0];
-        leftJoystickData.x = touch.clientX - leftJoystick.offsetLeft - 50;
-        leftJoystickData.y = touch.clientY - leftJoystick.offsetTop - 50;
+    function handleJoystickMove(event, joystick, joystickData) {
+        let clientX, clientY;
+
+        if (event.touches) {
+            clientX = event.touches[0].clientX;
+            clientY = event.touches[0].clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
+        }
+
+        joystickData.x = clientX - joystick.offsetLeft - 50;
+        joystickData.y = clientY - joystick.offsetTop - 50;
+    }
+
+    function resetJoystick(joystickData) {
+        joystickData.x = 0;
+        joystickData.y = 0;
+    }
+
+    // Handle Touch & Mouse Events
+    ["touchmove", "mousemove"].forEach(eventType => {
+        leftJoystick.addEventListener(eventType, (event) => handleJoystickMove(event, leftJoystick, leftJoystickData));
+        rightJoystick.addEventListener(eventType, (event) => handleJoystickMove(event, rightJoystick, rightJoystickData));
     });
 
-    rightJoystick.addEventListener("touchmove", (event) => {
-        let touch = event.touches[0];
-        rightJoystickData.x = touch.clientX - rightJoystick.offsetLeft - 50;
-        rightJoystickData.y = touch.clientY - rightJoystick.offsetTop - 50;
-    });
-
-    leftJoystick.addEventListener("touchend", () => {
-        leftJoystickData.x = 0;
-        leftJoystickData.y = 0;
-    });
-
-    rightJoystick.addEventListener("touchend", () => {
-        rightJoystickData.x = 0;
-        rightJoystickData.y = 0;
+    ["touchend", "mouseup"].forEach(eventType => {
+        leftJoystick.addEventListener(eventType, () => resetJoystick(leftJoystickData));
+        rightJoystick.addEventListener(eventType, () => resetJoystick(rightJoystickData));
     });
 }
+
 function isMobile() {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 }
 
-
-// Call updatePlayerMovement() in your game loop
+// Call this function in your game loop to update movement
+function updatePlayerMovement() {
+    if (isMobile()) { // Force activation on PC for testing
+        let x = (3 * (leftJoystickData.x > 0 ? 1 : -1));
+        let y = (3 * (leftJoystickData.y > 0 ? 1 : -1));
+        joueur.setVX(Math.max(leftJoystickData.x/15 * joueur.vitesse, x));
+        joueur.setVY(Math.max(leftJoystickData.y/15 * joueur.vitesse, y));
+        console.log(joueur.getVX());
+    }
+}

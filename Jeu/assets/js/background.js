@@ -25,30 +25,30 @@ export class Grid {
             } else {
                 grid.lineStyle(gridThickness, 0x000000, 0.5);
             }
-        
+            
 
-        const gradientTexture = Grid.createSmoothGradientTexture();
-        app.gradientLine = new PIXI.TilingSprite(gradientTexture, gridSize * 2, gridSize * 2);
-        app.gradientLine.position.set(-gridSize, -gridSize);
+            const gradientTexture = Grid.createSmoothGradientTexture();
+            app.gradientLine = new PIXI.TilingSprite(gradientTexture, gridSize * 2, gridSize * 2);
+            app.gradientLine.position.set(-gridSize, -gridSize);
 
-        for (let i = -gridSize; i < gridSize; i += step) {
-            grid.moveTo(i, -gridSize);
-            grid.lineTo(i, gridSize);
-        }
+            for (let i = -gridSize; i < gridSize; i += step) {
+                grid.moveTo(i, -gridSize);
+                grid.lineTo(i, gridSize);
+            }
 
-        for (let j = -gridSize; j < gridSize; j += step) {
-            grid.moveTo(-gridSize, j);
-            grid.lineTo(gridSize, j);
-        }
+            for (let j = -gridSize; j < gridSize; j += step) {
+                grid.moveTo(-gridSize, j);
+                grid.lineTo(gridSize, j);
+            }
 
 
-        if (app != null && app.space) {
-            app.gradientLine.mask = grid;
-            app.stage.addChild(app.gradientLine);
-        }
+            if (app != null && app.space) {
+                app.gradientLine.mask = grid;
+                app.stage.addChild(app.gradientLine);
+            }
 
-        grid.position.set(900, 400);
-        if (gridThickness == 100 && app.space) {
+            grid.position.set(900, 400);
+            if (gridThickness == 100 && app.space) {
                 app.gradientLine.visible = false;
             }
         }
