@@ -111,6 +111,8 @@ function setup() {
     Event.addMusic(Music);
     Event.addApp(app);
     Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan);
+    Event.addJoueur(joueur);
+
     Joueur.addEvent(Event);
     Event.currentEvent = new Event("normal");
 
@@ -122,14 +124,14 @@ function setup() {
     joueur.chooseClass();
     activerSpace();
 
-
-
+    Event.addMilk(setupKeyboardControls,Joueur,gun);
+    Monstre.addMilk(setupKeyboardControls,gun, Joueur);
 
     // setInterval(() => { 
     //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
     // }, 10);
 
-    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur,Event);
+    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur, Event);
 
 
     // Set le statut du jeu
@@ -223,7 +225,7 @@ function play(delta) {
 
         for (let shape of Shape3D.shapes) {
             shape.updatePosition(deltaX, deltaY, Event.boss["err404"]);
-            shape.draw();
+            shape.draw(Monstre);
         }
 
         // Simplified Game Loop
@@ -268,11 +270,13 @@ function play(delta) {
         gun.update(delta, cursorX, cursorY, deltaX, deltaY);
 
         MonstreGunner.updateBullets(delta, deltaX, deltaY, joueur);
+        MilkMan.updateBullets(delta, deltaX, deltaY, joueur);
 
         monstres.forEach(monstre => {
             monstre.bouger(joueur,delta, deltaX, deltaY, app.ennemiColor);
             if(sword.hasSword) {if (sword.isSwordCollidingWithMonster(monstre)) sword.onSwordHitEnemy(monstre);}
             if(gun.isBulletCollidingWithMonster(monstre)) gun.onBulletHitEnemy(monstre);
+            //if(MilkMan.isBulletCollidingWithMonster(monstre)) MilkMan.onBulletHitEnemy(monstre);
         });
         MonstreGunner.bullets.forEach(bullet => {if(sword.isSwordCollidingWithBullet(bullet)) sword.onSwordHitEnemyBullet(bullet);});
 
@@ -302,7 +306,7 @@ function play(delta) {
     crossHair.y += (cursorY-20 - crossHair.y) * 1;
     app.ennemiColor = updateBackgroundColor(app, Monstre);
     document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
-    Shape3D.shapes.forEach(shape => shape.draw());
+    Shape3D.shapes.forEach(shape => shape.draw(Monstre));
     Event.updateMusic();
     Monstre.cleanup();
     Exp.cleanup(delta);

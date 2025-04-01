@@ -33,9 +33,88 @@ export function keyboard(keyCode) {
 
 
 
-export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur, Event) {
+export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur, Event, milkM = false) {
     //console.log("this is working");
+    if(milkM)
+    {
+
+        if(!app.space)
+        {
+            app.space = true;
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0xFFFFFF, 1);
+            joueur.body.beginFill(0xFF0000);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0xFFFFFF, 1);
+            gun.body.beginFill(0x000000);
+            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.endFill();
+            if(!app.pause)
+            {   
+                Joueur.Grid.pauseGrid(app);
+                app.pause = true;
+                Joueur.Grid.pauseGrid(app);
+                app.pause = false;
+            }
+
+            
+        }
+        else{
+            app.space = false;
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0x000000, 1);
+            joueur.body.beginFill(0xFF0000);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0x000000, 1);
+            gun.body.beginFill(0x9966FF);
+            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.endFill();
+            if(!app.pause)
+            {   
+                Joueur.Grid.pauseGrid(app);
+                app.pause = true;
+                Joueur.Grid.pauseGrid(app);
+                app.pause = false;
+            }
+            
+            
+        }
+        if(mstr.dedMilkMan)
+        {
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0x000000, 1);
+            joueur.body.beginFill(0xFF0000);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0x000000, 1);
+            gun.body.beginFill(0x9966FF);
+            gun.body.drawRect(0, 0, 10, 15); // Ajuster la taille du gun
+            gun.body.endFill();
+            
+            mstr.dedMilkMan = false;
+            joueur.updateHealthBar();
+        }
+        else{
+            joueur.body.clear();
+            joueur.body.lineStyle(3, 0x000000, 1);
+            joueur.body.beginFill(0xFF0000);
+            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+            joueur.body.endFill();
+            gun.body.lineStyle(3, 0x000000, 1);
+            gun.body.beginFill(0xFFFFFF);
+            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+            gun.body.endFill();
+            
+            mstr.dedMilkMan = true;
+            joueur.updateHealthBar();
+        }
     
+        return;
+    }
+    else
+    {
     // Arrow keys
     const leftArrow = keyboard(37),         // Left arrow
         upArrow = keyboard(38),            // Up arrow
@@ -161,8 +240,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
             app.graph.visible = true;
         }
     }
-    milk.press = () =>
-    {
+    milk.press =  () =>{
         if(mstr.dedMilkMan)
         {
             joueur.body.clear();
@@ -192,8 +270,8 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
             mstr.dedMilkMan = true;
             joueur.updateHealthBar();
         }
-    }
-
+    };
+    
     // Forcer le joureur a monter de niveau avec la touche L, ajoute assez
     // d'EXP pour dépasser le seuil requis pour le prochain niveau
     lvlUp.press = () =>
@@ -224,53 +302,51 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
 
     }
 
-    space.press = () =>
-    {
-        //app.space = !app.space;
+    space.press = () =>{
         if(!app.space)
-        {
-            app.space = true;
-            joueur.body.clear();
-            joueur.body.lineStyle(3, 0xFFFFFF, 1);
-            joueur.body.beginFill(0xFF0000);
-            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
-            joueur.body.endFill();
-            gun.body.lineStyle(3, 0xFFFFFF, 1);
-            gun.body.beginFill(0x000000);
-            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
-            gun.body.endFill();
-            if(!app.pause)
-            {   
-                Joueur.Grid.pauseGrid(app);
-                app.pause = true;
-                Joueur.Grid.pauseGrid(app);
-                app.pause = false;
+            {
+                app.space = true;
+                joueur.body.clear();
+                joueur.body.lineStyle(3, 0xFFFFFF, 1);
+                joueur.body.beginFill(0xFF0000);
+                joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+                joueur.body.endFill();
+                gun.body.lineStyle(3, 0xFFFFFF, 1);
+                gun.body.beginFill(0x000000);
+                gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+                gun.body.endFill();
+                if(!app.pause)
+                {   
+                    Joueur.Grid.pauseGrid(app);
+                    app.pause = true;
+                    Joueur.Grid.pauseGrid(app);
+                    app.pause = false;
+                }
+    
+               
             }
-
-           
-        }
-        else{
-            app.space = false;
-            joueur.body.clear();
-            joueur.body.lineStyle(3, 0x000000, 1);
-            joueur.body.beginFill(0xFF0000);
-            joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
-            joueur.body.endFill();
-            gun.body.lineStyle(3, 0x000000, 1);
-            gun.body.beginFill(0x9966FF);
-            gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
-            gun.body.endFill();
-            if(!app.pause)
-            {   
-                Joueur.Grid.pauseGrid(app);
-                app.pause = true;
-                Joueur.Grid.pauseGrid(app);
-                app.pause = false;
-            }
-            
-          
-        }
-    }
+            else{
+                app.space = false;
+                joueur.body.clear();
+                joueur.body.lineStyle(3, 0x000000, 1);
+                joueur.body.beginFill(0xFF0000);
+                joueur.body.drawCircle(joueur.size, joueur.size, joueur.size);
+                joueur.body.endFill();
+                gun.body.lineStyle(3, 0x000000, 1);
+                gun.body.beginFill(0x9966FF);
+                gun.body.drawRect(0, 0, 10, 15); // Adjust gun size
+                gun.body.endFill();
+                if(!app.pause)
+                {   
+                    Joueur.Grid.pauseGrid(app);
+                    app.pause = true;
+                    Joueur.Grid.pauseGrid(app);
+                    app.pause = false;
+                }
+                
+              
+            }}
+    
 
     suicide.press = () => {
         if(!app.pause) joueur.playerDied();
@@ -311,5 +387,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
     upWASD.release = () => { if (moveY === -joueur.vitesse) moveY = 0; updateVelocity(); };
 
     downWASD.press = () => { moveY = joueur.vitesse; updateVelocity(); };
-    downWASD.release = () => { if (moveY === joueur.vitesse) moveY = 0; updateVelocity(); };
+    downWASD.release = () => { if (moveY === joueur.vitesse) moveY = 0; updateVelocity(); };}
+    
+
 }

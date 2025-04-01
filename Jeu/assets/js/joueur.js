@@ -49,7 +49,7 @@ export class Joueur {
         this.hpText.visible = false;
         this.healthBar.visible = false;
         this.damageFlash = this.createDmgFlash(app);
-        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, score : 0};//timePlayed*kills*expGained};
+        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, score : 0, jeton: ""};//timePlayed*kills*expGained};
     }
 
     // Fonction pour créer le joueur
@@ -539,12 +539,34 @@ export class Joueur {
     }
 
 
-    sendStatsToDB()
+    async sendStatsToDB()
     {
+        document.addEventListener("DOMContentLoaded", async function(){
+            const jeton = this.statistics.jeton;
+            const kills = this.statistics.kills;
+            const expGained = this.statistics.expGained;
+            const timePlayed = this.statistics.timePlayed;
+            const score = this.statistics.score;
 
-
-
-        //à faire
+                try {
+                    const formData = new FormData();
+                    formData.append('jeton', jeton);
+                    formData.append('ennemis', kills);
+                    formData.append('experience', expGained);
+                    formData.append('duree', timePlayed);
+                    formData.append('score', score);
+                    
+                    // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    let response = await fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/ajouter', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors de la connexion: ' + error.message);
+                }
+        });
     }
 
     
@@ -599,42 +621,44 @@ export class Joueur {
         // Loop through statistics object and create text for each
         for (let [statName, statValue] of Object.entries(this.statistics)) {
 
+            if(statName != "jeton")
+            {
+                const statRow = document.createElement("div");
+                statRow.style.display = "flex";
+                statRow.style.justifyContent = "space-between";
+                statRow.style.marginBottom = "10px";
+                statRow.style.padding = "5px 10px";
+                statRow.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                statRow.style.borderRadius = "10px";
+        
+                // Stat name
+                const name = document.createElement("div");
+                this.createResolver(name, this.formatStatName(statName));
+                name.textContent = this.formatStatName(statName);
+                name.style.fontFamily = "courier new";
+                name.style.fontSize = "18px";
+                name.style.color = "#ccc";
+        
+                // Stat value
+                const value = document.createElement("div");
+                this.createResolver(value, statValue);
+                value.textContent = statValue;
+                value.style.fontFamily = "courier new";
+                value.style.fontSize = "18px";
+                value.style.fontWeight = "bold";
+                value.style.color = "white";
 
-            const statRow = document.createElement("div");
-            statRow.style.display = "flex";
-            statRow.style.justifyContent = "space-between";
-            statRow.style.marginBottom = "10px";
-            statRow.style.padding = "5px 10px";
-            statRow.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-            statRow.style.borderRadius = "10px";
-    
-            // Stat name
-            const name = document.createElement("div");
-            this.createResolver(name, this.formatStatName(statName));
-            name.textContent = this.formatStatName(statName);
-            name.style.fontFamily = "courier new";
-            name.style.fontSize = "18px";
-            name.style.color = "#ccc";
-    
-            // Stat value
-            const value = document.createElement("div");
-            this.createResolver(value, statValue);
-            value.textContent = statValue;
-            value.style.fontFamily = "courier new";
-            value.style.fontSize = "18px";
-            value.style.fontWeight = "bold";
-            value.style.color = "white";
-
-    
-            // Append to statRow
-            statRow.appendChild(name);
-            statRow.appendChild(value);
-    
-            // Store reference for dynamic updates
-            this.statElements[statName] = value;
-    
-            // Append statRow to card
-            card.appendChild(statRow);
+        
+                // Append to statRow
+                statRow.appendChild(name);
+                statRow.appendChild(value);
+        
+                // Store reference for dynamic updates
+                this.statElements[statName] = value;
+        
+                // Append statRow to card
+                card.appendChild(statRow);
+            }
         }
     
         // Append card to container

@@ -246,11 +246,11 @@ export class Shape3D {
     // 1. Dessiner les formes 3D 
     // 2. Mettre à jour les angles de rotation
     // 3. Trace les arrêtes entre les sommets projetés
-    draw() {
+    draw(Monstre) {
         this.graphics.clear();
 
-        if(!this.boss) {this.graphics.lineStyle(this.position.z * 1.3, this.app.space ? this.color : this.app.ennemiColor, 1);}
-        else{this.graphics.lineStyle(this.position.z * 2, this.app.space ? this.color : this.app.ennemiColor, 1);}
+        if(!this.boss) {this.graphics.lineStyle(this.position.z * 1.3, this.app.space || Monstre.dedMilkMan ? this.color : this.app.ennemiColor, 1);}
+        else{this.graphics.lineStyle(this.position.z * 2, this.app.space || Monstre.dedMilkMan ? this.color : this.app.ennemiColor, 1);}
 
         let projected = [];
 
@@ -274,7 +274,7 @@ export class Shape3D {
     // Mettre à jour la position en ajoutant des offsets    
     updatePosition(dx, dy, bossPos = 0) {
 
-        if(!this.boss)
+        if(!this.boss || !bossPos)
         {
             this.position.x += dx * this.position.z;
             this.position.y += dy * this.position.z;

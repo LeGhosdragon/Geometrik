@@ -118,7 +118,7 @@ export class Exp {
             let y = exp1.getY();
             
             if (x < -marginX || x > screenWidth + marginX || y < -marginY || y > screenHeight + marginY) {
-                Exp.expBuildUp += exp1.qty/2;//pour que l'utilisateur veuille pareil aller chercher le EXP
+                Exp.expBuildUp += Math.round(exp1.qty/2);//pour que l'utilisateur veuille pareil aller chercher le EXP
                 let index = Exp.exps.indexOf(exp1);
                 Exp.app.stage.removeChild(exp1.body);
                 if (index !== -1) {

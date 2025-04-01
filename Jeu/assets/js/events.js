@@ -20,6 +20,9 @@ export class Event{
     static Err404 = null;
     static monstres = null;
     static app = null;
+    static gun = null;
+    static Joueur = null;
+    static milkMode = null;
     static joueur = null;
     static difficultyDegree = 1;
     static currentEventName = "normal";
@@ -50,17 +53,17 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;
+                event.timeElapsed % 200 == 0 ? bossChoose = true : 0;
                 let compteur = 0;
 
-                // if(Event.boss["bossTank"] == null){
-                //     event.ajouterMONSTRE(1, "bossTank", 2 + Event.difficultyDegree, "boss"); 
+                // if(Event.boss["milkMan"] == null){
+                //     event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
                 // }
 
 
                 while(bossChoose && compteur < 100)
                 {
-                    num = Math.floor(Math.random() * 4);
+                    num = Math.floor(Math.random() * 5);
                     switch (num) {
                         case 0:
                             if(Event.boss["bossNormal"] != null) {compteur++;}
@@ -110,6 +113,20 @@ export class Event{
                                 Event.nextSong = false; 
                             }
                             break;
+                        case 4:
+                        if(Event.boss["milkMan"] != null) {compteur++;}
+                        else {
+                            event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
+                            Event.currentMusic.stop();
+                            Event.nextSong = true; 
+                            Event.nextSongIs = "milkMan";
+                            bossChoose = false;
+                            Event.updateMusic(); 
+                            Event.nextSong = false; 
+                            Event.milkMode(Event.app, Event.joueur, 0, Event.Monstre, Event.gun, 0, Event.Joueur, Event, true);
+                            
+                        }
+                        break;
                         default:
                             break;
                     }
@@ -376,6 +393,11 @@ export class Event{
     // ajoute une réf a l'app PIXI
     static addApp(appInput) {
         Event.app = appInput;
+    }
+    static addMilk(milkInput, J, gun) {
+        Event.milkMode = milkInput;
+        Event.Joueur =  J;
+        Event.gun = gun;
     }
     // ajoute un réf au joueur
     static addJoueur(joueurInput) {
