@@ -97,7 +97,7 @@ export class Grid {
 
 
 // La fonction pour mettre a jour la couleur de fond pour pulser a travers l'arc-en-ciel
-export function updateBackgroundColor(app, mstr, grid) {
+export function updateBackgroundColor(app, mstr) {
     if(app.pause)
     {
        vitesseCouleur = 0.001;
@@ -177,7 +177,7 @@ function hexToRgb(hex) {
  * des formes 3D pour enrichir le fond de la scène.
  */
 export class Shape3D {
-    
+    static onStart = true;
     constructor(app, vertices, edges, x, y, z, boss = false) {
         this.app = app;
         this.vertices = vertices;
@@ -337,8 +337,12 @@ export class Shape3D {
             let x, y, z;
             let attempts = 0;
             let validPosition = false;
-            while (!validPosition && attempts < Shape3D.maxAttempts) {
+            while (!validPosition && (attempts < Shape3D.maxAttempts || Shape3D.onStart)) {
                 [x, y] = Event.posRandomExterieur();
+                if(Shape3D.onStart)
+                {
+                    [x, y] = Event.posRandomInterieur();
+                }
                 z = Math.random();
                 x -= app.view.width / 2;
                 y -= app.view.height / 2;
@@ -360,6 +364,7 @@ export class Shape3D {
                 //console.warn("Could not find a valid position after " + Shape3D.maxAttempts + " attempts.");
             }
         }
+        Shape3D.onStart = false;
     }
     
 

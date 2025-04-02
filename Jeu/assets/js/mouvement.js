@@ -37,7 +37,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
     //console.log("this is working");
     if(milkM)
     {
-
+            app.toSpace = true;
         if(!app.space)
         {
             app.space = true;
@@ -110,7 +110,6 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
             mstr.dedMilkMan = true;
             joueur.updateHealthBar();
         }
-    
         return;
     }
     else
@@ -304,6 +303,7 @@ export function setupKeyboardControls(app, joueur, sword, mstr, gun, exp, Joueur
     }
 
     space.press = () =>{
+        app.toSpace = true;
         if(!app.space)
             {
                 app.space = true;

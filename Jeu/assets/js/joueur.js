@@ -307,14 +307,18 @@ export class Joueur {
         }, 1000);
     }
     
-
+    actualiseScore()
+    {
+        this.statistics.score = ((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
+        (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * 
+        this.statistics.timePlayed).toFixed(0);
+        return this.statistics.score;
+    }
     playerDied() {  
         console.log("Player died!");
         Joueur.Grid.pauseGrid(this.app);
         this.app.pause = true;
-        this.statistics.score = ((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
-                                (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * 
-                                this.statistics.timePlayed).toFixed(0);
+
     
         // Log statistics for debugging
         console.log("Statistics:", this.statistics);
@@ -386,7 +390,7 @@ export class Joueur {
         };
     
         resolver.resolve(options, () => {
-            console.log("Resolver effect finished!"); // Callback for when effect finishes
+            //console.log("Resolver effect finished!"); // Callback for when effect finishes
         });
     }
     
@@ -446,7 +450,7 @@ export class Joueur {
         const partialString = options.partialString;
     
         if (!element) {
-            console.error("Element is undefined in doRandomiserEffect:", options);
+            //console.error("Element is undefined in doRandomiserEffect:", options);
             return;
         }
     

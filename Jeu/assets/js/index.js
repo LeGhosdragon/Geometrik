@@ -64,10 +64,11 @@ crossHair.filters = [colorFilter];
 app.stage.addChild(crossHair);
 cursorX = crossHair.x, cursorY = crossHair.y;
 
-app.ennemiColor = 0x0000ff
+app.ennemiColor = 0xFFFFFF;
 app.backColor = 0x000000;
 app.pause = false;
 app.space = false;
+app.toSpace = false;
 
 
 let debugText = new Text('', {
@@ -145,7 +146,7 @@ function setup() {
 
     Grid.pauseGrid(app);
     app.pause = true;
- 
+    Shape3D.spawnShapes(Event, app);
     
     // Commencer la boucle du jeu
     app.ticker.add((delta) => play(delta));
@@ -175,14 +176,12 @@ function play(delta) {
             hour += 1;
         }    
 
-        
-       updatePlayerMovement();
+        updatePlayerMovement();
         
         let xI = xF;
         let yI = yF;
         xF += joueur.getVX();
         yF += joueur.getVY();
-        console.log(joueur.getVX());
 
         const deltaX = -(xF - xI) * delta;
         const deltaY = -(yF - yI) * delta;
@@ -284,7 +283,6 @@ function play(delta) {
             monstre.bouger(joueur,delta, deltaX, deltaY, app.ennemiColor);
             if(sword.hasSword) {if (sword.isSwordCollidingWithMonster(monstre)) sword.onSwordHitEnemy(monstre);}
             if(gun.isBulletCollidingWithMonster(monstre)) gun.onBulletHitEnemy(monstre);
-            //if(MilkMan.isBulletCollidingWithMonster(monstre)) MilkMan.onBulletHitEnemy(monstre);
         });
         MonstreGunner.bullets.forEach(bullet => {if(sword.isSwordCollidingWithBullet(bullet)) sword.onSwordHitEnemyBullet(bullet);});
 
@@ -309,11 +307,16 @@ function play(delta) {
         });
         
         joueur.onPlayerCollision(monstres);
+    }       
+    if(!app.space || app.toSpace)
+    {
+        app.toSpace = false;
+        app.ennemiColor = updateBackgroundColor(app, Monstre);
+        document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
     }
-    crossHair.x += (cursorX-30 - crossHair.x) * 1;
-    crossHair.y += (cursorY-33 - crossHair.y) * 1;
-    app.ennemiColor = updateBackgroundColor(app, Monstre);
-    document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
+
+    crossHair.x=cursorX-30;
+    crossHair.y=cursorY-33;
     Shape3D.shapes.forEach(shape => shape.draw(Monstre));
     Event.updateMusic();
     Monstre.cleanup();
@@ -366,6 +369,7 @@ function afficherDebug() {
         Elapsed time: ${hour<=0?"":hour + "h"}${min<=0?"":min+ "m"}${elapsedTime.toFixed(2)}s
         Event : ${Event.currentEvent.type}
         Song : ${Event.currentMusic.nom != null ? Event.currentMusic.nom : 0}
+        Score : ${joueur.actualiseScore()}
         FPS : ${app.ticker.FPS.toFixed(0)}
 
 
@@ -606,8 +610,8 @@ function setupJoystickControls() {
 
         for (let i = 0; i < touches.length; i++) {
             let touch = touches[i];
-            let touchX = touch.clientX;
-            let touchY = touch.clientY;
+            let touchX = touch.clientX - 30;
+            let touchY = touch.clientY - 33;
 
             // Identify if the touch belongs to the left or right joystick
             if (!activeTouches.left && touchX < window.innerWidth / 2) {
@@ -678,7 +682,8 @@ function setupJoystickControls() {
 
 
 function updatePlayerMovement() {
-    if(isMobile()){
+    if(isMobile())
+    {
         joueur.setVX(Math.min(Math.abs(leftJoystickData.x / 5), joueur.vitesse * 3) * (leftJoystickData.x > 0 ? 1 : -1));
         joueur.setVY(Math.min(Math.abs(leftJoystickData.y / 5), joueur.vitesse * 3) * (leftJoystickData.y > 0 ? 1 : -1));
     }

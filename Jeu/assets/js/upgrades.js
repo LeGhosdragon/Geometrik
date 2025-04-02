@@ -366,7 +366,6 @@ export class Upgrade
  * Sous-classe pour définir les propritété de chaque upgrade individuellement (effet,
  * type, titre, description et son icône)
  */
-
 class Upg {
     constructor(getParam, setParam, type, augment, title, description, icon, exponentiel) {
         this.exponentiel = exponentiel;

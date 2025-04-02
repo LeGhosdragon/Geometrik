@@ -371,6 +371,18 @@ export class Event{
         return [randomX, randomY];
     }
 
+    // génère une position aléatoire off-screen et retourne les coordonnées x,y
+    static posRandomInterieur() {
+        let w = Event.app.view.width; 
+        let h = Event.app.view.height;
+        let randomX, randomY;
+
+        randomX = Math.random() * w;
+        randomY = Math.random() * h;
+
+        return [randomX, randomY];
+    }
+
     // ajoute une réf aux différents type de monstres
     static addMonstres(monstresInput,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12)
     {

@@ -874,7 +874,7 @@ export class BossTank extends Monstre {
         const speed = 1.3;
         const spinSpeed = 0.005;
         const baseHP = Math.round(50 * ennemiDifficultee**1.2)*25;
-        const exp = Math.round(4 + 4 * ennemiDifficultee/3)*100;
+        const exp = Math.round(4 + 4 * ennemiDifficultee/3)*10;
         const baseDMG = Math.round(2 * ennemiDifficultee);
         super(x, y, 8, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
         this.baseBaseDMG = this.baseDMG;
@@ -911,7 +911,7 @@ export class BossTank extends Monstre {
         }
 
         this.baseDMG = this.baseBaseDMG * this.size;
-        this.exp = this.baseExp  * this.size;
+        this.exp = this.baseExp * this.size;
         this.baseHP = this.baseBaseHP  * this.size;
 
         // inner shape of tank
