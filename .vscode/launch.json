@@ -1,11 +1,19 @@
 {
     "version": "0.2.0",
     "configurations": [
+        // {
+        //     "type": "msedge",
+        //     "request": "launch",
+        //     "name": "Launch msedge against localhost",
+        //     "url": "http://127.0.0.1:3000/assets/pages/index.html",
+        //     "webRoot": "${workspaceFolder}",
+        //     "sourceMaps": false,
+        // },
         {
-            "type": "msedge",
+            "type": "chrome",
             "request": "launch",
-            "name": "Launch msedge against localhost",
-            "url": "http://127.0.0.1:3000/assets/pages/index.html",
+            "name": "Launch chrome against localhost",
+            "url": "http://localhost/Geometrik/assets/pages/index.html",
             "webRoot": "${workspaceFolder}",
             "sourceMaps": false,
         },

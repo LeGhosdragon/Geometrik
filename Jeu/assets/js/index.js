@@ -308,12 +308,12 @@ function play(delta) {
         
         joueur.onPlayerCollision(monstres);
     }       
-    if(!app.space || app.toSpace)
-    {
+    // if(!app.space || app.toSpace)
+    // {
         app.toSpace = false;
         app.ennemiColor = updateBackgroundColor(app, Monstre);
         document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
-    }
+    // }
 
     crossHair.x=cursorX-30;
     crossHair.y=cursorY-33;

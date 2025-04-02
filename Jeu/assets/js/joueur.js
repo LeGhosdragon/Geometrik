@@ -310,8 +310,7 @@ export class Joueur {
     actualiseScore()
     {
         this.statistics.score = ((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
-        (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * 
-        this.statistics.timePlayed).toFixed(0);
+        (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * this.statistics.timePlayed).toFixed(0);
         return this.statistics.score;
     }
     playerDied() {  
@@ -321,7 +320,7 @@ export class Joueur {
 
     
         // Log statistics for debugging
-        console.log("Statistics:", this.statistics);
+        //this.actualiseScore();
     
         const seconde = ((this.statistics.timePlayed % 60000) / 1000);
         const minute = ((this.statistics.timePlayed % 3600000) / 1000 - seconde);
@@ -365,7 +364,7 @@ export class Joueur {
                 } else {
                     gameOverText.y = targetY;
                     this.createStatsBoards();
-                    this.sendStatsToDB();
+                     this.sendStatsToDB();
                     ticker.stop(); 
                 }
             });
@@ -550,7 +549,7 @@ export class Joueur {
             const kills = this.statistics.kills;
             const expGained = this.statistics.expGained;
             const timePlayed = this.statistics.timePlayed;
-            const score = this.statistics.score;
+            const score = this.actualiseScore();
 
                 try {
                     const formData = new FormData();
@@ -565,6 +564,15 @@ export class Joueur {
                         method: 'POST',
                         body: formData
                     });
+                    const responseText = await response.text();
+
+                    let data;
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (e) {
+                        console.error("Failed to parse JSON:", e);
+                        throw new Error("Invalid JSON response");
+                    }
                     
                 } catch (error) {
                     console.error('Erreur:', error);

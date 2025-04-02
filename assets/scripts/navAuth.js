@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function modifierBarreNav(){
         const jeton = localStorage.getItem('jeton');
+        console.log(jeton);
         const menuDiv = document.querySelector('.menu');
 
         if(jeton){
