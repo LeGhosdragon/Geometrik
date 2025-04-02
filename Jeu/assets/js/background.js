@@ -25,30 +25,30 @@ export class Grid {
             } else {
                 grid.lineStyle(gridThickness, 0x000000, 0.5);
             }
-        
+            
 
-        const gradientTexture = Grid.createSmoothGradientTexture();
-        app.gradientLine = new PIXI.TilingSprite(gradientTexture, gridSize * 2, gridSize * 2);
-        app.gradientLine.position.set(-gridSize, -gridSize);
+            const gradientTexture = Grid.createSmoothGradientTexture();
+            app.gradientLine = new PIXI.TilingSprite(gradientTexture, gridSize * 2, gridSize * 2);
+            app.gradientLine.position.set(-gridSize, -gridSize);
 
-        for (let i = -gridSize; i < gridSize; i += step) {
-            grid.moveTo(i, -gridSize);
-            grid.lineTo(i, gridSize);
-        }
+            for (let i = -gridSize; i < gridSize; i += step) {
+                grid.moveTo(i, -gridSize);
+                grid.lineTo(i, gridSize);
+            }
 
-        for (let j = -gridSize; j < gridSize; j += step) {
-            grid.moveTo(-gridSize, j);
-            grid.lineTo(gridSize, j);
-        }
+            for (let j = -gridSize; j < gridSize; j += step) {
+                grid.moveTo(-gridSize, j);
+                grid.lineTo(gridSize, j);
+            }
 
 
-        if (app != null && app.space) {
-            app.gradientLine.mask = grid;
-            app.stage.addChild(app.gradientLine);
-        }
+            if (app != null && app.space) {
+                app.gradientLine.mask = grid;
+                app.stage.addChild(app.gradientLine);
+            }
 
-        grid.position.set(900, 400);
-        if (gridThickness == 100 && app.space) {
+            grid.position.set(900, 400);
+            if (gridThickness == 100 && app.space) {
                 app.gradientLine.visible = false;
             }
         }
@@ -97,7 +97,7 @@ export class Grid {
 
 
 // La fonction pour mettre a jour la couleur de fond pour pulser a travers l'arc-en-ciel
-export function updateBackgroundColor(app, mstr, grid) {
+export function updateBackgroundColor(app, mstr) {
     if(app.pause)
     {
        vitesseCouleur = 0.001;
@@ -177,7 +177,7 @@ function hexToRgb(hex) {
  * des formes 3D pour enrichir le fond de la scène.
  */
 export class Shape3D {
-    
+    static onStart = true;
     constructor(app, vertices, edges, x, y, z, boss = false) {
         this.app = app;
         this.vertices = vertices;
@@ -246,11 +246,11 @@ export class Shape3D {
     // 1. Dessiner les formes 3D 
     // 2. Mettre à jour les angles de rotation
     // 3. Trace les arrêtes entre les sommets projetés
-    draw() {
+    draw(Monstre) {
         this.graphics.clear();
 
-        if(!this.boss) {this.graphics.lineStyle(this.position.z * 1.3, this.app.space ? this.color : this.app.ennemiColor, 1);}
-        else{this.graphics.lineStyle(this.position.z * 2, this.app.space ? this.color : this.app.ennemiColor, 1);}
+        if(!this.boss) {this.graphics.lineStyle(this.position.z * 1.3, this.app.space || Monstre.dedMilkMan ? this.color : this.app.ennemiColor, 1);}
+        else{this.graphics.lineStyle(this.position.z * 2, this.app.space || Monstre.dedMilkMan ? this.color : this.app.ennemiColor, 1);}
 
         let projected = [];
 
@@ -274,7 +274,7 @@ export class Shape3D {
     // Mettre à jour la position en ajoutant des offsets    
     updatePosition(dx, dy, bossPos = 0) {
 
-        if(!this.boss)
+        if(!this.boss || !bossPos)
         {
             this.position.x += dx * this.position.z;
             this.position.y += dy * this.position.z;
@@ -337,8 +337,12 @@ export class Shape3D {
             let x, y, z;
             let attempts = 0;
             let validPosition = false;
-            while (!validPosition && attempts < Shape3D.maxAttempts) {
+            while (!validPosition && (attempts < Shape3D.maxAttempts || Shape3D.onStart)) {
                 [x, y] = Event.posRandomExterieur();
+                if(Shape3D.onStart)
+                {
+                    [x, y] = Event.posRandomInterieur();
+                }
                 z = Math.random();
                 x -= app.view.width / 2;
                 y -= app.view.height / 2;
@@ -360,6 +364,7 @@ export class Shape3D {
                 //console.warn("Could not find a valid position after " + Shape3D.maxAttempts + " attempts.");
             }
         }
+        Shape3D.onStart = false;
     }
     
 

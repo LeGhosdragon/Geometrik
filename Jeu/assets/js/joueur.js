@@ -40,7 +40,8 @@ export class Joueur {
         this.numChoix = 3;
         this.bulletHit = false;
         this.body = this.faireJoueur();
-        
+
+        this.createResolver();
         this.hpText = this.createHPText();
         this.healthBar = this.createHealthBar();
         this.updateHealthBar();
@@ -48,7 +49,7 @@ export class Joueur {
         this.hpText.visible = false;
         this.healthBar.visible = false;
         this.damageFlash = this.createDmgFlash(app);
-        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, score : 0};//timePlayed*kills*expGained};
+        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, score : 0, jeton: ""};//timePlayed*kills*expGained};
     }
 
     // Fonction pour créer le joueur
@@ -306,36 +307,56 @@ export class Joueur {
         }, 1000);
     }
     
-
+    actualiseScore()
+    {
+        this.statistics.score = ((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
+        (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * 
+        this.statistics.timePlayed).toFixed(0);
+        return this.statistics.score;
+    }
     playerDied() {  
-        
+        console.log("Player died!");
         Joueur.Grid.pauseGrid(this.app);
         this.app.pause = true;
-        this.statistics.score = ((this.statistics.kills <= 0 ? 1:this.statistics.kills) * (this.statistics.expGained <= 0 ? 1:this.statistics.expGained)  * this.statistics.timePlayed).toFixed(0);
-        const seconde = ((this.statistics.timePlayed%60000)/1000);
-        const minute = ((this.statistics.timePlayed%3600000)/1000 - seconde);
-        const heure = ((this.statistics.timePlayed%(3600000 * 60))/1000 - minute - seconde);
-        this.statistics.timePlayed = this.statistics.timePlayed.toFixed(0) + "( " + Math.abs(heure.toFixed(0)) + "h " + minute.toFixed(0)/60 + "min " + seconde.toFixed(2) + "s "+ ")";
-        const gameOverText = new PIXI.Text("Game Over", {
+
+    
+        // Log statistics for debugging
+        console.log("Statistics:", this.statistics);
+    
+        const seconde = ((this.statistics.timePlayed % 60000) / 1000);
+        const minute = ((this.statistics.timePlayed % 3600000) / 1000 - seconde);
+        const heure = ((this.statistics.timePlayed % (3600000 * 60)) / 1000 - minute - seconde);
+        this.statistics.timePlayed = this.statistics.timePlayed.toFixed(0) + 
+                                    "( " + Math.abs(heure.toFixed(0)) + "h " + 
+                                    (minute.toFixed(0) / 60) + "min " + 
+                                    seconde.toFixed(2) + "s )";
+    
+        // Create PIXI text object
+        const gameOverText = new PIXI.Text("", {  
             fontFamily: 'calibri',
-            stroke: 'black',      // Black outline
+            stroke: 'white',      
             strokeThickness: 4, 
             fontSize: 72,
-            weight: 'bold',
+            fontWeight: 'bold',
             fill: 0xFF0000,
             align: 'center'
-        });
+        }); 
         gameOverText.anchor.set(0.5);
         gameOverText.x = this.app.renderer.width / 2;
         gameOverText.y = this.app.renderer.height / 2;
         gameOverText.zIndex = 10000;
-        this.app.stage.addChild(gameOverText);
+        Joueur.Event.currentMusic.stop();
+        Joueur.Event.nextSongIs = "gameOver";
+        Joueur.Event.nextSong = true;
         
+        let text2 = "Game Over";
+        this.app.stage.addChild(gameOverText);
+        this.createResolver(gameOverText, text2);
+    
         let targetY = this.app.renderer.height / 20;
         let speed = 2; 
-        
+    
         setTimeout(() => {
-            
             const ticker = new PIXI.Ticker();
             ticker.add(() => {
                 speed += 0.1;
@@ -350,12 +371,124 @@ export class Joueur {
             });
             ticker.start(); 
         }, 2000);
-        
-
-        return "";
-
     }
-
+    
+    
+    createResolver(object, text1) {
+        let text = text1 || "";
+        let options = {
+            offset: 0,
+            timeout: 15, 
+            iterations: 10, 
+            characters: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'x', '#', '%', '&', '-', '+', '_', '?', '/', '\\', '='],
+            resolveString: text || "",  
+            element: object  // This will be the PIXI Text or HTML element
+        };
+    
+        const resolver = {
+            resolve: (options, callback) => this.resolve(options, callback) // Ensuring 'this' is preserved
+        };
+    
+        resolver.resolve(options, () => {
+            //console.log("Resolver effect finished!"); // Callback for when effect finishes
+        });
+    }
+    
+    resolve(options, callback) {
+        const resolveString = options.resolveString;
+        const combinedOptions = Object.assign({}, options, { resolveString: resolveString });
+        this.doResolverEffect(combinedOptions, callback);
+    }
+    
+    doResolverEffect(options, callback) {
+        let resolveString = options.resolveString;
+    
+        // Ensure resolveString is a string before using substring()
+        if (typeof resolveString !== "string") {
+            if (resolveString && resolveString.text !== undefined) {
+                // If it's a PIXI.Text object, use its text content
+                resolveString = resolveString.text;
+            } else if (resolveString instanceof HTMLElement) {
+                // If it's an HTML element, use its innerText
+                resolveString = resolveString.innerText;
+            } else {
+                //console.error("Invalid resolveString type:", resolveString);
+                return;
+            }
+        }
+    
+        const characters = options.characters;
+        const offset = options.offset;
+        const partialString = resolveString.substring(0, offset);
+    
+        const combinedOptions = Object.assign({}, options, { partialString: partialString });
+    
+        this.doRandomiserEffect(combinedOptions, () => {
+            const nextOptions = Object.assign({}, options, { offset: offset + 1 });
+    
+            if (offset <= resolveString.length) {
+                this.doResolverEffect(nextOptions, callback);
+            } else if (typeof callback === "function") {
+                callback(); // Fixing callback invocation here
+            }
+        });
+    }
+    
+    
+    getRandomInteger(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    
+    randomCharacter(characters) {
+        return characters[this.getRandomInteger(0, characters.length - 1)];
+    }
+    
+    doRandomiserEffect(options, callback) {
+        const characters = options.characters;
+        const timeout = options.timeout;
+        const element = options.element;  // PIXI Text or HTML element
+        const partialString = options.partialString;
+    
+        if (!element) {
+            //console.error("Element is undefined in doRandomiserEffect:", options);
+            return;
+        }
+    
+        let iterations = options.iterations;
+    
+        setTimeout(() => {
+            if (iterations >= 0) {
+                const nextOptions = Object.assign({}, options, { iterations: iterations - 1 });
+    
+                if (element instanceof PIXI.Text) {
+                    element.text = "";  // Clear the text first for PIXI Text
+                } else {
+                    element.textContent = "";  // Clear the text first for HTML elements
+                }
+    
+                if (iterations === 0) {
+                    if (element instanceof PIXI.Text) {
+                        element.text = partialString;  // Update PIXI text
+                    } else {
+                        element.textContent = partialString;  // Update HTML element's text
+                    }
+                } else {
+                    const randomChar = this.randomCharacter(characters);
+                    if (element instanceof PIXI.Text) {
+                        element.text = partialString.substring(0, partialString.length - 1) + randomChar;  // Update PIXI text
+                    } else {
+                        element.textContent = partialString.substring(0, partialString.length - 1) + randomChar;  // Update HTML element's text
+                    }
+                }
+    
+                this.doRandomiserEffect(nextOptions, callback);
+            } else if (typeof callback === "function") {
+                callback();
+            }
+        }, timeout);
+    }
+    
+    
 
     chooseClass()
     {
@@ -372,6 +505,7 @@ export class Joueur {
         
         this.weapons.forEach((weapon) => {
             const card = document.createElement("div");
+            this.createResolver(card, weapon);
             card.className = "card";
             card.style.width = "200px";
             card.style.borderRadius = "15px";
@@ -409,19 +543,46 @@ export class Joueur {
     }
 
 
-    sendStatsToDB()
+    async sendStatsToDB()
     {
+        document.addEventListener("DOMContentLoaded", async function(){
+            const jeton = this.statistics.jeton;
+            const kills = this.statistics.kills;
+            const expGained = this.statistics.expGained;
+            const timePlayed = this.statistics.timePlayed;
+            const score = this.statistics.score;
 
-
-
-        //à faire
+                try {
+                    const formData = new FormData();
+                    formData.append('jeton', jeton);
+                    formData.append('ennemis', kills);
+                    formData.append('experience', expGained);
+                    formData.append('duree', timePlayed);
+                    formData.append('score', score);
+                    
+                    // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    let response = await fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/ajouter', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors de la connexion: ' + error.message);
+                }
+        });
     }
+
+    
+          
+          
+
 
 
     createStatsBoards() {
         const container = document.createElement("div");
         container.id = "stats-container";
-        container.style.position = "absolute";
+        container.style.position = "fixed";
         container.style.width = "40%";
         container.style.top = "50%";
         container.style.left = "50%";
@@ -451,7 +612,7 @@ export class Joueur {
         card.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
         card.style.cursor = "default";
         card.style.userSelect = "none"; 
-    
+        card.style.overscrollBehavior = "none";
         // Title for the card
         const cardTitle = document.createElement("h2");
         cardTitle.textContent = "Statistics";
@@ -459,43 +620,50 @@ export class Joueur {
         cardTitle.style.fontSize = "32px";
         cardTitle.style.marginBottom = "20px";
         cardTitle.style.textAlign = "center";
+        cardTitle.style.overscrollBehavior = "none";
         card.appendChild(cardTitle);
     
         // Loop through statistics object and create text for each
         for (let [statName, statValue] of Object.entries(this.statistics)) {
-            
-            const statRow = document.createElement("div");
-            statRow.style.display = "flex";
-            statRow.style.justifyContent = "space-between";
-            statRow.style.marginBottom = "10px";
-            statRow.style.padding = "5px 10px";
-            statRow.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-            statRow.style.borderRadius = "10px";
-    
-            // Stat name
-            const name = document.createElement("body");
-            name.textContent = this.formatStatName(statName);
-            name.style.fontFamily = "courier new";
-            name.style.fontSize = "18px";
-            name.style.color = "#ccc";
-    
-            // Stat value
-            const value = document.createElement("body");
-            value.textContent = statValue;
-            value.style.fontFamily = "courier new";
-            value.style.fontSize = "18px";
-            value.style.fontWeight = "bold";
-            value.style.color = "white";
-    
-            // Append to statRow
-            statRow.appendChild(name);
-            statRow.appendChild(value);
-    
-            // Store reference for dynamic updates
-            this.statElements[statName] = value;
-    
-            // Append statRow to card
-            card.appendChild(statRow);
+
+            if(statName != "jeton")
+            {
+                const statRow = document.createElement("div");
+                statRow.style.display = "flex";
+                statRow.style.justifyContent = "space-between";
+                statRow.style.marginBottom = "10px";
+                statRow.style.padding = "5px 10px";
+                statRow.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
+                statRow.style.borderRadius = "10px";
+                statRow.style.overscrollBehavior = "none";
+                // Stat name
+                const name = document.createElement("div");
+                this.createResolver(name, this.formatStatName(statName));
+                name.textContent = this.formatStatName(statName);
+                name.style.fontFamily = "courier new";
+                name.style.fontSize = "18px";
+                name.style.color = "#ccc";
+        
+                // Stat value
+                const value = document.createElement("div");
+                this.createResolver(value, statValue);
+                value.textContent = statValue;
+                value.style.fontFamily = "courier new";
+                value.style.fontSize = "18px";
+                value.style.fontWeight = "bold";
+                value.style.color = "white";
+
+        
+                // Append to statRow
+                statRow.appendChild(name);
+                statRow.appendChild(value);
+        
+                // Store reference for dynamic updates
+                this.statElements[statName] = value;
+        
+                // Append statRow to card
+                card.appendChild(statRow);
+            }
         }
     
         // Append card to container

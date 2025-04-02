@@ -55,6 +55,7 @@ export class Sword extends Weapon {
         this.color = 0x0000FF;
         this.length = length;
         this.trail = [];
+        this.trailPool = [];
         this.swingSpeed = 7;
         this.wideness = 0.8;
         this.swingDirection = 1; // 1 for normal, -1 for inverted

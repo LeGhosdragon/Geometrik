@@ -1,5 +1,5 @@
 /**
- * La classe Upgrade permet de gérer tous les upgrades des dispoinible 
+ * La classe Upgrade permet de gérer tous les upgrades disponibles
  * dans le jeu (armes, vitesse, Health etc.) 
  */
 export class Upgrade
@@ -196,7 +196,7 @@ export class Upgrade
         [   // Player crit damage
             new Upg(() => Upgrade.joueur.critDMG, (val) => Upgrade.joueur.critDMG = val,
                 "x", 1.30,
-                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${Upgrade.joueur.critDMG*100}% => ${Upgrade.joueur.critDMG*100 + 30}%`, "../images/CritDMG.gif",
+                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${(Upgrade.joueur.critDMG*100).toFixed(0)}% => ${(Upgrade.joueur.critDMG*100 + 30).toFixed(0)}%`, "../images/CritDMG.gif",
                 true
             )
         ],
@@ -366,7 +366,6 @@ export class Upgrade
  * Sous-classe pour définir les propritété de chaque upgrade individuellement (effet,
  * type, titre, description et son icône)
  */
-
 class Upg {
     constructor(getParam, setParam, type, augment, title, description, icon, exponentiel) {
         this.exponentiel = exponentiel;

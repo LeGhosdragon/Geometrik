@@ -20,6 +20,9 @@ export class Event{
     static Err404 = null;
     static monstres = null;
     static app = null;
+    static gun = null;
+    static Joueur = null;
+    static milkMode = null;
     static joueur = null;
     static difficultyDegree = 1;
     static currentEventName = "normal";
@@ -50,29 +53,28 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0; //SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUUE
+                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;
                 let compteur = 0;
 
-                // if(Event.boss["err404"] == null){
-                //     event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
+                // if(Event.boss["milkMan"] == null){
+                //     event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
                 // }
 
 
-                while(bossChoose)
+                while(bossChoose && compteur < 100)
                 {
-                    if (compteur == 10) {break;}
-                    if(compteur >= 10){break;}
-                    num = Math.floor(Math.random() * 2);
+                    num = Math.floor(Math.random() * 5);
                     switch (num) {
                         case 0:
-                            if(Event.boss["bossNormal"] != null) {compteur++;compteur++;}
+                            if(Event.boss["bossNormal"] != null) {compteur++;}
                             else {
                                 event.ajouterMONSTRE(1, "bossNormal", 2 + Event.difficultyDegree, "boss"); 
                                 Event.currentMusic.stop();
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "boss";
                                 bossChoose = false;
-                                compteur = 0;
+                                Event.updateMusic(); 
+                         
                             }
                             break;
                         case 1:
@@ -83,13 +85,51 @@ export class Event{
                                 Event.nextSong = true; 
                                 Event.nextSongIs = "404Boss";
                                 bossChoose = false;
-                                compteur = 0;
+                                Event.updateMusic(); 
+                               
                             }
                             break;
+                        case 2:
+                            if(Event.boss["bossGunner"] != null) {compteur++;}
+                            else {
+                                event.ajouterMONSTRE(1, "bossGunner", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "kim";
+                                bossChoose = false;
+                                Event.updateMusic(); 
+                              
+                            }
+                            break;
+                        case 3:
+                            if(Event.boss["bossTank"] != null) {compteur++;}
+                            else {
+                                event.ajouterMONSTRE(1, "bossTank", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "difficulty";
+                                bossChoose = false;
+                                Event.updateMusic(); 
+                            }
+                            break;
+                        case 4:
+                        if(Event.boss["milkMan"] != null) {compteur++;}
+                            else {
+                                event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
+                                Event.currentMusic.stop();
+                                Event.nextSong = true; 
+                                Event.nextSongIs = "milkMan";
+                                bossChoose = false;
+                                Event.updateMusic(); 
+              
+                                Event.milkMode(Event.app, Event.joueur, 0, Event.Monstre, Event.gun, 0, Event.Joueur, Event, true);    
+                            }
+                        break;
                         default:
                             break;
                     }
                 }
+
 
                 if (Event.boss["bossNormal"] != null) { event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( 1, "normal", 2 + Event.difficultyDegree, "normal") :0;}
             } 
@@ -172,6 +212,7 @@ export class Event{
                             break;
                     }
                     Event.currentMusic.play(); // Play the selected music
+                    Event.currentMusic.audio.currentTime = 0;
                 }
                 console.log(Event.currentMusic.nom);
                 if(Event.currentMusic.nom == "404Boss")
@@ -221,7 +262,6 @@ export class Event{
             this.placeOldOnes();
         }
         let rngPos = Event.posRandomExterieur();
-        //console.log(type);
         let monstre;
         if(type == "bossNormal"){
             monstre = new Event.BossNormal( rngPos[0], rngPos[1], sides,Event.ennemiDifficultee);
@@ -331,6 +371,18 @@ export class Event{
         return [randomX, randomY];
     }
 
+    // génère une position aléatoire off-screen et retourne les coordonnées x,y
+    static posRandomInterieur() {
+        let w = Event.app.view.width; 
+        let h = Event.app.view.height;
+        let randomX, randomY;
+
+        randomX = Math.random() * w;
+        randomY = Math.random() * h;
+
+        return [randomX, randomY];
+    }
+
     // ajoute une réf aux différents type de monstres
     static addMonstres(monstresInput,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12)
     {
@@ -352,6 +404,11 @@ export class Event{
     static addApp(appInput) {
         Event.app = appInput;
     }
+    static addMilk(milkInput, J, gun) {
+        Event.milkMode = milkInput;
+        Event.Joueur =  J;
+        Event.gun = gun;
+    }
     // ajoute un réf au joueur
     static addJoueur(joueurInput) {
         Event.joueur = joueurInput;
@@ -372,7 +429,8 @@ export class Event{
             "boss": new Event.Music("boss"),
             "404Boss": new Event.Music("404Boss"),
             "milkMan": new Event.Music("milkMan"),
-            "speed": new Event.Music("speed")
+            "speed": new Event.Music("speed"),
+            "gameOver": new Event.Music("gameOver")
         };
         Event.currentMusic = new Event.Music("space2");
     }
