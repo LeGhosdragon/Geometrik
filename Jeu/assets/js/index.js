@@ -1,5 +1,5 @@
 import { setupKeyboardControls } from './mouvement.js';
-import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan } from './monstre.js';
+import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan, BossBunny } from './monstre.js';
 import { Grid, updateBackgroundColor, Shape3D} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
@@ -82,6 +82,14 @@ debugText.x = 10;
 debugText.y = 10;
 debugText.zIndex = 1000;
 
+// Fonction pour faire apparaître le BossBunny
+// function spawnBossBunny() {
+//     const bossBunny = new BossBunny(app, joueur);
+//     bossBunny.spawn();
+//     Monstre.monstres.push(bossBunny);
+//     app.stage.addChild(bossBunny.body);
+// }
+
 // fonction qui initialise et configure les éléments nécessaires avant de commencer le jeu
 function setup() {
     app.stage.sortableChildren = true;
@@ -112,7 +120,7 @@ function setup() {
     Upgrade.addGrid(Grid);
     Event.addMusic(Music);
     Event.addApp(app);
-    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan);
+    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan, BossBunny);
     Event.addJoueur(joueur);
 
     Joueur.addEvent(Event);

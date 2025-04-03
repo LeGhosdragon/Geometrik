@@ -171,7 +171,7 @@ export class Monstre {
             let dy = this.getY() - otherMonstre.getY();
             let distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < minDistance && this.type != "err404" && this.type != "bossTank" && this.type != "milkMan") {
+            if (distance < minDistance && this.type != "err404" && this.type != "bossTank" && this.type != "milkMan" && this.type != "bossBunny") {
                 let angle = Math.atan2(dy, dx);
                 let avoidX = Math.cos(angle) * avoidFactor;
                 let avoidY = Math.sin(angle) * avoidFactor;
@@ -408,7 +408,7 @@ export class Monstre {
             }
             setTimeout(()=> {
                 this.setExplosionHit(false);
-            }, 300);
+            }, 500);
         }
         if(weapon.type == "gun")
         {
@@ -1378,7 +1378,8 @@ export class Err404 extends Monstre {
         this.shapeNum = shapeNum;
         this.attachedShapes = [];
         this.createBody();
-    }    
+    }
+    
 
     createBody() {
         for (let i = 0; i < this.shapeNum; i++) {
@@ -1430,5 +1431,234 @@ export class Err404 extends Monstre {
         this.body.visible = false;
         // S'assurer que le HP reste à jour
         this.updateHP();
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+
+            // Remove shapes from scene when monster dies
+            for (let shape of this.attachedShapes) {
+                let shapeIndex = Monstre.Shape3D.shapes.indexOf(shape);
+                if (shapeIndex !== -1) {
+                    Monstre.Shape3D.shapes.splice(shapeIndex, 1);
+                }
+            }
+            this.attachedShapes = [];
+
+            // Remove monster from stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null; 
+            }
+
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["err404"] = null;
+            return;
+        }
+
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
+    }
+}
+export class BossBunny extends Monstre {
+    constructor(x, y, sides, ennemiDifficultee) {
+        const type = "bossBunny";
+        const size = 1.2;
+        const speed = 2;
+        const spinSpeed = 0.01;
+        const baseHP = Math.round(25 * ennemiDifficultee ** 1.2) * 125;
+        const exp = Math.round(2 * ennemiDifficultee / 3) * 100;
+        const baseDMG = Math.round(1 * ennemiDifficultee) * 10;
+        super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        this.alt = false;
+    }
+    
+    // Crée une explosion autour du boss
+    createExplosion() {
+        this.vitesse = 0;
+        const radius = this.body.width * 5;
+        const explosionDamage = 10;
+        const explosionColor = 0xFFFFFF;
+        const isEnnemy = true;
+
+        setTimeout(() => {
+            this.vitesse = 2;
+            new Monstre.Explosion(this.getX(), this.getY(), radius, explosionDamage, explosionColor, isEnnemy);
+        }, 2000);    
+    }
+
+    // Fait sauter le boss vers le joueur
+    jumpTowardsPlayer() {
+        this.vitesse +=6;
+        setTimeout(() => {this.vitesse-=6}, 700);
+    }
+
+    activatePower()
+    {
+        if(this.alt) {
+            this.createExplosion();
+            this.alt = false;
+        }
+        else {
+            this.jumpTowardsPlayer();
+            this.alt = true;
+        }
+    }
+
+    // Dessine le BossBunny en forme de lapin à l'aide de formes géométriques
+    actualiserPolygone(delta, ennemiColor) {
+        // Efface l’ancien dessin
+        this.body.clear();
+
+        // Définir le style de ligne et la couleur de remplissage
+        this.body.lineStyle(3, 0xFFFFFF, 1); // Lignes blanches
+        const base = this.size * 50;
+
+        // Oreille gauche
+        this.body.moveTo(-0.2 * base, -0.9 * base);
+        this.body.lineTo(-0.3 * base, -1.4 * base);
+        this.body.lineTo(-0.1 * base, -0.9 * base);
+        this.body.closePath();
+
+        // Oreille droite
+        this.body.moveTo(0.2 * base, -0.9 * base);
+        this.body.lineTo(0.3 * base, -1.4 * base);
+        this.body.lineTo(0.1 * base, -0.9 * base);
+        this.body.closePath();
+
+        // Tête (polygone anguleux)
+        this.body.moveTo(-0.4 * base, -0.7 * base);
+        this.body.lineTo(0.4 * base, -0.7 * base);
+        this.body.lineTo(0.5 * base, -0.4 * base);
+        this.body.lineTo(0.3 * base, -0.2 * base);
+        this.body.lineTo(-0.3 * base, -0.2 * base);
+        this.body.lineTo(-0.5 * base, -0.4 * base);
+        this.body.closePath();
+
+        // Corps
+        this.body.moveTo(-0.5 * base, -0.2 * base);
+        this.body.lineTo(-0.7 * base, 0.4 * base);
+        this.body.lineTo(-0.4 * base, 0.8 * base);
+        this.body.lineTo(0.4 * base, 0.8 * base);
+        this.body.lineTo(0.7 * base, 0.4 * base);
+        this.body.lineTo(0.5 * base, -0.2 * base);
+        this.body.closePath();
+
+        // Patte avant gauche
+        this.body.moveTo(-0.4 * base, 0.6 * base);
+        this.body.lineTo(-0.5 * base, 1.0 * base);
+        this.body.lineTo(-0.3 * base, 1.0 * base);
+        this.body.lineTo(-0.2 * base, 0.6 * base);
+        this.body.closePath();
+
+        // Patte avant droite
+        this.body.moveTo(0.4 * base, 0.6 * base);
+        this.body.lineTo(0.5 * base, 1.0 * base);
+        this.body.lineTo(0.3 * base, 1.0 * base);
+        this.body.lineTo(0.2 * base, 0.6 * base);
+        this.body.closePath();
+
+        // Patte arrière gauche
+        this.body.moveTo(-0.6 * base, 0.4 * base);
+        this.body.lineTo(-0.8 * base, 0.9 * base);
+        this.body.lineTo(-0.5 * base, 0.9 * base);
+        this.body.lineTo(-0.4 * base, 0.4 * base);
+        this.body.closePath();
+
+        // Patte arrière droite
+        this.body.moveTo(0.6 * base, 0.4 * base);
+        this.body.lineTo(0.8 * base, 0.9 * base);
+        this.body.lineTo(0.5 * base, 0.9 * base);
+        this.body.lineTo(0.4 * base, 0.4 * base);
+        this.body.closePath();
+
+        // Queue
+        this.body.moveTo(0.7 * base, 0.3 * base);
+        this.body.lineTo(0.9 * base, 0.5 * base);
+        this.body.lineTo(0.8 * base, 0.2 * base);
+        this.body.closePath();
+
+        // Yeux rouges (losanges)
+        this.body.lineStyle(2, 0xFF0000, 1); // Lignes rouges pour les yeux
+        this.body.beginFill(0xFF0000);
+
+        // Œil gauche
+        this.body.moveTo(-0.2 * base, -0.5 * base);
+        this.body.lineTo(-0.15 * base, -0.55 * base);
+        this.body.lineTo(-0.1 * base, -0.5 * base);
+        this.body.lineTo(-0.15 * base, -0.45 * base);
+        this.body.closePath();
+
+        // Œil droit
+        this.body.moveTo(0.2 * base, -0.5 * base);
+        this.body.lineTo(0.15 * base, -0.55 * base);
+        this.body.lineTo(0.1 * base, -0.5 * base);
+        this.body.lineTo(0.15 * base, -0.45 * base);
+        this.body.closePath();
+
+        this.body.endFill();
+
+        // Mise à jour des points de vie
+        this.updateHP();
+    }
+
+    updateHP() {
+        if (this.currentHP <= 0) {
+            if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
+            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
+            Monstre.joueur.statistics.kills += 1;
+
+            // Supprimer le monstre de l'array
+            let index = Monstre.monstres.indexOf(this);
+            if (index !== -1) {
+                Monstre.monstres.splice(index, 1);
+            }
+
+            // Supprimer les graphiques du stage
+            Monstre.app.stage.removeChild(this.hpText);
+            Monstre.app.stage.removeChild(this.body);
+
+            // Arrêt de toute animation ticker-based
+            if (this.updateFn) {
+                Monstre.app.ticker.remove(this.updateFn);
+                this.updateFn = null;
+            }
+
+            // Clean up des références pour le garbage collection
+            this.hpText.destroy({ children: true });
+            this.body.destroy({ children: true });
+            this.hpText = null;
+            this.body = null;
+            Monstre.Event.boss["bossBunny"] = null;
+            return;
+        }
+
+        // Mise à jour du texte HP si le joueur est encore en vie
+        if (this.showLife) {
+            this.hpText.text = this.currentHP;
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+        } else {
+            Monstre.app.stage.removeChild(this.hpText);
+        }
     }
 }
