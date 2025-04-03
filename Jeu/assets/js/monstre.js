@@ -283,30 +283,34 @@ export class Monstre {
             if(this.type == "err404")
             {
                 Monstre.Event.boss["err404"] = null;
+                Monstre.Event.nextSong = true; 
             }
             if(this.type == "bossNormal")
             {
                 Monstre.Event.boss["bossNormal"] = null;
+                Monstre.Event.nextSong = true; 
             }
             if(this.type == "bossRunner")
             {
                 Monstre.Event.boss["bossRunner"] = null;
+                Monstre.Event.nextSong = true; 
             }
             if(this.type == "bossTank")
             {
                 Monstre.Event.boss["bossTank"] = null;
+                Monstre.Event.nextSong = true; 
             }
             if(this.type == "bossGunner")
             {
                 Monstre.Event.boss["bossGunner"] = null;
+                Monstre.Event.nextSong = true; 
             }
             if(this.type == "milkMan")
             {
                 Monstre.milkMode(Monstre.app, Monstre.joueur, 0, Monstre, Monstre.gun, 0, Monstre.Joueur, Monstre.Event, true);
                 Monstre.Event.boss["milkMan"] = null;
+                Monstre.Event.nextSong = true; 
             }
-            Monstre.Event.nextSong = true; 
-
             return;
         }
     

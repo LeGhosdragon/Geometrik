@@ -156,8 +156,10 @@ export class Joueur {
     // Ajoute un quantité l'EXP au joueur
     addExp(qty)
     {
-        this.exp += qty;
-        this.statistics.expGained += qty;
+        let val = Math.round(this.exp + qty);
+        let val2 = Math.round(this.statistics.expGained + qty);
+        this.exp = isNaN(val) ? this.exp : val;
+        this.statistics.expGained = isNaN(val2) ? this.statistics.expGained : val2;
         this.updateHP();
         this.updatelvl();
         this.updateExpBar();
@@ -255,8 +257,8 @@ export class Joueur {
     {
         if(this.exp >= this.expReq)
         {
-            this.lvl+=1;
-            this.exp = this.exp - this.expReq < 0 ? 0 : this.exp- this.expReq;
+            this.lvl++;
+            this.exp -= this.expReq < 0 ? 0 : this.expReq;
             this.expReq = 7 + Math.round(this.lvl**1.9);
             let upgrades = Joueur.upgrade.choisirUpgrade(this.numChoix);
             Joueur.upgrade.montrerUpgrades(upgrades); 
@@ -278,9 +280,9 @@ export class Joueur {
         {
             new Joueur.Explosion(this.getX() + this.size, this.getY()+ this.size, this.body.width * 6 * this.explRadius, this.baseDMG/3, 0xFF0000);    
         }
-        this.statistics.dmgTaken+=dmg;
+        this.statistics.dmgTaken=this.statistics.dmgTaken+Math.ceil(dmg);
         this.triggerDamageEffect();
-        this.setHP(this.getHP() - dmg);
+        this.setHP(this.getHP() - Math.ceil(dmg));
         this.updateHP();
     }
 
@@ -309,8 +311,9 @@ export class Joueur {
     
     actualiseScore()
     {
-        this.statistics.score = ((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
-        (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * this.statistics.timePlayed).toFixed(0);
+        let val = Math.round((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
+        (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * this.statistics.timePlayed <= 0 ? 1 : this.statistics.timePlayed);
+        this.statistics.score = isNaN(val) ? this.statistics.score : val;
         return this.statistics.score;
     }
     playerDied() {  
@@ -320,8 +323,9 @@ export class Joueur {
 
     
         // Log statistics for debugging
-        //this.actualiseScore();
-    
+        this.actualiseScore();
+        console.log(this.statistics.score + " : score");
+
         const seconde = ((this.statistics.timePlayed % 60000) / 1000);
         const minute = ((this.statistics.timePlayed % 3600000) / 1000 - seconde);
         const heure = ((this.statistics.timePlayed % (3600000 * 60)) / 1000 - minute - seconde);

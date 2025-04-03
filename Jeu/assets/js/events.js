@@ -33,6 +33,7 @@ export class Event{
     static currentMusic = null;
     static nextSong = false;
     static nextSongIs = null;
+    static lastSong = false;
     static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "bossGunner":null, "milkMan":null, "err404":null};
 
     constructor(type)
@@ -53,7 +54,7 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;
+                event.timeElapsed % 200 == 0 ? bossChoose = true : 0;
                 let compteur = 0;
 
                 // if(Event.boss["milkMan"] == null){
@@ -63,7 +64,7 @@ export class Event{
 
                 while(bossChoose && compteur < 100)
                 {
-                    num = Math.floor(Math.random() * 5);
+                    num = 3;//Math.floor(Math.random() * 5);
                     switch (num) {
                         case 0:
                             if(Event.boss["bossNormal"] != null) {compteur++;}
@@ -185,9 +186,9 @@ export class Event{
     }
 
     static updateMusic() {
-        if (Event.currentMusic != null) {
+        if (Event.currentMusic != null ) {
             // Check if the current song is finished or if we need to play the next song
-            if (Event.currentMusic.audio.currentTime >= (Event.currentMusic.audio.duration - 1) || Event.nextSong) {
+            if ((Event.currentMusic.audio.currentTime >= (Event.currentMusic.audio.duration - 1) || Event.nextSong)&& !Event.lastSong) {
                 // Stop current music
                 Event.currentMusic.stop();
 
@@ -219,9 +220,17 @@ export class Event{
                 {
                     Event.currentMusic.audio.currentTime = 44;
                 }
+                if(Event.currentMusic.nom == "gameOver")
+                {
+                    Event.lastSong = true;
+                }
+            }
+            else{
+                //Event.currentMusic.stop();
             }
  
         }
+        
     }
     
 
