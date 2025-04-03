@@ -348,10 +348,15 @@ export class Joueur {
         const seconde = ((this.statistics.timePlayed % 60000) / 1000);
         const minute = ((this.statistics.timePlayed % 3600000) / 1000 - seconde);
         const heure = ((this.statistics.timePlayed % (3600000 * 60)) / 1000 - minute - seconde);
-        this.statistics.timePlayed = this.statistics.timePlayed.toFixed(0) + 
-                                    "( " + Math.abs(heure.toFixed(0)) + "h " + 
-                                    (minute.toFixed(0) / 60) + "min " + 
-                                    seconde.toFixed(2) + "s )";
+        if (Math.abs(heure.toFixed(0)) > 0) {
+            this.statistics.timePlayed = Math.abs(heure.toFixed(0)) + "h " + 
+            (minute.toFixed(0) / 60) + "min " + 
+            seconde.toFixed(2) + "s";
+        } else {
+            this.statistics.timePlayed = (minute.toFixed(0) / 60) + "min " + 
+            seconde.toFixed(2) + "s";
+        }
+        
     
         // Create PIXI text object
         const gameOverText = new PIXI.Text("", {  
