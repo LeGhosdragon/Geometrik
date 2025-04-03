@@ -598,7 +598,15 @@ function addJoysticks() {
     setupJoystickControls();
 }
 function isMobile() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const userAgent = navigator.userAgent.toLowerCase();
+    
+    // Check common mobile user agent keywords
+    const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone|opera mini|opera mobi/i.test(userAgent);
+
+
+
+    return hasTouch && (isMobileUA );
 }
 
 let leftJoystickData = { x: 0, y: 0 };
