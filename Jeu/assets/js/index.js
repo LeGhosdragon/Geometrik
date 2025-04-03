@@ -48,8 +48,8 @@ sword, gun, hasSword = false,  dedPos = 0, elapsedTime = 0, min = 0, hour = 0, e
 cursorX, cursorY;
 
 const app = new Application({
-    width: 900,
-    height: 900,
+    width: window.innerWidth-20,
+    height: window.innerHeight-20,
     antialias: true,
     transparent: false,
     resolution: 1,
@@ -153,6 +153,10 @@ function setup() {
     Grid.pauseGrid(app);
     app.pause = true;
     Shape3D.spawnShapes(Event, app);
+    if(isMobile())
+    {
+        crossHair.visible = false;
+    }
     
     // Commencer la boucle du jeu
     app.ticker.add((delta) => play(delta));
