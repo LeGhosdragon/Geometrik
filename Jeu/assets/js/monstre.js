@@ -311,6 +311,11 @@ export class Monstre {
                 Monstre.Event.boss["milkMan"] = null;
                 Monstre.Event.nextSong = true; 
             }
+            if(this.type == "bossBunny")
+            {
+                Monstre.Event.boss["bossBunny"] = null;
+                Monstre.Event.nextSong = true; 
+            }
             return;
         }
     
@@ -1485,7 +1490,7 @@ export class BossBunny extends Monstre {
         const size = 1.2;
         const speed = 2;
         const spinSpeed = 0.01;
-        const baseHP = Math.round(25 * ennemiDifficultee ** 1.2) * 125;
+        const baseHP = Math.round(25 * ennemiDifficultee ** 1.2) * 50;
         const exp = Math.round(2 * ennemiDifficultee / 3) * 100;
         const baseDMG = Math.round(1 * ennemiDifficultee) * 10;
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
@@ -1530,7 +1535,13 @@ export class BossBunny extends Monstre {
         this.body.clear();
 
         // Définir le style de ligne et la couleur de remplissage
-        this.body.lineStyle(3, 0xFFFFFF, 1); // Lignes blanches
+        if(Monstre.app.space) {
+            this.body.lineStyle(3, ennemiColor, 1);
+            this.body.beginFill(this.getContrastingColor(this.hexToRgb(ennemiColor)));
+        } else {
+            this.body.lineStyle(3, 0x000000, 1);
+            this.body.beginFill(ennemiColor);
+        }
         const base = this.size * 50;
 
         // Oreille gauche
