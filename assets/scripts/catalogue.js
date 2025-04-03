@@ -317,11 +317,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 x: Math.random() * window.innerWidth,
                 y: Math.random() * window.innerHeight,
                 scale: Math.random() * 0.5 + 0.5,
-                backgroundColor: getRandomColor()
+                // backgroundColor: getRandomColor()
             });
             
             // Animation de base
-            animateParticle(particle);
+            //animateParticle(particle);
         }
 
         // Ajouter un écouteur d'événements pour l'interaction à la souris
@@ -340,31 +340,31 @@ document.addEventListener('DOMContentLoaded', function() {
      * Cette fonction permet d'animer les particules
      * @param {*} particle la particule à animer
      */
-    function animateParticle(particle) {
-        gsap.to(particle, {
-            duration: Math.random() * 10 + 10,
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
-            rotation: Math.random() * 360,
-            ease: 'none',
-            repeat: -1,
-            yoyo: true
-        });
-    }
+    // function animateParticle(particle) {
+    //     gsap.to(particle, {
+    //         duration: Math.random() * 10 + 10,
+    //         x: Math.random() * window.innerWidth,
+    //         y: Math.random() * window.innerHeight,
+    //         rotation: Math.random() * 360,
+    //         ease: 'none',
+    //         repeat: -1,
+    //         yoyo: true
+    //     });
+    // }
 
     /**
      * Cette fonction permet de récupérer une couleur aléatoire pour le background
      * @returns la couleur aléatoire
      */
-    function getRandomColor() {
-        const colors = [
-            'rgba(0, 153, 255, 0.3)',    // primary
-            'rgba(74, 0, 153, 0.3)',     // secondary
-            'rgba(153, 0, 94, 0.3)',     // accent
-            'rgba(138, 43, 226, 0.3)'    // purple
-        ];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
+    // function getRandomColor() {
+    //     const colors = [
+    //         'rgba(0, 153, 255, 0.3)',    // primary
+    //         'rgba(74, 0, 153, 0.3)',     // secondary
+    //         'rgba(153, 0, 94, 0.3)',     // accent
+    //         'rgba(138, 43, 226, 0.3)'    // purple
+    //     ];
+    //     return colors[Math.floor(Math.random() * colors.length)];
+    // }
 
     /**
      * Cette fonction permet d'animer la transition entre les sections

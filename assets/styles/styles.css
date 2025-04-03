@@ -1,4 +1,4 @@
-/* Style Généraux */
+/* ---------- Style Généraux ---------- */
 :root {
     --primary: #0099FF;
     --secondary: #4A0099;
@@ -7,9 +7,7 @@
     --background: #1A1A1A;
     --dark-background: #222222;
     --purple: #8A2BE2;
-
-    /* Extract RGB components for use in rgba() */
-    --accent-rgb: 153, 0, 94; /* RGB equivalent of #99005E */
+    --accent-rgb: 153, 0, 94; 
 }
 * {
     margin: 0;
@@ -36,8 +34,9 @@ body {
         opacity: 1;
     }
 }
+/* ---------- Fin Style Généraux ---------- */
 
-/* 🌟 Barre de navigation */
+/* ---------- Barre de navigation ---------- */
 nav {
     width: 100%;
     /* margin: 0 auto; Centrage */
@@ -47,9 +46,11 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 10px 5%; /* Ajustable selon la largeur */
+    height: 60px; /* Définir une hauteur fixe */
     position: relative;
-    z-index: 2;
+    z-index: 10;
     background: rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
 }
 
 /* 📌 Listes */
@@ -57,6 +58,8 @@ nav ul {
     list-style: none;
     display: flex;
     align-items: center;
+    padding: 0;
+    margin: 0;
 }
 
 .nav-left {
@@ -87,6 +90,10 @@ nav ul {
     gap: 20px;
 }
 
+.nav-right li {
+    list-style: none;
+}
+
 /* 🔗 Liens */
 nav a {
     color: var(--text);
@@ -96,6 +103,24 @@ nav a {
     font-weight: 500;
     text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), 0 0 15px var(--primary);
     transition: text-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* 🍔 Menu Hamburger pour mobile */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 21px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    height: 3px;
+    width: 100%;
+    background-color: var(--text);
+    border-radius: 3px;
+    transition: all 0.3s ease;
 }
 
 .toggle-switch {
@@ -223,8 +248,10 @@ transition: 0.3s;
     position: absolute;
     top: 100%;
     border-radius: 0 0 16px 16px;
-    left: 0;
+    /* left: 0; */
+    right: 0;
     width: 100%;
+    min-width: 150px;
     overflow: hidden;
     border: 1px solid #cccccc;
     opacity: 0;
@@ -301,8 +328,7 @@ transition: 0.3s;
     color: var(--text);
 }
   
-
-/* 🎛️ Responsive Design */
+/* 🎛️ Responsive Design amélioré */
 
 /* ✅ Tablettes et petits laptops (≤ 1024px) */
 @media screen and (max-width: 1024px) {
@@ -319,7 +345,155 @@ transition: 0.3s;
     }
 }
 
-/*Page Login/Connexion */
+/* ✅ Mobiles (≤ 768px) */
+@media screen and (max-width: 768px) {
+    nav {
+        padding: 10px 5%;
+        height: 60px; /* Hauteur fixe */
+        position: relative;
+    }
+    
+    .hamburger {
+        display: flex;
+        z-index: 11;
+    }
+    
+    .nav-left {
+        position: fixed;
+        top: 0;
+        left: -100%; /* Caché par défaut */
+        width: 80%;
+        height: 100vh;
+        background-color: var(--background);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 80px 20px 20px;
+        transition: left 0.3s ease;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+    
+    .nav-left.active {
+        left: 0; /* Visible quand actif */
+    }
+    
+    .nav-left li {
+        margin: 15px 0;
+        width: 100%;
+    }
+    
+    .nav-left li:first-child {
+        margin-right: 0;
+        margin-bottom: 25px;
+    }
+    
+    .menu {
+        width: 100%;
+    }
+    
+    
+    /* Overlay quand le menu est ouvert */
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9;
+    }
+    
+    .overlay.active {
+        display: block;
+    }
+
+    .menu .item .submenu {
+        position: static;
+        width: 100%;
+        border: none;
+        background-color: transparent;
+        margin-top: 8px;
+    }
+    
+    .menu .item:hover .submenu {
+        border: none;
+    }
+    
+    .submenu .submenu-link {
+        text-align: left;
+        padding-left: 48px; /* Indent pour montrer qu'il s'agit d'un sous-menu */
+    }
+    
+    /* Positions fixes pour les boutons de connexion */
+    .nav-right {
+        position: fixed;
+        top: 70px;
+        right: 20px;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+
+    .nav-right {
+        display: none; /* Cacher complètement le menu dropdown en mode mobile */
+    }
+    
+    /* Ajustement pour rendre les liens plus cliquables */
+    .submenu .submenu-link {
+        padding: 15px 24px;
+        margin: 5px 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 8px;
+    }
+
+    /* Modifier la position du dropdown et son affichage en mode mobile */
+    .nav-right .menu {
+        width: 100%;
+    }
+    
+    .nav-right .menu .item {
+        width: 100%;
+    }
+    
+    .nav-right .menu .item .submenu {
+        position: static;
+        width: 100%;
+        transform: none;
+        opacity: 1;
+        visibility: visible;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        border: none;
+        background-color: transparent;
+    }
+    
+    .nav-right .menu .item:hover .submenu {
+        max-height: 200px;
+    }
+    
+    /* Style pour le bouton de connexion en mobile */
+    .nav-right .menu .link {
+        width: 100%;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+}
+
+/* ✅ Petits mobiles (≤ 480px) */
+@media screen and (max-width: 480px) {
+    nav {
+        padding: 10px 4%;
+    }
+    
+    .nav-left {
+        width: 85%;
+    }
+}
+
+/* ---------- Fin Style Barre de navigation ---------- */
+
+/* ---------- Page Login/Connexion ---------- */
 /* Main container */
 .main-container {
     display: flex;
@@ -327,6 +501,18 @@ transition: 0.3s;
     align-items: center;
     height: calc(100vh - 60px);
     padding: 20px;
+}
+
+/* Correction pour le main-container */
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 60px); /* Utiliser min-height au lieu de height */
+    padding: 20px;
+    position: relative; /* Ajouter position relative */
+    margin-top: 60px; /* Ajouter une marge supérieure équivalente à la hauteur de nav */
+    box-sizing: border-box; /* S'assurer que le padding est inclus dans la hauteur */
 }
 
 .form-section {
@@ -460,31 +646,6 @@ transition: 0.3s;
     max-height: 100%;
 }
 
-/* Modification pour le nav */
-nav {
-    background-color: var(--background);
-    border-bottom: var(--text) 1px solid;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 40px;
-    height: 60px; /* Définir une hauteur fixe */
-    position: relative; /* Ajouter position relative */
-    z-index: 10; /* S'assurer que la nav reste au-dessus */
-}
-
-/* Correction pour le main-container */
-.main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 60px); /* Utiliser min-height au lieu de height */
-    padding: 20px;
-    position: relative; /* Ajouter position relative */
-    margin-top: 60px; /* Ajouter une marge supérieure équivalente à la hauteur de nav */
-    box-sizing: border-box; /* S'assurer que le padding est inclus dans la hauteur */
-}
-
 /* Rendre le formulaire responsive */
 .form-container {
     display: flex;
@@ -497,17 +658,109 @@ nav {
     flex-direction: row; 
 }
 
-/* Page principale index.html */
+/* ---------- Media Queries ---------- */
+/* Pour tablettes */
+@media screen and (max-width: 992px) {
+    .form-container {
+        width: 90%;
+    }
+    
+    .form-section {
+        padding: 30px;
+    }
+    
+    .form-title {
+        font-size: 1.8em;
+    }
+}
+
+/* Pour telephone */
+@media screen and (max-width: 768px) {
+    .main-container {
+        padding: 10px;
+    }
+    
+    .form-container {
+        width: 95%;
+        flex-direction: column;
+        min-height: auto;
+    }
+    
+    .form-section {
+        width: 100%;
+        padding: 25px 20px;
+        order: 2;
+    }
+    
+    .image-section {
+        width: 100%;
+        height: 150px;
+        order: 1;
+        padding: 15px;
+    }
+    
+    .image-section img {
+        max-height: 120px;
+    }
+    
+    .form-title {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group input {
+        padding: 10px;
+    }
+    
+    #btnSignUp {
+        padding: 10px;
+    }
+}
+
+/* Pour petits petit telephone */
+@media screen and (max-width: 480px) {
+    .form-section {
+        padding: 20px 15px;
+    }
+    
+    .form-title {
+        font-size: 1.3em;
+    }
+    
+    .image-section {
+        height: 120px;
+    }
+    
+    .image-section img {
+        max-height: 100px;
+    }
+}
+
+/* Correction pour la hauteur sur les petits écrans */
+@media screen and (max-height: 600px) {
+    .main-container {
+        height: auto;
+        min-height: 100vh;
+    }
+}
+
+/* ---------- Fin Style Page Login/Connexion ---------- */
+
+/* ---------- Page principale Accueil ---------- */
 .hero-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 300px);
+    min-height: calc(100vh - 300px);
     text-align: center;
     background-color: var(--background);
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.0);
 }
 
 .hero-content {
@@ -522,14 +775,14 @@ nav {
 }
 
 .hero-title {
-    font-size: 6rem;
+    font-size: clamp(3rem, 8vw, 6rem); /* Responsive font size */
     background-image: linear-gradient(to right, var(--accent), var(--primary));
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     font-weight: bold;
-    line-height: 0.9;
+    line-height: 1.1;
     text-align: center;
 }
 
@@ -583,7 +836,7 @@ nav {
     align-items: center;
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.0);
 }
 
 .trailer-content {
@@ -731,8 +984,9 @@ nav {
 #btn-compte:hover:before {
     transform: translateX(15em);
 }
+/*---------- Fin Style Page Accueil ----------*/
 
-/*Page A Propos */
+/*---------- Page A Propos ----------*/
 section {
     padding: 3rem 2rem;
     margin: 2rem 0;
@@ -1008,9 +1262,9 @@ animation: glowing_401 5s linear infinite;
 .github-link a{
     color: var(--primary); text-decoration: none; font-size: 1.2rem;
 }
+/*---------- Fin Style A Propos ----------*/
 
-
-/*Page Palmares */
+/*---------- Page Palmares ----------*/
 .palmares-container h1 {
     text-align: center;
     font-family: 'Montserrat', sans-serif;
