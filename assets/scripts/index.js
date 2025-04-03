@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", function(){
     const showSuccessSignupNotification = localStorage.getItem('showSuccessSignupNotification');
     // Récupérer la notification de succès de connexion
     const showSuccessLoginNotification = localStorage.getItem('showSuccessLoginNotification');
+    // Récupérer le conteneur de la page d'accueil
+    const heroContainer = document.querySelector('.hero-container');
+    // Récupérer le jeton
+    const jeton = localStorage.getItem('jeton');
     // Créer une instance de Toast
     const Toast = Swal.mixin({
         toast: true,
@@ -52,4 +56,17 @@ document.addEventListener("DOMContentLoaded", function(){
         //Redirige vers la page de création de compte
         window.location.href = '../pages/signup.html';
     })
+
+    //Enlever le bouton compte lorsqu'on est connecté
+    if(jeton){
+        heroContainer.innerHTML = `<div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Geometrik</h1>
+            <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
+            <div class="hero-buttons">
+              <button id="btn-jouer" class="btn btn-primary"> JOUER</button>
+            </div>
+        </div>
+      </div>`;
+    }
 })

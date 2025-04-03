@@ -12,9 +12,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="../scripts/catalogue.js" defer></script>
     <script src="../scripts/navAuth.js" defer></script>
+    <script src="../background/noise.min.js"></script>
+    <script src="../background/util.js"></script>
+    <script src="../background/pipeline.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
 </head>
 <body>
+    <!--Conteneur de fond pour le background-->
+    <div class="content--canvas"></div>
+
     <!--Barre de navigation-->
     <nav>
         <ul class="nav-left">
@@ -27,7 +34,7 @@
             <li><a href="about.html">À propos</a></li>
             <li><a href="catalogue.html">Catalogue</a></li>
             <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
-            <li><a href="palmares.html">Palmares</a></li>
+            <li><a href="palmares.html">Palmarès</a></li>
         </ul>
         <ul class="nav-right">
             <!-- <div class="toggle-switch">
