@@ -742,95 +742,11 @@ function setupJoystickControls(joystick, knob, isLeftJoystick, cursor = null) {
 
 // Function to detect mobile devices
 function isMobile() {
-    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-}
-
-
-let leftJoystickData = { x: 0, y: 0 };
-let rightJoystickData = { x: 0, y: 0 };
-
-function setupJoystickControls() {
-    let leftJoystick = document.getElementById("leftJoystick");
-    let rightJoystick = document.getElementById("rightJoystick");
-    let virtualCursor = document.getElementById("virtualCursor");
-
-    let activeTouches = {}; // Store active touches (left & right joysticks)
-
-    function handleJoystickMove(event) {
-        event.preventDefault();
-
-        let touches = event.touches;
-
-        for (let i = 0; i < touches.length; i++) {
-            let touch = touches[i];
-            let touchX = touch.clientX - 30;
-            let touchY = touch.clientY - 33;
-
-            // Identify if the touch belongs to the left or right joystick
-            if (!activeTouches.left && touchX < window.innerWidth / 2) {
-                activeTouches.left = touch.identifier;
-            }
-            if (!activeTouches.right && touchX > window.innerWidth / 2) {
-                activeTouches.right = touch.identifier;
-            }
-
-            // Update joystick positions based on assigned touch
-            if (touch.identifier === activeTouches.left) {
-                leftJoystickData.x = touchX - leftJoystick.offsetLeft - 50;
-                leftJoystickData.y = touchY - leftJoystick.offsetTop - 50;
-            }
-            if (touch.identifier === activeTouches.right) {
-                rightJoystickData.x = touchX - rightJoystick.offsetLeft - 50;
-                rightJoystickData.y = touchY - rightJoystick.offsetTop - 50;
-            }
-        }
-    }
-
-    function resetJoystick(event) {
-        let touches = event.changedTouches;
-        for (let i = 0; i < touches.length; i++) {
-            let touch = touches[i];
-
-            // Reset joystick if the associated touch is removed
-            if (touch.identifier === activeTouches.left) {
-                leftJoystickData.x = 0;
-                leftJoystickData.y = 0;
-                delete activeTouches.left;
-            }
-            if (touch.identifier === activeTouches.right) {
-                rightJoystickData.x = 0;
-                rightJoystickData.y = 0;
-                delete activeTouches.right;
-            }
-        }
-    }
-
-    // Attach listeners for multi-touch handling
-    leftJoystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
-    rightJoystick.addEventListener("touchmove", handleJoystickMove, { passive: false });
-
-    leftJoystick.addEventListener("touchend", resetJoystick);
-    rightJoystick.addEventListener("touchend", resetJoystick);
-
-    function updateCursorPosition() {
-        let joueur = { x: window.innerWidth / 2, y: window.innerHeight / 2 }; // Replace with actual player position
-        let joystickMagnitude = Math.sqrt(rightJoystickData.x ** 2 + rightJoystickData.y ** 2);
-
-        if (joystickMagnitude > 10) { // Prevent noise when joystick is at rest
-            let angle = Math.atan2(rightJoystickData.y, rightJoystickData.x); // Get angle from joystick
-            let aimDistance = Math.min(joystickMagnitude, 100); // Limit aim distance
-
-            cursorX = joueur.x + Math.cos(angle) * aimDistance;
-            cursorY = joueur.y + Math.sin(angle) * aimDistance;
-
-            virtualCursor.style.left = `${cursorX}px`;
-            virtualCursor.style.top = `${cursorY}px`;
-        }
-
-        requestAnimationFrame(updateCursorPosition);
-    }
-
-    updateCursorPosition(); // Start cursor update loop
+    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const userAgent = navigator.userAgent.toLowerCase();
+    // Check common mobile user agent keywords
+    const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone|opera mini|opera mobi/i.test(userAgent);
+    return hasTouch && (isMobileUA );
 }
 
 
