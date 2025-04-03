@@ -1,5 +1,43 @@
 document.addEventListener("DOMContentLoaded", function(){
-    //Variables pour les boutons
+    // Récupérer la notification de succès d'inscription
+    const showSuccessSignupNotification = localStorage.getItem('showSuccessSignupNotification');
+    // Récupérer la notification de succès de connexion
+    const showSuccessLoginNotification = localStorage.getItem('showSuccessLoginNotification');
+    // Créer une instance de Toast
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+
+    // Si la notification de succès d'inscription est active
+    if (showSuccessSignupNotification === 'true') {
+        // Supprimer le flag pour éviter que la notification s'affiche à chaque rechargement
+        localStorage.removeItem('showSuccessSignupNotification');
+        
+        // Afficher la notification de succès d'inscription
+        Toast.fire({
+            icon: "success",
+            title: "Compte créé avec succès"
+        });
+    } else if (showSuccessLoginNotification === 'true') {
+        // Supprimer le flag pour éviter que la notification s'affiche à chaque rechargement
+        localStorage.removeItem('showSuccessLoginNotification');
+        
+        // Afficher la notification de succès de connexion
+        Toast.fire({
+            icon: "success",
+            title: "Connecté avec succès"
+        });
+    }
+
+    // Constante pour les boutons
     const btnJouer = document.getElementById("btn-jouer");
     const btnCompte = document.getElementById("btn-compte");
 

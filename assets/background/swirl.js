@@ -1,26 +1,5 @@
 'use strict';
 
-// Configuration - we'll store both dark and light mode settings
-const config = {
-  dark: {
-    backgroundColor: 'hsla(240,100%,3%,1)',
-    baseHue: 240,
-    rangeHue: 60,
-    compositeOperation: 'lighter',
-    particleColorTemplate: (hue, opacity) => `hsla(${hue},100%,60%,${opacity})`
-  },
-  light: {
-    backgroundColor: 'hsla(0,0%,100%,1)',
-    baseHue: 200,
-    rangeHue: 160,
-    compositeOperation: 'multiply',
-    particleColorTemplate: (hue, opacity) => `hsla(${hue},100%,40%,${opacity})`
-  }
-};
-
-// Set default mode
-let currentMode = 'dark';
-
 const particleCount = 700;
 const particlePropCount = 9;
 const particlePropsLength = particleCount * particlePropCount;
@@ -32,12 +11,15 @@ const baseSpeed = 0.1;
 const rangeSpeed = 2;
 const baseRadius = 2;
 const rangeRadius = 8;
+const baseHue = 240;
+const rangeHue = 60;
 //Tourbillons plus complexes
 const noiseSteps = 16;
 // Déplacement du bruit Reduire pour des tourbillons plus grands
 const xOff = 0.0008;
 const yOff = 0.0008;
 const zOff = 0.0005;
+const backgroundColor = 'hsla(240,100%,3%,1)';
 
 let container;
 let canvas;
@@ -53,30 +35,12 @@ let lifeSpans;
 let speeds;
 let sizes;
 let hues;
-let toggleCheckbox;
 
 function setup() {
-  createCanvas();
-  setupToggleSwitch();
+	createCanvas();
   resize();
   initParticles();
-  draw();
-}
-
-function setupToggleSwitch() {
-  // Find the toggle checkbox
-  toggleCheckbox = document.querySelector('.checkbox');
-  
-  // Add event listener to toggle theme
-  toggleCheckbox.addEventListener('change', toggleTheme);
-}
-
-function toggleTheme() {
-  // Switch between dark and light mode based on checkbox state
-  currentMode = toggleCheckbox.checked ? 'light' : 'dark';
-  
-  // Optionally, you can add a class to the body to style other elements
-  document.body.classList.toggle('light-mode', currentMode === 'light');
+	draw();
 }
 
 function initParticles() {
@@ -102,7 +66,7 @@ function initParticle(i) {
   ttl = baseTTL + rand(rangeTTL);
   speed = baseSpeed + rand(rangeSpeed);
   radius = baseRadius + rand(rangeRadius);
-  hue = config[currentMode].baseHue + rand(config[currentMode].rangeHue);
+  hue = baseHue + rand(rangeHue);
 
   particleProps.set([x, y, vx, vy, life, ttl, speed, radius, hue], i);
 }
@@ -149,10 +113,7 @@ function drawParticle(x, y, x2, y2, life, ttl, radius, hue) {
   ctx.a.save();
   ctx.a.lineCap = 'round';
   ctx.a.lineWidth = radius;
-  
-  // Use the mode-specific color template
-  ctx.a.strokeStyle = config[currentMode].particleColorTemplate(hue, fadeInOut(life, ttl));
-  
+  ctx.a.strokeStyle = `hsla(${hue},100%,60%,${fadeInOut(life, ttl)})`;
   ctx.a.beginPath();
   ctx.a.moveTo(x, y);
   ctx.a.lineTo(x2, y2);
@@ -162,44 +123,44 @@ function drawParticle(x, y, x2, y2, life, ttl, radius, hue) {
 }
 
 function checkBounds(x, y) {
-  return(
-    x > canvas.a.width ||
-    x < 0 ||
-    y > canvas.a.height ||
-    y < 0
-  );
+	return(
+		x > canvas.a.width ||
+		x < 0 ||
+		y > canvas.a.height ||
+		y < 0
+	);
 }
 
 function createCanvas() {
   container = document.querySelector('.content--canvas');
-  canvas = {
-    a: document.createElement('canvas'),
-    b: document.createElement('canvas')
-  };
-  canvas.b.style = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  `;
-  container.appendChild(canvas.b);
-  ctx = {
-    a: canvas.a.getContext('2d'),
-    b: canvas.b.getContext('2d')
+	canvas = {
+		a: document.createElement('canvas'),
+		b: document.createElement('canvas')
+	};
+	canvas.b.style = `
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	`;
+	container.appendChild(canvas.b);
+	ctx = {
+		a: canvas.a.getContext('2d'),
+		b: canvas.b.getContext('2d')
   };
   center = [];
 }
 
 function resize() {
-  const { innerWidth, innerHeight } = window;
-  
-  canvas.a.width = innerWidth;
+	const { innerWidth, innerHeight } = window;
+	
+	canvas.a.width = innerWidth;
   canvas.a.height = innerHeight;
 
   ctx.a.drawImage(canvas.b, 0, 0);
 
-  canvas.b.width = innerWidth;
+	canvas.b.width = innerWidth;
   canvas.b.height = innerHeight;
   
   ctx.b.drawImage(canvas.a, 0, 0);
@@ -210,27 +171,21 @@ function resize() {
 
 function renderGlow() {
   ctx.b.save();
-  ctx.b.filter = 'blur(8px)';
-  if (currentMode === 'dark') {
-    ctx.b.filter += ' brightness(200%)';
-  }
-  ctx.b.globalCompositeOperation = config[currentMode].compositeOperation;
+  ctx.b.filter = 'blur(8px) brightness(200%)';
+  ctx.b.globalCompositeOperation = 'lighter';
   ctx.b.drawImage(canvas.a, 0, 0);
   ctx.b.restore();
 
   ctx.b.save();
-  ctx.b.filter = 'blur(4px)';
-  if (currentMode === 'dark') {
-    ctx.b.filter += ' brightness(200%)';
-  }
-  ctx.b.globalCompositeOperation = config[currentMode].compositeOperation;
+  ctx.b.filter = 'blur(4px) brightness(200%)';
+  ctx.b.globalCompositeOperation = 'lighter';
   ctx.b.drawImage(canvas.a, 0, 0);
   ctx.b.restore();
 }
 
 function renderToScreen() {
   ctx.b.save();
-  ctx.b.globalCompositeOperation = currentMode === 'dark' ? 'lighter' : 'source-over';
+  ctx.b.globalCompositeOperation = 'lighter';
   ctx.b.drawImage(canvas.a, 0, 0);
   ctx.b.restore();
 }
@@ -240,14 +195,14 @@ function draw() {
 
   ctx.a.clearRect(0, 0, canvas.a.width, canvas.a.height);
 
-  ctx.b.fillStyle = config[currentMode].backgroundColor;
+  ctx.b.fillStyle = backgroundColor;
   ctx.b.fillRect(0, 0, canvas.a.width, canvas.a.height);
 
   drawParticles();
   renderGlow();
   renderToScreen();
 
-  window.requestAnimationFrame(draw);
+	window.requestAnimationFrame(draw);
 }
 
 window.addEventListener('load', setup);
