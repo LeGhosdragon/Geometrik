@@ -447,7 +447,6 @@ export class Event{
         Event.Music = musicInput;
 
         Event.musicList = {
-
             "kim": new Event.Music("kim"),
             "space": new Event.Music("space"),
             "space2": new Event.Music("space2"),
