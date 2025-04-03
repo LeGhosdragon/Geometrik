@@ -40,7 +40,7 @@ export class Joueur {
         this.numChoix = 3;
         this.bulletHit = false;
         this.body = this.faireJoueur();
-this.hasExplHit = false;
+        this.hasExplHit = false;
         this.createResolver();
         this.hpText = this.createHPText();
         this.healthBar = this.createHealthBar();
@@ -49,7 +49,8 @@ this.hasExplHit = false;
         this.hpText.visible = false;
         this.healthBar.visible = false;
         this.damageFlash = this.createDmgFlash(app);
-        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, score : 0, jeton: ""};//timePlayed*kills*expGained};
+        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, score : 0, jeton: ""};
+        this.statistics.jeton = localStorage.getItem('jeton');
     }
 
     // Fonction pour créer le joueur
@@ -334,6 +335,7 @@ this.hasExplHit = false;
         return this.statistics.score;
     }
     playerDied() {  
+        this.app.gameOver = true;
         console.log("Player died!");
         Joueur.Grid.pauseGrid(this.app);
         this.app.pause = true;
@@ -546,14 +548,18 @@ this.hasExplHit = false;
             
             card.appendChild(description);
             card.addEventListener("click", () => {
-                Joueur.addupgrade(new Joueur.Upgrade(weapon));
-                Joueur.Grid.pauseGrid(this.app)
-                this.app.pause = false;
-                this.body.visible = true;
-                this.hpText.visible = true;
-                this.healthBar.visible = true;
-                Joueur.Event.currentMusic.play();
-                document.body.removeChild(container);
+                if(!document.body.contains(this.app.menu))
+                {
+                    Joueur.addupgrade(new Joueur.Upgrade(weapon));
+                    Joueur.Grid.pauseGrid(this.app)
+                    this.app.class = false;
+                    this.app.pause = false;
+                    this.body.visible = true;
+                    this.hpText.visible = true;
+                    this.healthBar.visible = true;
+                    Joueur.Event.currentMusic.play();
+                    document.body.removeChild(container);
+                }
             });
             container.appendChild(card);
         });
@@ -601,12 +607,6 @@ this.hasExplHit = false;
                 }
         });
     }
-
-    
-          
-          
-
-
 
     createStatsBoards() {
         const container = document.createElement("div");
@@ -694,12 +694,70 @@ this.hasExplHit = false;
                 card.appendChild(statRow);
             }
         }
-    
+      
         // Append card to container
         container.appendChild(card);
         document.body.appendChild(container);
+        this.createEndButtons();
     }
     
+    createEndButtons()
+    {
+        const container = document.createElement("div");
+        container.id = "menuContainer";
+        container.style.position = "absolute";
+        container.style.top = "85%";
+        container.style.left = "50%";
+        container.style.transform = "translate(-50%, -50%)";
+        container.style.background = "rgba(0, 0, 0, 0.8)";
+        container.style.padding = "20px";
+        container.style.borderRadius = "10px";
+        container.style.display = "flex";
+        container.style.flexDirection = "row";
+        container.style.alignItems = "center";
+        container.style.zIndex = "1000000";
+        container.style.gap = "50px";
+
+        function createMenuItem(text, onClick) {
+            const description = document.createElement("p");
+            description.textContent = text;
+            description.style.fontFamily ="courier new";
+            description.style.fontSize = "16px";
+            description.style.userSelect = "none";
+            const item = document.createElement("div");
+            
+            item.style.width = "200px";
+            item.style.borderRadius = "15px";
+            item.style.overflow = "hidden";
+            item.style.backgroundColor = "#2a2a2a";
+            //item.style.color = "white";
+            item.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+            item.style.cursor = "pointer";
+            item.style.userSelect = "none";
+    
+            item.style.padding = "10px 20px";
+            //item.style.background = "#fff";
+            item.style.borderRadius = "5px";
+            item.className = "card";
+            item.style.cursor = "pointer";
+            item.style.textAlign = "center";
+            item.style.width = "100px";
+            item.style.zIndex = "1000000";
+            item.appendChild(description);
+            item.addEventListener("click", onClick);
+            return item;
+        }
+        const restart = createMenuItem("Restart", () => {
+            location.reload(); // Reloads the page to restart
+        });
+        const exit = createMenuItem("Exit", () => {
+            location.href = "../../../assets/pages/index.html";
+        });
+
+
+        container.append(restart,  exit);
+        document.body.appendChild(container);
+    }
     
     // Helper function to format stat names
     formatStatName(statName) {

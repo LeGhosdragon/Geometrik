@@ -247,33 +247,38 @@ export class Upgrade
 
     // gestion de l'upgrade choisi
     upgradeChoisi(upgrade) {
-        let index = -1;
-        let foundIn = -1; 
-    
-        upgrade.apply();
+        if(!document.body.contains(Upgrade.app.menu))
+        {
+            let index = -1;
+            let foundIn = -1; 
         
-        // Trouver l'upgrade dans la liste et enlever si nécessaire
-        for (let i = 0; i < this.boite.length; i++) {
-            index = this.boite[i].indexOf(upgrade);
-            if (index > -1) {
-                foundIn = i;
-                break; 
+            upgrade.apply();
+            
+            // Trouver l'upgrade dans la liste et enlever si nécessaire
+            for (let i = 0; i < this.boite.length; i++) {
+                index = this.boite[i].indexOf(upgrade);
+                if (index > -1) {
+                    foundIn = i;
+                    break; 
+                }
             }
-        }
-        if (foundIn > -1 && !upgrade.exponentiel) {
-            this.boite[foundIn].splice(index, 1); 
-        }
+            if (foundIn > -1 && !upgrade.exponentiel) {
+                this.boite[foundIn].splice(index, 1); 
+            }
+        
+            // Enlever le upgrade UI container du DOM
+            const container = document.getElementById("upgrade-container");
+            if (container) {
+                container.remove();
+            }
+        
+            // Resumer le jeu
+        
+            Upgrade.app.upg = false;
     
-        // Enlever le upgrade UI container du DOM
-        const container = document.getElementById("upgrade-container");
-        if (container) {
-            container.remove();
+            Upgrade.Grid.pauseGrid(Upgrade.app);
+            Upgrade.app.pause = false;
         }
-    
-        // Resumer le jeu
-        Upgrade.Grid.pauseGrid(Upgrade.app);
-        Upgrade.app.upg = false;
-        Upgrade.app.pause = false;
     }
     
     // Gestion des upgrades des monstres 
