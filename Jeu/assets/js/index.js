@@ -72,6 +72,14 @@ debugText.x = 10;
 debugText.y = 10;
 debugText.zIndex = 1000;
 
+// Fonction pour faire apparaître le BossBunny
+// function spawnBossBunny() {
+//     const bossBunny = new BossBunny(app, joueur);
+//     bossBunny.spawn();
+//     Monstre.monstres.push(bossBunny);
+//     app.stage.addChild(bossBunny.body);
+// }
+
 // fonction qui initialise et configure les éléments nécessaires avant de commencer le jeu
 function setup() {
     app.stage.sortableChildren = true;
@@ -114,15 +122,10 @@ function setup() {
     joueur.chooseClass();
     activerSpace();
 
+    // Spawn BossBunny at the beginning of the game
+    // spawnBossBunny();
 
-
-
-    // setInterval(() => { 
-    //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
-    // }, 10);
-
-    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur,Event);
-
+    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur, Event);
 
     // Set le statut du jeu
     state = play;
@@ -130,7 +133,6 @@ function setup() {
     Grid.pauseGrid(app);
     app.pause = true;
  
-    
     // Commencer la boucle du jeu
     app.ticker.add((delta) => play(delta));
     app.stage.addChild(debugText);

@@ -51,12 +51,12 @@ export class Event{
             if(event.type == " ") {
                 event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
                 event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0; //SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUUE
+                //event.timeElapsed % 7200 == 0 ? bossChoose = true : 0; //SET TO TRUUUUUUUUUUUUUUUUUUUUUUUUUUE
                 let compteur = 0;
 
-                // if(Event.boss["err404"] == null){
-                //     event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
-                // }
+                if(Event.boss["bossBunny"] == null){
+                    event.ajouterMONSTRE(1, "bossBunny", 2 + Event.difficultyDegree, "boss"); 
+                }
 
 
                 while(bossChoose) {
@@ -85,13 +85,13 @@ export class Event{
                                 compteur = 0;
                             }
                             break;
-                        case 2:
+                        case 5:
                             if(Event.boss["bossBunny"] != null) { compteur++; }
                             else {
                                 event.ajouterMONSTRE(1, "bossBunny", 2 + Event.difficultyDegree, "boss");
                                 Event.currentMusic.stop();
                                 Event.nextSong = true;
-                                Event.nextSongIs = "boss"; // Vous pouvez définir une musique spécifique pour BossBunny si vous le souhaitez
+                                Event.nextSongIs = "bossBunny"; // Vous pouvez définir une musique spécifique pour BossBunny si vous le souhaitez
                                 bossChoose = false;
                                 compteur = 0;
                             }
@@ -103,6 +103,7 @@ export class Event{
                 
 
                 if (Event.boss["bossNormal"] != null) { event.timeElapsed%Math.round(40/Event.difficultyDegree) == 0 ? event.ajouterMONSTRE( 1, "normal", 2 + Event.difficultyDegree, "normal") :0;}
+                if (Event.boss["bossBunny"] != null) { event.timeElapsed%300 == 0 ? Event.boss["bossBunny"].activatePower():0;}
             } 
             if(event.type == "normal") {
                // Update the music based on the current event
@@ -265,11 +266,10 @@ export class Event{
             Event.app.stage.addChild(monstre.body);
             Event.monstres.push(monstre);}
         if(type == "bossBunny"){
-                monstre = new Event.BossBunny(rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
-                Event.boss[type] = monstre;
-                Event.app.stage.addChild(monstre.body);
-                Event.monstres.push(monstre);
-            }            
+            monstre = new Event.BossBunny(rngPos[0], rngPos[1], sides, Event.ennemiDifficultee);
+            Event.boss[type] = monstre;
+            Event.app.stage.addChild(monstre.body);
+            Event.monstres.push(monstre);}            
         else if(code == "normal"){
             monstre = new Event.MonstreNormal( Event.boss["bossNormal"].getX(), Event.boss["bossNormal"].getY(), sides, Event.ennemiDifficultee);
             Event.app.stage.addChild(monstre.body);
@@ -391,7 +391,7 @@ export class Event{
             "404Boss": new Event.Music("404Boss"),
             "milkMan": new Event.Music("milkMan"),
             "speed": new Event.Music("speed"),
-            "bunny": new Event.Music("bunny")
+            "bossBunny": new Event.Music("bossBunny")
         };
         Event.currentMusic = new Event.Music("space2");
     }

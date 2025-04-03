@@ -167,7 +167,7 @@ export class Monstre {
             let dy = this.getY() - otherMonstre.getY();
             let distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < minDistance) {
+            if (distance < minDistance && this.type != "bossBunny") {
                 let angle = Math.atan2(dy, dx);
                 let avoidX = Math.cos(angle) * avoidFactor;
                 let avoidY = Math.sin(angle) * avoidFactor;
@@ -371,7 +371,7 @@ export class Monstre {
             this.knockback(weapon.knockback, Math.atan2(this.getY() - (Monstre.joueur.getY() + Monstre.joueur.size), this.getX() - (Monstre.joueur.getX() + Monstre.joueur.size)));
             setTimeout(()=> {
                 this.setExplosionHit(false);
-            }, 300);
+            }, 500);
         }
         if(weapon.type == "gun")
         {
@@ -1218,37 +1218,39 @@ export class BossBunny extends Monstre {
         const exp = Math.round(2 * ennemiDifficultee / 3) * 100;
         const baseDMG = Math.round(1 * ennemiDifficultee) * 10;
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
-
-        this.explosionInterval = 300; // Intervalle de temps pour les explosions 
-        this.lastExplosionTime = 0; // Temps de la dernière explosion
-        this.isStopped = false; // Indique si le boss est arrêté pour une explosion
-        this.stopDuration = 60; // Durée pendant laquelle le boss reste immobile 
-        this.stopTime = 0; // Temps écoulé depuis que le boss s'est arrêté
-
-        this.jumpInterval = 300; // Intervalle de temps pour les sauts (en frames)
-        this.lastJumpTime = 0; // Temps du dernier saut
-        this.jumpDistance = 200; // Distance parcourue par un saut
+        this.alt = false;
     }
     
     // Crée une explosion autour du boss
     createExplosion() {
-        const explosionRadius = this.body.width * 3;
-        const explosionDamage = 50;
-        const explosionColor = 0xFF00FF;
-        new Monstre.Explosion(this.getX(), this.getY(), explosionRadius, explosionDamage, explosionColor);
+        this.vitesse = 0;
+        const radius = this.body.width * 5;
+        const explosionDamage = 10;
+        const explosionColor = 0xFFFFFF;
+        const isEnnemy = true;
+
+        setTimeout(() => {
+            this.vitesse = 2;
+            new Monstre.Explosion(this.getX(), this.getY(), radius, explosionDamage, explosionColor, isEnnemy);
+        }, 2000);    
     }
 
     // Fait sauter le boss vers le joueur
-    jumpTowardsPlayer(joueur) {
-        // Calcul du vecteur directionnel vers le joueur
-        let dx = (joueur.getX() + joueur.getWidth() / 2) - this.getX();
-        let dy = (joueur.getY() + joueur.getHeight() / 2) - this.getY();
-        let magnitude = Math.sqrt(dx * dx + dy * dy);
-        if (magnitude === 0) return; // Évite la division par zéro
-        let jumpX = (dx / magnitude) * this.jumpDistance;
-        let jumpY = (dy / magnitude) * this.jumpDistance;
-        this.setX(this.getX() + jumpX);
-        this.setY(this.getY() + jumpY);
+    jumpTowardsPlayer() {
+        this.vitesse +=6;
+        setTimeout(() => {this.vitesse-=6}, 700);
+    }
+
+    activatePower()
+    {
+        if(this.alt) {
+            this.createExplosion();
+            this.alt = false;
+        }
+        else {
+            this.jumpTowardsPlayer();
+            this.alt = true;
+        }
     }
 
     // Dessine le BossBunny en forme de lapin à l'aide de formes géométriques

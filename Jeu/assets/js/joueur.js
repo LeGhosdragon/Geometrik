@@ -40,7 +40,7 @@ export class Joueur {
         this.numChoix = 3;
         this.bulletHit = false;
         this.body = this.faireJoueur();
-        
+        this.hasExplHit = false;
         this.hpText = this.createHPText();
         this.healthBar = this.createHealthBar();
         this.updateHealthBar();
@@ -271,15 +271,32 @@ export class Joueur {
     }
 
     // Gestion des dégats subis par le joueur
-    endommagé(dmg)
-    {
-        if(this.upgExplosion)
+    endommagé(dmg, weapon = "sword") {
+    
+        
+        if(weapon.type == "explosion")
         {
-            new Joueur.Explosion(this.getX() + this.size, this.getY()+ this.size, this.body.width * 6 * this.explRadius, this.baseDMG/3, 0xFF0000);    
+            if(!this.hasExplHit) {
+                this.setExplosionHit(true);
+                console.log(weapon.baseDMG);
+                setTimeout(()=> {
+                    this.setExplosionHit(false);
+                }, 500);
+                this.statistics.dmgTaken+=dmg;
+                this.triggerDamageEffect();
+                this.setHP(this.getHP() - dmg);
+            }
         }
-        this.statistics.dmgTaken+=dmg;
-        this.triggerDamageEffect();
-        this.setHP(this.getHP() - dmg);
+        else{
+            if(this.upgExplosion)
+            {
+                new Joueur.Explosion(this.getX() + this.size, this.getY()+ this.size, this.body.width * 6 * this.explRadius, this.baseDMG/3, 0xFF0000);    
+            }
+            this.statistics.dmgTaken+=dmg;
+            this.triggerDamageEffect();
+            this.setHP(this.getHP() - dmg);
+        }
+
         this.updateHP();
     }
 
@@ -522,7 +539,8 @@ export class Joueur {
     {
         return this.distanceDattraction;
     }
-
+    setExplosionHit(bool){this.hasExplHit = bool;}
+    getExplosionHit(){return this.hasExplHit;}
     // association des objets externes mstr et upg avec la classe joueur
     static addMonstre(Monstre)
     {

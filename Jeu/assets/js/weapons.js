@@ -415,7 +415,7 @@ export class Explosion extends Weapon {
     static explosions = [];
     static bodyKnockback = 10;
 
-    constructor(x, y, rayon, baseDMG, couleur) {
+    constructor(x, y, rayon, baseDMG, couleur, isEnnemy = false) {
         super("explosion", 10, 10, new PIXI.Graphics());
         this.rayon = rayon;
         this.baseDMG = baseDMG;
@@ -423,9 +423,8 @@ export class Explosion extends Weapon {
         this.maxRayon = rayon;
         this.currentRayon = Math.max(1, rayon / 20); // Éviter un rayon de 0
         this.knockback = Explosion.bodyKnockback;
-
+        this.isEnnemy = isEnnemy;
         this.body = this.createExplosion(x, y);
-
         // S'assuer que body a x,y valides immédiatement
         if (!this.body) {
             console.error("Explosion creation failed.");
@@ -477,15 +476,24 @@ export class Explosion extends Weapon {
     applyDamage(monstres) {
         if (!this.body) return;
 
-        monstres.forEach(monstre => {
-            if (!monstre.getExplosionHit()) {
-                const distance = Math.hypot(this.body.x - monstre.getX(), this.body.y - monstre.getY());
-                if (distance <= this.currentRayon) {
-                    monstre.setExplosionHit(true);
-                    monstre.endommagé(this.baseDMG, this, Math.random() * 100 < Weapon.joueur.critChance);
-                }
+     
+            monstres.forEach(monstre => {
+                if (!monstre.getExplosionHit()) {
+                    const distance = Math.hypot(this.body.x - monstre.getX(), this.body.y - monstre.getY());
+                    if (distance <= this.currentRayon) {
+                        monstre.setExplosionHit(true);
+                        monstre.endommagé(this.baseDMG, this, Math.random() * 100 < Weapon.joueur.critChance);
+                    }
+                } 
+            }); 
+        if(this.isEnnemy)
+        {
+
+            const distance = Math.hypot(this.body.x - Weapon.Monstre.joueur.getX(), this.body.y - Weapon.Monstre.joueur.getY());
+            if (distance <= this.currentRayon) {
+                Weapon.Monstre.joueur.endommagé(this.baseDMG, this);
             }
-        });
+        }
     }
 
     // Détruit l'explosion et la supprime de la scène 
