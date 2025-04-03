@@ -21,8 +21,7 @@
     <script src="../background/noise.min.js"></script>
 		<script src="../background/util.js"></script>
     <script src="../background/swirl.js"></script>
-    <!-- <script src="../background/pipeline.js"></script> -->
-    <!-- <script src="../background/coalesce.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>document.documentElement.className="js";var supportsCssVars=function(){var e,t=document.createElement("style");return t.innerHTML="root: { --tmp-var: bold; }",document.head.appendChild(t),e=!!(window.CSS&&window.CSS.supports&&window.CSS.supports("font-weight","var(--tmp-var)")),t.parentNode.removeChild(t),e};supportsCssVars()||alert("Please view this demo in a modern browser that supports CSS Variables.");</script>
 </head>
 <body>
@@ -87,13 +86,13 @@
                   <form id="loginForm">
                       <div class="form-group">
                           <label for="username">Nom d'utilisateur:</label>                   
-                              <input type="text" name="username" id="username" required>       
+                              <input type="text" name="username" id="username">       
                       </div>
                       
                       <div class="form-group">
                           <label for="password">Mot de passe:</label>
                           <div class="password-container">
-                              <input type="password" name="password" id="password" required>
+                              <input type="password" name="password" id="password">
                               <button type="button" class="password-toggle" id="password-toggle"><img src="../images/hide.png" alt="Hide password" width="20"></button>
                           </div>
                       </div>

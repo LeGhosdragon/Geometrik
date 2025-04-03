@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function(){
     function modifierBarreNav(){
         const jeton = localStorage.getItem('jeton');
         const menuDiv = document.querySelector('.menu');
-
+        console.log(jeton)
         if(jeton){
             menuDiv.innerHTML = `
                 <div class="item">
@@ -119,5 +119,6 @@ document.addEventListener('DOMContentLoaded', function(){
             `;
         }
     }
+    
     modifierBarreNav();
 });

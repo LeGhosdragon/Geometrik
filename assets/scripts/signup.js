@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", function(){
     const passwordToggle = document.getElementById("password-toggle");
     const passwordInput = document.getElementById("password");
     const signupForm = document.getElementById("signupForm");
+
     showPassword(passwordToggle, passwordInput);
+
     signupForm.addEventListener("submit", function(event){
         event.preventDefault();
         
@@ -11,8 +13,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
         createAccount(username, password);
     });
-    
-    
 });
 
 function showPassword(passwordToggle, passwordInput){
@@ -34,7 +34,7 @@ function showImage(src, width, height, alt){
     image.width = width;
     image.height = height;
     image.alt = alt;
-    passwordToggle.innerHTML = ''; // Clear previous content
+    passwordToggle.innerHTML = '';
     passwordToggle.appendChild(image);
 }
 
@@ -65,13 +65,87 @@ async function createAccount(username, password) {
         }
         
         if (data.reussite) {
+            // Stocke le jeton
             localStorage.setItem('jeton', data.jeton);
+            
+            // Stocke une variable pour afficher la notification sur la page suivante
+            localStorage.setItem('showSuccessSignupNotification', 'true');
+            
+            // Redirige vers la page principale
             window.location.href = '../pages/index.html';
         } else {
-            alert('Erreur de connexion: ' + (data.erreurs || "Erreur inconnue"));
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showCancelButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            
+            // Vérifie les différents types d'erreurs
+            if (Array.isArray(data.erreurs)) {
+                // Si erreurs est pour les mots de passe
+                if (data.erreurs.some(err => err.includes("Longueur du mot de passe invalide"))) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Le mot de passe doit contenir entre 8 et 32 caractères"
+                    });
+                } else if (data.erreurs.some(err => err.includes("ne contiens pas de majuscule"))) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Le mot de passe doit contenir au moins une majuscule"
+                    });
+                } else if (data.erreurs.some(err => err.includes("ne contiens pas de minuscule"))) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Le mot de passe doit contenir au moins une minuscule"
+                    });
+                } else if (data.erreurs.some(err => err.includes("ne contiens pas de chiffres"))) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Le mot de passe doit contenir au moins un chiffre"
+                    });
+                } else {
+                    Toast.fire({
+                        icon: "error",
+                        title: data.erreurs[0] || "Erreur d'inscription"
+                    });
+                }
+            } else {
+                // Si erreurs est une chaîne de caractères pour le nom d'utilisateur
+                if (data.erreurs === "L'identifiant existe deja") {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Nom d'utilisateur déjà utilisé"
+                    });
+                } else {
+                    Toast.fire({
+                        icon: "error",
+                        title: data.erreurs || "Erreur d'inscription"
+                    });
+                }
+            }
         }
     } catch (error) {
         console.error('Erreur:', error);
-        alert('Une erreur est survenue lors de la connexion: ' + error.message);
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showCancelButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+        Toast.fire({
+            icon: "error",
+            title: "Une erreur est survenue lors de l'inscription: " + error.message
+        });
     }
 }

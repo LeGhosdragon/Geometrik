@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function(){
     const loginForm = document.getElementById("loginForm");
 
     showPassword(passwordToggle, passwordInput);
+
     loginForm.addEventListener('submit', function(event){
         event.preventDefault();
 
@@ -12,8 +13,9 @@ document.addEventListener("DOMContentLoaded", function(){
 
         login(username, password);
     });
+});
 
-    async function login(username, password) {
+async function login(username, password) {
         try {
             const formData = new FormData();
             formData.append('identifiant', username);
@@ -41,17 +43,68 @@ document.addEventListener("DOMContentLoaded", function(){
             
             if (data.reussite) {
                 localStorage.setItem('jeton', data.jeton);
+                localStorage.setItem('showSuccessLoginNotification', 'true');   
                 window.location.href = '../pages/index.html';
             } else {
-                alert('Erreur de connexion: ' + (data.erreurs || "Erreur inconnue"));
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showCancelButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                
+                // Gestion des différents types d'erreurs
+                if (data.erreurs === "L'identifiant est invalide") {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Nom d'utilisateur introuvable"
+                    });
+                } else if (data.erreurs === "Le mot de passe est incorect") {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Mot de passe incorrect"
+                    });
+                } else if (data.erreurs === "Aucun identifiant n'a été trouvé" || data.erreurs === "Aucun identifiant n'a ete envoye") {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Veuillez saisir un nom d'utilisateur"
+                    });
+                } else if (data.erreurs === "Aucun mot de passe n'a ete envoye") {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Veuillez saisir un mot de passe"
+                    });
+                } else {
+                    Toast.fire({
+                        icon: "error",
+                        title: data.erreurs || "Erreur de connexion"
+                    });
+                }
             }
         } catch (error) {
             console.error('Erreur:', error);
-            alert('Une erreur est survenue lors de la connexion: ' + error.message);
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showCancelButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "error",
+                title: "Une erreur est survenue lors de la connexion: " + error.message
+            });
         }
-    }
-    
-});
+}
 
 function showPassword(passwordToggle, passwordInput){
     passwordToggle.addEventListener('click', function(){
