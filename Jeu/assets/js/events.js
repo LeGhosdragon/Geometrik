@@ -459,6 +459,7 @@ export class Event{
             "404Boss": new Event.Music("404Boss"),
             "milkMan": new Event.Music("milkMan"),
             "speed": new Event.Music("speed"),
+            "gameOver": new Event.Music("gameOver"),
             "bossBunny": new Event.Music("bossBunny")
         };
         Event.currentMusic = new Event.Music("space2");
