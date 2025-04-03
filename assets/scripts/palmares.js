@@ -1,20 +1,35 @@
 document.addEventListener("DOMContentLoaded", function() {
+    // Constante pour le jeton
     const jeton = localStorage.getItem('jeton');
+
+    // Variable pour savoir si l'utilisateur est un admin
     let estAdmin = false;
+
+    // Variable pour savoir si le tri est ascendant
     let isSortAscending = false;
+
+    // Tableau pour stocker le palmares actuel
     let currentPalmares = [];
-    let currentSortColumn = null;
-    
+
+    // Variable pour stocker la colonne actuelle
+    let currentSortColumn = null; 
+
+    // Crée un élément script pour le GSAP
     const gsapScript = document.createElement('script');
+
+    // Définit le chemin du script GSAP
     gsapScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+    // Ajoute le script GSAP au head du document
     document.head.appendChild(gsapScript);
 
+    // Charge le script GSAP
     gsapScript.onload = function() {
         initAnimations();
     };
 
+    // Fonction pour initialiser les animations
     function initAnimations() {
-        // Animate the heading
+        // Animation pour le titre
         gsap.from("h1", {
             duration: 1,
             y: -50,
@@ -22,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
             ease: "power3.out"
         });
 
-        // Animate the leaderboard container
+        // Animation pour le conteneur du palmares
         gsap.from("#palmares-container", {
             duration: 1.2,
             y: 30,
@@ -32,33 +47,55 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-     // Creer la barre de recherche
+     /**
+      * Cette fonction permet de créer la barre de recherche
+      */
      function createSearchBar() {
+        // Crée un élément div pour la barre de recherche
         const searchContainer = document.createElement('div');
+
+        // Ajoute la classe search-container a la barre de recherche
         searchContainer.className = 'search-container';
-        
+
+        // Crée un élément input pour la barre de recherche
         const searchInput = document.createElement('input');
+
+        // Définit le type de l'input
         searchInput.type = 'text';
+
+        // Définit l'id de l'input
         searchInput.id = 'player-search';
+
+        // Définit le placeholder de l'input
         searchInput.placeholder = 'Rechercher un joueur...';
+
+        // Ajoute la classe player-search-input a l'input
         searchInput.className = 'player-search-input';
-        
+
+        // Ajoute un écouteur de changement sur l'input
         searchInput.addEventListener('input', function() {
+            // Filtre le palmares en fonction de la requete de recherche
             filterPalmares(this.value);
         });
-        
+
+        // Crée un élément span pour l'icône de recherche
         const searchIcon = document.createElement('span');
+
+        // Ajoute la classe search-icon a l'icône de recherche
         searchIcon.className = 'search-icon';
+
+        // Ajoute l'icône de recherche a l'élément span
         searchIcon.innerHTML = '🔍';
-        
+
+        // Ajoute l'élément span et l'input a la barre de recherche
         searchContainer.appendChild(searchIcon);
         searchContainer.appendChild(searchInput);
-        
-        // Insert before the palmares container
+
+        // Insère la barre de recherche avant le conteneur du palmares
         const palmaresContainer = document.querySelector('.palmares-container');
         palmaresContainer.insertBefore(searchContainer, document.getElementById('palmares-container'));
         
-        // Animate the search bar appearance
+        // Animation pour la barre de recherche
         if (window.gsap) {
             gsap.from(searchContainer, {
                 duration: 0.8,
@@ -70,31 +107,46 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Filtrer le palmares en fonction de la requete de recherche
+    /**
+     * Cette fonction permet de filtrer le palmares en fonction de la requete de recherche
+     * @param {*} query la requete de recherche
+     */
     function filterPalmares(query) {
+        // Si aucune requete, afficher tous les scores
         if (!query) {
-            // Si aucune requete, afficher tous les scores
             displayPalmares(currentPalmares, estAdmin);
             return;
         }
-        
+        // Convertir la requete en minuscule
         const lowerCaseQuery = query.toLowerCase();
+
+        // Filtrer le palmares en fonction de la requete
         const filteredPalmares = currentPalmares.filter(score => 
             score.nom_utilisateur.toLowerCase().includes(lowerCaseQuery)
         );
-        
+
+        // Afficher le palmares filtré
         displayPalmares(filteredPalmares, estAdmin);
         
         // Souligner les noms des joueurs qui correspondent a la requete
         const playerCells = document.querySelectorAll('.palmares-table tbody td:nth-child(2)');
+
+        // Parcourir les cellules des joueurs
         playerCells.forEach(cell => {
+
+            // Récupérer le nom du joueur
             const name = cell.textContent;
+
+            // Si le nom du joueur correspond a la requete
             if (name.toLowerCase().includes(lowerCaseQuery)) {
+
                 // Sousligne le texte qui correspond a la requete
                 const highlightedText = name.replace(
                     new RegExp(`(${query})`, 'gi'),
                     '<span class="highlight">$1</span>'
                 );
+                
+                // Remplacer le texte de la cellule par le texte souligné
                 cell.innerHTML = highlightedText;
                 
                 // Animation du soulignement
@@ -108,10 +160,17 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    /**
+     * Cette fonction permet de charger le palmares
+     */
     function chargerPalmares(){
-        // Show loading animation with GSAP if available
+
+        // Affiche l'animation de chargement avec GSAP si disponible
         const loadingEl = document.querySelector('.loading');
+
+        // Si GSAP et l'animation de chargement sont disponibles
         if (window.gsap && loadingEl) {
+            // Animation pour l'animation de chargement
             gsap.to(loadingEl, {
                 opacity: 0.7,
                 duration: 0.5,
@@ -120,72 +179,110 @@ document.addEventListener("DOMContentLoaded", function() {
                 ease: "power1.inOut"
             });
         }
-        
+
+        // Récupère les scores
         fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/obtenir')
+        // Convertir la réponse en JSON
+
         .then(response => response.json())
+        // Si la réponse est une réussite
         .then(data => {
             if (data.reussite) {
-                currentPalmares = data.palmares; // Store original data
+
+                // Stocke les données originales
+                currentPalmares = data.palmares;
+
+                // Affiche le palmares
                 displayPalmares(currentPalmares, estAdmin);
-                createSearchBar(); // Add search bar after data is loaded
+
+                // Ajoute la barre de recherche après les données sont chargées
+                createSearchBar();
             } else {
+                // Affiche une erreur
                 displayError("Erreur lors de la récupération des données.");
             }
         })
+        // Si une erreur survient
         .catch(error => {
+            // Affiche une erreur
             console.error('Erreur:', error);
+            // Affiche une erreur
             displayError("Erreur de connexion au serveur.");
         });    
     }
 
+    /**
+     * Cette fonction permet de vérifier si l'utilisateur est un admin
+     */
     if (jeton) {
+        // Récupère les données de l'utilisateur
         fetch(`http://localhost/H2025_TCH099_02_S1/api/api.php/utilisateur/estAdmin?jeton=${jeton}`)
+            // Convertir la réponse en JSON
             .then(response => response.json())
             .then(data => {
+                // Si la réponse est une réussite
                 if (data.reussite) {
+                    // Stocke si l'utilisateur est un admin
                     estAdmin = data.estAdmin;
                 }
+                // Charge le palmares
                 chargerPalmares();
             })
             .catch(error => {
+                // Affiche une erreur
                 console.error('Erreur vérification admin:', error);
+                // Charge le palmares
                 chargerPalmares();
             });
     } else {
+        // Charge le palmares
         chargerPalmares();
     }
     
-    // Function qui sert a trier le palmares et qui prend la colomne en parametre
+    /**
+     * Cette fonction permet de trier le palmares
+     * @param {*} column la colonne a trier
+     */
     function sortPalmares(column) {
+        // Si la colonne actuelle est la même que la colonne a trier
         if (currentSortColumn === column) {
+            // Inverse le sens du tri
             isSortAscending = !isSortAscending;
         } else {
+            // Stocke la colonne a trier
             currentSortColumn = column;
-            isSortAscending = false; // Par default il est descendant
+            // Par default il est descendant
+            isSortAscending = false;
         }
 
         // Ici on fait la logique du tri le [...currentPalmares] sert a faire une copie du tableau original
         const sortedPalmares = [...currentPalmares].sort((a, b) => {
+            // Définit les valeurs a trier
             let valueA, valueB;
 
             switch(column) {
                 case 'score':
+                    // Définit les scores
                     valueA = a.score;
                     valueB = b.score;
                     break;
                 case 'temps_partie':
+                    // Définit les temps de partie
                     valueA = a.temps_partie;
                     valueB = b.temps_partie;
                     break;
                 case 'experience':
+                    // Définit les experiences
                     valueA = a.experience;
                     valueB = b.experience;
                     break;
                 case 'ennemis_enleve':
+                    // Définit les ennemis enlevés
                     valueA = a.ennemis_enleve;
                     valueB = b.ennemis_enleve;
                     break;
                 case 'date_soumission':
+                    // Définit les dates de soumission
                     valueA = new Date(a.date_soumission);
                     valueB = new Date(b.date_soumission);
                     break;
@@ -210,16 +307,25 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Cette fonction affiche les palmares et prend en parametre le palmares et si l'utilisateur est un admin
+    /**
+     * Cette fonction affiche les palmares
+     * @param {*} palmares le palmares
+     * @param {*} estAdmin si l'utilisateur est un admin
+     */
     function displayPalmares(palmares, estAdmin) {
+        // Récupère le conteneur du palmares
         const container = document.getElementById('palmares-container');
-        
+        // Vide le conteneur du palmares
         container.innerHTML = '';
-        
+        // Si le palmares est vide ou n'a pas de scores
         if (!palmares || palmares.length === 0) {
+            // Crée un message vide
             const emptyMessage = document.createElement('div');
+            // Ajoute la classe empty-message
             emptyMessage.className = 'empty-message';
+            // Ajoute le texte du message
             emptyMessage.textContent = "Aucun score n'a encore été enregistré. Soyez le premier à jouer !";
+            // Ajoute le message au conteneur
             container.appendChild(emptyMessage);
             // Animation de l'affichage du message
             if (window.gsap) {
@@ -232,11 +338,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             return;
         }
-        
+        // Crée une table
         const table = document.createElement('table');
+        // Ajoute la classe palmares-table
         table.className = 'palmares-table';
-        
+        // Crée un élément thead
         const thead = document.createElement('thead');
+        // Crée une ligne d'en-tête
         const headerRow = document.createElement('tr');
         
         //Les en tetes est un tableau d'objets qui represente un entete
@@ -251,38 +359,53 @@ document.addEventListener("DOMContentLoaded", function() {
             {text: "Ennemis éliminés", sortable: true, key: 'ennemis_enleve'},
             {text: "Date", sortable: true, key: 'date_soumission'}
         ];
-
+        // Si l'utilisateur est un admin
         if (estAdmin) {
             headers.push({text: "Actions", sortable: false});
         }
         
+        // Parcourt les en-têtes
         headers.forEach(header => {
+            // Crée un élément th
             const th = document.createElement('th');
+            // Ajoute le texte de l'en-tête
             th.textContent = header.text;
             
             // On ajoute la fonctionnalite du sort sur les en-tetes
             if (header.sortable) {
+                // Ajoute le curseur de la souris
                 th.style.cursor = 'pointer';
+                // Ajoute un écouteur de clic sur l'en-tête
                 th.addEventListener('click', () => sortPalmares(header.key));
                 
-               // Visual indicator for sorting
-               const sortIndicator = document.createElement('span');
-               sortIndicator.className = `sort-indicator sort-${header.key}`;
-               sortIndicator.innerHTML = currentSortColumn === header.key ? 
-                (isSortAscending ? ' ▲' : ' ▼') : ' ↕️';
-               th.appendChild(sortIndicator);
+                // Crée un élément span pour l'indicateur de tri
+                const sortIndicator = document.createElement('span');
+                // Ajoute la classe sort-indicator
+                sortIndicator.className = `sort-indicator sort-${header.key}`;
+                // Ajoute l'indicateur de tri
+                sortIndicator.innerHTML = currentSortColumn === header.key ? 
+                    (isSortAscending ? ' ▲' : ' ▼') : ' ↕️';
+                // Ajoute l'indicateur de tri
+                th.appendChild(sortIndicator);
             }
-            
+            // Ajoute l'en-tête à la ligne d'en-tête
             headerRow.appendChild(th);
         });
-        
+
+        // Ajoute la ligne d'en-tête à la table
         thead.appendChild(headerRow);
+
+        // Ajoute la table à la table
         table.appendChild(thead);
-        
+
+        // Crée un élément tbody
         const tbody = document.createElement('tbody');
-        
+
+        // Parcourt les scores
         palmares.forEach((score, id) => {
+            // Crée une ligne
             const row = document.createElement('tr');
+            // Ajoute l'id du score
             row.dataset.scoreId = score.id;
             
             // Celulle Rang
@@ -393,20 +516,30 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
 });
+
+/**
+ * Cette fonction permet l'administeur de supprimer un score
+ * @param {*} scoreId 
+ * @returns 
+ */
 function supprimerScore(scoreId) {
+    // Récupère le jeton
     const jeton = localStorage.getItem('jeton');
+    // Si le jeton n'existe pas
     if (!jeton) {
+        // Affiche une erreur
         displayError("Vous devez être connecté pour effectuer cette action.");
         return;
     }
-
+    // Si l'utilisateur n'est pas sûr de vouloir supprimer le score
     if (!confirm("Êtes-vous sûr de vouloir supprimer ce score ?")) {
         return;
     }
-
-    // Add animation for row removal
+    // Ajoute une animation pour la suppression de la ligne
     if (window.gsap) {
+        // Récupère la ligne
         const row = document.querySelector(`tr[data-score-id="${scoreId}"]`);
+        // Si la ligne existe
         if (row) {
             gsap.to(row, {
                 opacity: 0,
@@ -417,28 +550,44 @@ function supprimerScore(scoreId) {
                 }
             });
         } else {
+            // Envoie la requête de suppression
             sendDeleteRequest(scoreId, jeton);
         }
     } else {
+        // Envoie la requête de suppression
         sendDeleteRequest(scoreId, jeton);
     }
 }
 
+/**
+ * Cette fonction envoie la requête de suppression
+ * @param {*} scoreId l'id du score
+ * @param {*} jeton le jeton
+ */
 function sendDeleteRequest(scoreId, jeton) {
+    // Envoie la requête de suppression
     fetch(`http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/supprimer/${scoreId}?jeton=${jeton}`, {
         method: 'DELETE'
     })
+    // Convertir la réponse en JSON
     .then(response => response.json())
+    // Si la réponse est une réussite
     .then(data => {
         if (data.reussite) {
+            // Affiche une notification
             showNotification("Score supprimé avec succès.", "success");
+            // Actualise la page
             setTimeout(() => location.reload(), 1000);
         } else {
+            // Affiche une notification
             showNotification(`Erreur: ${data.erreurs}`, "error");
         }
     })
+    // Si une erreur survient
     .catch(error => {
+        // Affiche une erreur
         console.error('Erreur:', error);
+        // Affiche une notification
         showNotification("Une erreur est survenue lors de la suppression du score.", "error");
     });
 }

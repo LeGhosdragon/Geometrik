@@ -178,7 +178,9 @@ document.addEventListener('DOMContentLoaded', function() {
     showSection('catalogue-characters');
     updateDetailView();
 
-    //Définitions des fonctions
+    /**
+     * Cette fonction permet de configurer les événements
+     */
     function setupEventListeners() {
         // Boutons de catégorie
         uiElements.buttons.characters.addEventListener('click', () => switchSection('characters'));
@@ -190,6 +192,10 @@ document.addEventListener('DOMContentLoaded', function() {
         uiElements.buttons.next.addEventListener('click', () => navigateCatalogue(1));
     }
 
+    /**
+     * Cette fonction permet de changer de section
+     * @param {*} section la section à changer
+     */
     function switchSection(section) {
         state.currentSection = section;
         state.currentIndex = 0;
@@ -200,6 +206,10 @@ document.addEventListener('DOMContentLoaded', function() {
         animateSectionTransition();
     }
 
+    /**
+     * Cette fonction permet d'afficher la section
+     * @param {*} sectionId l'id de la section
+     */
     function showSection(sectionId) {
         uiElements.sections.forEach(section => {
             section.style.display = 'none';
@@ -207,6 +217,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById(sectionId).style.display = 'block';
     }
 
+    /**
+     * Cette fonction permet de naviguer dans le catalogue
+     * @param {*} direction la direction de la navigation
+     */
     function navigateCatalogue(direction) {
         const currentData = catalogueData[state.currentSection];
         
@@ -223,6 +237,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDetailView();
     }
 
+    /**
+     * Cette fonction permet de mettre à jour la vue des détails
+     */ 
     function updateDetailView() {
         const currentData = catalogueData[state.currentSection][state.currentIndex];
         if (!currentData) {
@@ -280,7 +297,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(state.currentIndex, currentData);
     }
 
-    //Fonctions d'animation GSAP
+    /**
+     * Cette fonction permet d'initialiser l'effet de fond
+     */
     function initBackgroundEffect() {
         // Créer une div pour contenir les particules interactives
         const bgContainer = document.createElement('div');
@@ -317,6 +336,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * Cette fonction permet d'animer les particules
+     * @param {*} particle la particule à animer
+     */
     function animateParticle(particle) {
         gsap.to(particle, {
             duration: Math.random() * 10 + 10,
@@ -329,6 +352,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * Cette fonction permet de récupérer une couleur aléatoire pour le background
+     * @returns la couleur aléatoire
+     */
     function getRandomColor() {
         const colors = [
             'rgba(0, 153, 255, 0.3)',    // primary
@@ -339,6 +366,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return colors[Math.floor(Math.random() * colors.length)];
     }
 
+    /**
+     * Cette fonction permet d'animer la transition entre les sections
+     */
     function animateSectionTransition() {
         // Animation de transition entre les sections
         const sectionElement = document.getElementById(`catalogue-${state.currentSection}`);
@@ -359,6 +389,9 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
 
+    /**
+     * Cette fonction permet d'animer la transition entre les éléments
+     */
     function animateItemTransition() {
         // Mapping pour obtenir le bon préfixe d'ID pour chaque section
         const idPrefix = {

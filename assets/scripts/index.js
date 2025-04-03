@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", function(){
-    // Vérifier si une notification de succès doit être affichée
+    // Récupérer la notification de succès d'inscription
     const showSuccessSignupNotification = localStorage.getItem('showSuccessSignupNotification');
+    // Récupérer la notification de succès de connexion
     const showSuccessLoginNotification = localStorage.getItem('showSuccessLoginNotification');
+    // Créer une instance de Toast
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -14,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
+    // Si la notification de succès d'inscription est active
     if (showSuccessSignupNotification === 'true') {
         // Supprimer le flag pour éviter que la notification s'affiche à chaque rechargement
         localStorage.removeItem('showSuccessSignupNotification');
@@ -34,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     }
 
-    //Variables pour les boutons
+    // Constante pour les boutons
     const btnJouer = document.getElementById("btn-jouer");
     const btnCompte = document.getElementById("btn-compte");
 
