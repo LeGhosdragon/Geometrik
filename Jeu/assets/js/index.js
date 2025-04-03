@@ -621,23 +621,20 @@ function addMenu() {
     return container;
 }
 
+
 function addJoysticks() {
     let leftJoystick = document.createElement("div");
-    let leftKnob = document.createElement("div");
     let rightJoystick = document.createElement("div");
-    let rightKnob = document.createElement("div");
     let virtualCursor = document.createElement("div"); // Simulated aiming cursor
 
     leftJoystick.id = "leftJoystick";
-    leftKnob.id = "leftKnob";
     rightJoystick.id = "rightJoystick";
-    rightKnob.id = "rightKnob";
     virtualCursor.id = "virtualCursor";
 
-    // Joystick container styles
-    const joystickStyle = `
+    leftJoystick.style = `
         position: absolute;
         bottom: 10%;
+        left: 20%;
         width: 100px;
         height: 100px;
         background: rgba(47, 139, 155, 0.5);
@@ -648,23 +645,20 @@ function addJoysticks() {
         justify-content: center;
     `;
 
-    leftJoystick.style = joystickStyle;
-    leftJoystick.style.left = "15%"; // Adjust left position
-    rightJoystick.style = joystickStyle;
-    rightJoystick.style.right = "15%"; // Adjust right position
-
-    // Joystick knob styles
-    const knobStyle = `
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.8);
+    rightJoystick.style = `
+        position: absolute;
+        bottom: 10%;
+        right: 20%;
+        width: 100px;
+        height: 100px;
+        background: rgba(47, 139, 155, 0.5);
         border-radius: 50%;
-        position: relative;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     `;
-    leftKnob.style = knobStyle;
-    rightKnob.style = knobStyle;
 
-    // Virtual cursor for aiming
     virtualCursor.style = `
         position: absolute;
         width: 10px;
@@ -675,79 +669,105 @@ function addJoysticks() {
         pointer-events: none;
     `;
 
-    // Append elements
-    leftJoystick.appendChild(leftKnob);
-    rightJoystick.appendChild(rightKnob);
     document.body.appendChild(leftJoystick);
     document.body.appendChild(rightJoystick);
-    document.body.appendChild(virtualCursor);
+    document.body.appendChild(virtualCursor); // Add aiming cursor
 
-    setupJoystickControls(leftJoystick, leftKnob, true); // Left joystick for movement
-    setupJoystickControls(rightJoystick, rightKnob, false, virtualCursor); // Right joystick for aiming
+    setupJoystickControls();
 }
 
-// Function to handle joystick movement
-function setupJoystickControls(joystick, knob, isLeftJoystick, cursor = null) {
-    let active = false;
-    let startX = 0, startY = 0;
-    let knobX = 0, knobY = 0;
-
-    function startEvent(e) {
-        active = true;
-        let touch = e.touches ? e.touches[0] : e;
-        startX = touch.clientX;
-        startY = touch.clientY;
-        knobX = knob.offsetLeft;
-        knobY = knob.offsetTop;
-        e.preventDefault();
-    }
-
-    function moveEvent(e) {
-        if (!active) return;
-        let touch = e.touches ? e.touches[0] : e;
-        let deltaX = touch.clientX - startX;
-        let deltaY = touch.clientY - startY;
-
-        let distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-        let maxDistance = 40; // Max joystick movement
-        if (distance > maxDistance) {
-            deltaX = (deltaX / distance) * maxDistance;
-            deltaY = (deltaY / distance) * maxDistance;
-        }
-
-        knob.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
-
-        if (!isLeftJoystick && cursor) {
-            cursor.style.left = `${touch.clientX}px`;
-            cursor.style.top = `${touch.clientY}px`;
-        }
-
-        e.preventDefault();
-    }
-
-    function endEvent() {
-        active = false;
-        knob.style.transform = `translate(0px, 0px)`; // Reset knob position
-    }
-
-    joystick.addEventListener("mousedown", startEvent);
-    joystick.addEventListener("mousemove", moveEvent);
-    joystick.addEventListener("mouseup", endEvent);
-    joystick.addEventListener("mouseleave", endEvent);
-
-    joystick.addEventListener("touchstart", startEvent);
-    joystick.addEventListener("touchmove", moveEvent);
-    joystick.addEventListener("touchend", endEvent);
-}
-
-// Function to detect mobile devices
 function isMobile() {
-    const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
     const userAgent = navigator.userAgent.toLowerCase();
-    // Check common mobile user agent keywords
-    const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone|opera mini|opera mobi/i.test(userAgent);
-    return hasTouch && (isMobileUA );
+    return hasTouch && /android|iphone|ipad|ipod|blackberry|windows phone|opera mini|opera mobi/i.test(userAgent);
 }
+
+let leftJoystickData = { x: 0, y: 0 };
+let rightJoystickData = { x: 0, y: 0 };
+
+function setupJoystickControls() {
+    let leftJoystick = document.getElementById("leftJoystick");
+    let rightJoystick = document.getElementById("rightJoystick");
+    let virtualCursor = document.getElementById("virtualCursor");
+
+    let activeTouches = { left: null, right: null }; // Track active touches
+
+    function handleJoystickMove(event) {
+        event.preventDefault();
+        let touches = event.touches;
+
+        for (let touch of touches) {
+            let touchX = touch.clientX;
+            let touchY = touch.clientY;
+
+            // Assign touch to joystick
+            if (activeTouches.left === null && touchX < window.innerWidth / 2) {
+                activeTouches.left = touch.identifier;
+            }
+            if (activeTouches.right === null && touchX > window.innerWidth / 2) {
+                activeTouches.right = touch.identifier;
+            }
+
+            // Update joystick movement
+            if (touch.identifier === activeTouches.left) {
+                leftJoystickData.x = touchX - leftJoystick.offsetLeft - 50;
+                leftJoystickData.y = touchY - leftJoystick.offsetTop - 50;
+                leftJoystick.style.transform = `translate(${leftJoystickData.x}px, ${leftJoystickData.y}px)`;
+            }
+            if (touch.identifier === activeTouches.right) {
+                rightJoystickData.x = touchX - rightJoystick.offsetLeft - 50;
+                rightJoystickData.y = touchY - rightJoystick.offsetTop - 50;
+                rightJoystick.style.transform = `translate(${rightJoystickData.x}px, ${rightJoystickData.y}px)`;
+            }
+        }
+    }
+
+    function resetJoystick(event) {
+        let touches = event.changedTouches;
+        for (let touch of touches) {
+            if (touch.identifier === activeTouches.left) {
+                leftJoystickData.x = 0;
+                leftJoystickData.y = 0;
+                leftJoystick.style.transform = `translate(0px, 0px)`;
+                activeTouches.left = null;
+            }
+            if (touch.identifier === activeTouches.right) {
+                rightJoystickData.x = 0;
+                rightJoystickData.y = 0;
+                rightJoystick.style.transform = `translate(0px, 0px)`;
+                activeTouches.right = null;
+            }
+        }
+    }
+
+    function updateCursorPosition() {
+        let playerX = window.innerWidth / 2;
+        let playerY = window.innerHeight / 2;
+
+        let joystickMagnitude = Math.sqrt(rightJoystickData.x ** 2 + rightJoystickData.y ** 2);
+
+        if (joystickMagnitude > 10) {
+            let angle = Math.atan2(rightJoystickData.y, rightJoystickData.x);
+            let aimDistance = Math.min(joystickMagnitude, 100);
+
+            let cursorX = playerX + Math.cos(angle) * aimDistance;
+            let cursorY = playerY + Math.sin(angle) * aimDistance;
+
+            virtualCursor.style.left = `${cursorX}px`;
+            virtualCursor.style.top = `${cursorY}px`;
+        }
+
+        requestAnimationFrame(updateCursorPosition);
+    }
+
+    // Attach listeners
+    document.addEventListener("touchmove", handleJoystickMove, { passive: false });
+    document.addEventListener("touchend", resetJoystick);
+    document.addEventListener("touchcancel", resetJoystick);
+
+    updateCursorPosition(); // Start cursor tracking
+}
+
 
 
 function updatePlayerMovement() {
