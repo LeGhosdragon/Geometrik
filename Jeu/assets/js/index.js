@@ -631,7 +631,7 @@ function addJoysticks() {
 
     leftJoystick.style = `
         position: absolute;
-        bottom: 10%;
+        bottom: 20%;
         left: 20%;
         width: 100px;
         height: 100px;
@@ -645,7 +645,7 @@ function addJoysticks() {
 
     rightJoystick.style = `
         position: absolute;
-        bottom: 10%;
+        bottom: 20%;
         right: 20%;
         width: 100px;
         height: 100px;
