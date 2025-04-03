@@ -35,7 +35,7 @@ export class Event{
     static nextSong = false;
     static nextSongIs = null;
     static lastSong = false;
-    static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "bossGunner":null, "milkMan":null, "err404":null};
+    static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "bossGunner":null, "milkMan":null, "err404":null, "bossBunny":null};
 
     constructor(type)
     {
@@ -65,7 +65,7 @@ export class Event{
 
                 while(bossChoose && compteur < 100)
                 {
-                    num = 3;//Math.floor(Math.random() * 5);
+                    num = Math.floor(Math.random() * 6);
                     switch (num) {
                         case 0:
                             if(Event.boss["bossNormal"] != null) {compteur++;}
