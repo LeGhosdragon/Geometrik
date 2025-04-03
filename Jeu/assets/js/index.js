@@ -314,15 +314,13 @@ function play(delta) {
         
         joueur.onPlayerCollision(monstres);
     }       
-    // if(!app.space || app.toSpace)
-    // {
-
-        app.ennemiColor = updateBackgroundColor(app, Monstre);
-        document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
-    // }
-
-    crossHair.x=cursorX-30;
-    crossHair.y=cursorY-33;
+    app.ennemiColor = updateBackgroundColor(app, Monstre);
+    document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
+    if(!isMobile())
+    {
+        crossHair.x=cursorX-30;
+        crossHair.y=cursorY-33;
+    }
     Shape3D.shapes.forEach(shape => shape.draw(Monstre));
     Event.updateMusic();
     Monstre.cleanup();
@@ -771,12 +769,27 @@ function setupJoystickControls() {
 
 
 function updatePlayerMovement() {
-    if(isMobile())
-    {
-        joueur.setVX(Math.min(Math.abs(leftJoystickData.x / 5), joueur.vitesse * 3) * (leftJoystickData.x > 0 ? 1 : -1));
-        joueur.setVY(Math.min(Math.abs(leftJoystickData.y / 5), joueur.vitesse * 3) * (leftJoystickData.y > 0 ? 1 : -1));
+    if (isMobile()) {
+        let dx = leftJoystickData.x;
+        let dy = leftJoystickData.y;
+
+        let magnitude = Math.sqrt(dx * dx + dy * dy); // Get joystick magnitude
+
+        if (magnitude > 5) { // Prevent small movements from affecting the player
+            let normX = dx / magnitude; // Normalize X
+            let normY = dy / magnitude; // Normalize Y
+
+            let speed = Math.min(magnitude / 5, joueur.vitesse * 3); // Scale speed correctly
+
+            joueur.setVX(normX * speed);
+            joueur.setVY(normY * speed);
+        } else {
+            joueur.setVX(0);
+            joueur.setVY(0);
+        }
     }
 }
+
 
 // Prevent scrolling when touching joysticks
 document.addEventListener("touchmove", (event) => {
