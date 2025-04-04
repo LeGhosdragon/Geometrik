@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Compte - Geometrik</title>
+    <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="../scripts/navAuth.js"></script>
+    <script src="../scripts/account.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <!--Barre de navigation-->
+    <nav>
+        <ul class="nav-left">
+            <li>
+                <a href="index.html">
+                    <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
+                </a>
+            </li>
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="about.html">À propos</a></li>
+            <li><a href="catalogue.html">Catalogue</a></li>
+            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
+            <li><a href="palmares.html">Palmarès</a></li>
+            <li><a href="feedback.html">Feedback</a></li>
+        </ul>
+
+        <ul class="nav-right">
+            <li>
+                <div class="menu">
+                    <div class="item">
+                        <a href="#" class="link" id="user-menu-link">
+                            <span id="nav-username">Mon Compte</span>
+                            <svg viewBox="0 0 360 360" xml:space="preserve">
+                                <g id="SVGRepo_iconCarrier">
+                                    <path
+                                        id="XMLID_225_"
+                                        d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
+                                    ></path>
+                                </g>
+                            </svg>
+                        </a>
+                        <div class="submenu">
+                            <div class="submenu-item">
+                                <a href="account.html" class="submenu-link"> Mon Compte </a>
+                            </div>
+                            <div class="submenu-item">
+                                <a href="#" class="submenu-link" id="logout-link"> Déconnexion </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!--Contenu de la page-->
+    <main>
+        <div class="account-container">
+        <div class="account-header">
+            <div class="user-info">
+                <div class="avatar" id="user-avatar">?</div>
+                <div class="user-details">
+                    <h2 id="username">Chargement...</h2>
+                    <p>Membre depuis <span id="member-since">-</span></p>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-account btn-primary-account" id="play-btn">Jouer maintenant</button>
+                <button class="btn-account logout-btn-account" id="btn-deconnexion-action">Déconnexion</button>
+            </div>
+        </div>
+
+        <div class="ranking-info">
+            <div class="ranking-position">
+                <div class="position-number" id="ranking">?</div>
+                <div>
+                    <h3>Votre classement mondial</h3>
+                    <p>Sur tous les joueurs de Geometrik</p>
+                </div>
+            </div>
+            <div id="ranking-badge"></div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="user-score">-</div>
+                <div class="stat-label">points</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Temps de jeu</div>
+                <div class="stat-value" id="play-time">-</div>
+                <div class="stat-label">secondes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Expérience</div>
+                <div class="stat-value" id="user-xp">-</div>
+                <div class="stat-label">points</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Ennemis éliminés</div>
+                <div class="stat-value" id="enemies-killed">-</div>
+                <div class="stat-label">total</div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h3>Historique des parties</h3>
+            <div class="loader" id="history-loader"></div>
+            <div class="error-message-account" id="error-message">Une erreur est survenue lors du chargement des données</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Score</th>
+                        <th>Temps</th>
+                        <th>Expérience</th>
+                        <th>Ennemis</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <!-- Les données seront insérées ici dynamiquement -->
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </main>
+
+</body>
+</html>
