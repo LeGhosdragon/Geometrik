@@ -58,8 +58,8 @@ export class Event{
                 event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;
                 let compteur = 0;
 
-                // if(Event.boss["bossBunny"] == null){
-                //     event.ajouterMONSTRE(1, "bossBunny", 2 + Event.difficultyDegree, "boss"); 
+                // if(Event.boss["err404"] == null){
+                //     event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
                 // }
 
 

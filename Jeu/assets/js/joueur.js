@@ -13,7 +13,7 @@ export class Joueur {
     static EXP_BAR = document.getElementById('expBar');
     static Grid = null;
 
-    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 15, elapsedTime = 0, couleur = 0xFF0000, weapons = ["sword","gun"]) {
+    constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 150, elapsedTime = 0, couleur = 0xFF0000, weapons = ["sword","gun"]) {
         this.hold = false;
         this.clickLock = false;
         this.lvl = 0;

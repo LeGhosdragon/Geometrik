@@ -1458,6 +1458,7 @@ export class Err404 extends Monstre {
             }
             this.attachedShapes = [];
 
+
             // Remove monster from stage
             Monstre.app.stage.removeChild(this.hpText);
             Monstre.app.stage.removeChild(this.body);
@@ -1471,7 +1472,7 @@ export class Err404 extends Monstre {
             this.body.destroy({ children: true });
             this.hpText = null;
             this.body = null;
-            Monstre.Event.boss["err404"] = null;
+  
             return;
         }
 
@@ -1492,7 +1493,7 @@ export class BossBunny extends Monstre {
         const spinSpeed = 0.01;
         const baseHP = Math.round(25 * ennemiDifficultee ** 1.2) * 50;
         const exp = Math.round(2 * ennemiDifficultee / 3) * 100;
-        const baseDMG = Math.round(1 * ennemiDifficultee) * 10;
+        const baseDMG = Math.round(1 * ennemiDifficultee) * 5;
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
         this.alt = false;
     }
