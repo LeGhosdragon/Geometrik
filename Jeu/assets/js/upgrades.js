@@ -46,7 +46,7 @@ export class Upgrade
         [   // Bullet size
             new Upg(() => Upgrade.gun.bulletSize, (val) => Upgrade.gun.bulletSize = val,
                 "+", 3,
-                "Bullet Size", () => `Bigger bullets!\n\n\n\n\n\n\n${(Upgrade.gun.bulletSize).toFixed(2)}px => ${(Upgrade.gun.bulletSize + 3).toFixed(2)}px`, "../images/bulletSize.gif",
+                "Bullet Size", () => `Bigger bullets!\n\n\n\n\n\n\n${(Upgrade.gun.bulletSize).toFixed(2)}px => ${(Upgrade.gun.bulletSize + 3).toFixed(2)}px`, "../images/BulletSize.gif",
                 true
             )//, insert more
         ],
@@ -84,7 +84,7 @@ export class Upgrade
         [   // Sword length
             new Upg(() => Upgrade.sword.length, (val) => Upgrade.sword.length = val,
                 "+", 30,
-                "Sword Length", () => `Increase sword length for greater reach!\n\n\n\n\n${Upgrade.sword.length}px => ${Upgrade.sword.length + 30}px`, "../images/bulletSize.gif",
+                "Sword Length", () => `Increase sword length for greater reach!\n\n\n\n\n${Upgrade.sword.length}px => ${Upgrade.sword.length + 30}px`, "../images/BulletSize.gif",
                 true
             )//, insérer plus
         ],
