@@ -41,6 +41,19 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     }
 
+    //Enlever le bouton compte lorsqu'on est connecté
+    if(jeton){
+        heroContainer.innerHTML = `<div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Geometrik</h1>
+            <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
+            <div class="hero-buttons">
+              <button id="btn-jouer" class="btn btn-primary"> JOUER</button>
+            </div>
+        </div>
+      </div>`;
+    }
+
     // Constante pour les boutons
     const btnJouer = document.getElementById("btn-jouer");
     const btnCompte = document.getElementById("btn-compte");
@@ -56,17 +69,4 @@ document.addEventListener("DOMContentLoaded", function(){
         //Redirige vers la page de création de compte
         window.location.href = '../pages/signup.html';
     })
-
-    //Enlever le bouton compte lorsqu'on est connecté
-    if(jeton){
-        heroContainer.innerHTML = `<div class="hero-container">
-        <div class="hero-content">
-            <h1 class="hero-title">Geometrik</h1>
-            <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
-            <div class="hero-buttons">
-              <button id="btn-jouer" class="btn btn-primary"> JOUER</button>
-            </div>
-        </div>
-      </div>`;
-    }
 })

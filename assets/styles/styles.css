@@ -1833,3 +1833,829 @@ animation: glowing_401 5s linear infinite;
     box-shadow: var(--glow);
 }
 /* ---------- Fin Style pour la page de catalogue ---------- */
+
+/* ---------- Style pour la page de feedback ---------- */
+.feedback-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 0rem;
+    text-align: center;
+}
+.feedback-container h1 {
+    color: var(--text);
+    font-family: "Work Sans", sans-serif;
+    font-style: bold;
+    text-decoration: none;
+    font-weight: 500;
+    text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary), 0 0 15px var(--primary);
+}
+.feedback-container p {
+    margin-top: 1rem;
+    color: var(--text);
+    font-family: "Work Sans", sans-serif;
+    font-style: bold;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* From Uiverse.io by LeonKohli */ 
+.radio {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-direction: row-reverse;
+}
+
+.radio > input {
+    position: absolute;
+    appearance: none;
+}
+
+.radio > label {
+    cursor: pointer;
+    font-size: 30px;
+    position: relative;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.radio > label > svg {
+    fill: #666;
+    transition: fill 0.3s ease;
+}
+
+.radio > label::before,
+.radio > label::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background-color: #ff9e0b;
+    border-radius: 50%;
+    opacity: 0;
+    transform: scale(0);
+    transition:
+        transform 0.4s ease,
+        opacity 0.4s ease;
+    animation: particle-explosion 1s ease-out;
+}
+
+.radio > label::before {
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+}
+
+.radio > label::after {
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+}
+
+.radio > label:hover::before,
+.radio > label:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.5);
+}
+
+.radio > label:hover {
+    transform: scale(1.2);
+    animation: pulse 0.6s infinite alternate;
+}
+
+.radio > label:hover > svg,
+.radio > label:hover ~ label > svg {
+fill: #ff9e0b;
+filter: drop-shadow(0 0 15px rgba(255, 158, 11, 0.9));
+animation: shimmer 1s ease infinite alternate;
+}
+
+.radio > input:checked + label > svg,
+.radio > input:checked + label ~ label > svg {
+fill: #ff9e0b;
+filter: drop-shadow(0 0 15px rgba(255, 158, 11, 0.9));
+animation: pulse 0.8s infinite alternate;
+}
+
+@keyframes pulse {
+0% {
+    transform: scale(1);
+}
+100% {
+    transform: scale(1.1);
+}
+}
+
+@keyframes particle-explosion {
+0% {
+    opacity: 0;
+    transform: scale(0.5);
+}
+50% {
+    opacity: 1;
+    transform: scale(1.2);
+}
+100% {
+    opacity: 0;
+    transform: scale(0.5);
+}
+}
+
+@keyframes shimmer {
+0% {
+    filter: drop-shadow(0 0 10px rgba(255, 158, 11, 0.5));
+}
+100% {
+    filter: drop-shadow(0 0 20px rgba(255, 158, 11, 1));
+}
+}
+
+.radio > input:checked + label:hover > svg,
+.radio > input:checked + label:hover ~ label > svg {
+fill: #e58e09;
+}
+
+.radio > label:hover > svg,
+.radio > label:hover ~ label > svg {
+fill: #ff9e0b;
+}
+
+.radio input:checked ~ label svg {
+fill: #ffa723;
+}
+
+#feedback-form {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 1rem;
+background-color: var(--dark-background);
+padding: 2rem;
+border-radius: 1rem;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+#feedback-form h1{
+color: var(--text);
+font-family: "Work Sans", sans-serif;
+font-style: bold;
+text-decoration: none;
+font-weight: 500;
+text-shadow: 0 0 5px var(--secondary), 0 0 10px var(--secondary), 0 0 15px var(--secondary);
+}
+.feedback-input {
+height: 100px;
+border-radius: 0.5rem;
+border: none;
+padding: 1rem;
+}
+
+#feedback-form textarea {
+width: 100%;
+height: 100px;
+border-radius: 0.5rem;
+border: none;
+padding: 1rem;
+
+}
+#feedback-form p {
+color: var(--text);
+font-family: "Work Sans", sans-serif;
+font-style: bold;
+text-decoration: none;
+font-weight: 500;
+margin-top: 1rem;
+}
+
+#feedback{
+resize: none;
+border-radius: 0.5rem;
+border: none;
+padding: 1rem;
+}
+
+  /* From Uiverse.io by adamgiebl */ 
+.feedback-button button {
+    font-family: "Work Sans", sans-serif;
+    font-style: bold;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 20px;
+    background: var(--primary);
+    color: white;
+    padding: 0.7em 1em;
+    padding-left: 0.9em;
+    display: flex;
+    align-items: center;
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s;
+    cursor: pointer;
+    margin-top: 3rem;
+}
+  
+.feedback-button button span {
+display: block;
+margin-left: 0.3em;
+transition: all 0.3s ease-in-out;
+}
+
+.feedback-button button svg {
+display: block;
+transform-origin: center center;
+transition: transform 0.3s ease-in-out;
+}
+
+.feedback-button button:hover .svg-wrapper {
+animation: fly-1 0.6s ease-in-out infinite alternate;
+}
+
+.feedback-button button:hover svg {
+transform: translateX(1.2em) rotate(45deg) scale(1.1);
+}
+
+.feedback-button button:hover span {
+transform: translateX(5em);
+}
+
+.feedback-button button:active {
+transform: scale(0.95);
+}
+
+
+@keyframes fly-1 {
+from {
+    transform: translateY(0.1em);
+}
+
+to {
+    transform: translateY(-0.1em);
+}
+}
+  
+
+/* Amélioration du formulaire de feedback */
+#feedback-form {
+max-width: 600px;
+margin: 0 auto;
+background-color: var(--dark-background);
+padding: 2.5rem;
+border-radius: 1.5rem;
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#feedback-form h1 {
+margin-bottom: 1.5rem;
+font-size: 2rem;
+text-align: center;
+}
+
+/* Animation d'entrée du formulaire */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+#feedback-form {
+animation: fadeIn 0.6s ease-out;
+}
+
+/* Amélioration du textarea */
+.feedback-input {
+width: 100%;
+margin: 1.5rem 0;
+}
+
+#feedback {
+width: 100%;
+min-height: 150px;
+background-color: rgba(255, 255, 255, 0.9);
+border-radius: 0.8rem;
+border: 1px solid rgba(0, 0, 0, 0.1);
+padding: 1rem;
+font-family: "Work Sans", sans-serif;
+font-size: 1rem;
+transition: all 0.3s ease;
+box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) inset;
+}
+
+#feedback:focus {
+outline: none;
+box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.3);
+transform: translateY(-2px);
+}
+
+/* Label flottant pour le textarea */
+.feedback-input {
+position: relative;
+}
+
+.feedback-input::before {
+content: "Votre avis est précieux";
+position: absolute;
+top: -10px;
+left: 15px;
+background-color: var(--dark-background);
+padding: 0 10px;
+font-size: 0.8rem;
+color: var(--text);
+opacity: 0.8;
+}
+
+/* Amélioration des étoiles */
+.radio {
+margin: 1rem 0;
+padding: 1rem 0;
+}
+
+/* Améliorations du bouton */
+.feedback-button {
+width: 100%;
+display: flex;
+justify-content: center;
+}
+
+
+/* Badges thématiques ajoutés */
+.feedback-categories {
+display: flex;
+flex-wrap: wrap;
+gap: 10px;
+margin: 1.5rem 0;
+justify-content: center;
+}
+
+.category-badge {
+background-color: rgba(255, 255, 255, 0.1);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 20px;
+padding: 8px 16px;
+font-size: 0.9rem;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.category-badge:hover {
+background-color: var(--primary);
+transform: translateY(-2px);
+}
+
+.category-badge.active {
+background-color: var(--primary);
+box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.5);
+}
+
+/* Animation pour le message de confirmation */
+@keyframes slideUp {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+#feedback-form p {
+animation: slideUp 0.5s ease-out;
+text-align: center;
+}
+
+/* Indicateur de limite de caractères */
+.char-counter {
+text-align: right;
+font-size: 0.8rem;
+color: var(--text);
+opacity: 0.7;
+margin-top: 5px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+#feedback-form {
+    padding: 1.5rem;
+    border-radius: 1rem;
+}
+
+#feedback {
+    min-height: 120px;
+}
+
+.radio {
+    gap: 5px;
+}
+
+.radio > label {
+    font-size: 25px;
+}
+}
+
+.feedback-login-required {
+    color: var(--text);
+    font-family: "Work Sans", sans-serif;
+    font-style: bold;
+    text-decoration: none;
+    font-weight: 500;
+}
+/* ---------- Fin Style pour la page de feedback ---------- */
+
+/* ---------- Style pour la page de compte ---------- */
+.account-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--dark-background);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(153, 0, 94, 0.3);
+}
+
+.account-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--accent);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text);
+    border: 3px solid var(--accent);
+    flex-shrink: 0;
+}
+
+.user-details h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+    word-break: break-word;
+}
+
+.user-details p {
+    color: #aaa;
+    font-family: 'Work Sans', sans-serif;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: linear-gradient(145deg, var(--secondary), var(--accent));
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 10px 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Work Sans', sans-serif;
+}
+
+.history-section {
+    margin-top: 40px;
+}
+
+.history-section h3 {
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    border-left: 5px solid var(--primary);
+    padding-left: 15px;
+}
+
+.ranking-info {
+    background-color: rgba(74, 0, 153, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ranking-position {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.position-number {
+    background-color: var(--primary);
+    color: var(--text);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    background-color: var(--primary);
+    margin-left: 10px;
+}
+
+.top-badge {
+    background-color: gold;
+    color: #333;
+}
+
+.data-table-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Work Sans', sans-serif;
+    min-width: 650px;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.data-table th {
+    background-color: rgba(0, 153, 255, 0.2);
+    color: var(--text);
+    font-weight: 600;
+}
+
+.data-table tr:hover {
+    background-color: rgba(153, 0, 94, 0.1);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    
+}
+
+.btn-account {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-primary-account {
+    background-color: var(--primary);
+    color: var(--text);
+}
+
+.btn-secondary-account {
+    background-color: var(--secondary);
+    color: var(--text);
+}
+
+.btn-accent-account {
+    background-color: var(--accent);
+    color: var(--text);
+}
+
+.btn-account:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.logout-btn-account {
+    background-color: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+
+.logout-btn-account:hover {
+    background-color: var(--accent);
+    color: var(--text);
+}
+
+/* Loader animation */
+.loader {
+    display: none;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid var(--primary);
+    width: 30px;
+    height: 30px;
+    animation: spin-account 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin-account {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error message */
+.error-message-account {
+    /* display: none; */
+    background-color: rgba(255, 0, 0, 0.2);
+    color: #ff6b6b;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+/* No-data message */
+.no-data {
+    text-align: center;
+    padding: 20px;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .account-container {
+        margin: 10px;
+        padding: 15px;
+        border-radius: 10px;
+    }
+    
+    .account-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .user-info {
+        flex-direction: column;
+    }
+    
+    .avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+    }
+    
+    .user-details h2 {
+        font-size: 1.5rem;
+    }
+    
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .stat-card {
+        padding: 15px 10px;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .ranking-info {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+        padding: 12px;
+    }
+    
+    .ranking-position {
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .position-number {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .ranking-position div h3 {
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+    }
+    
+    .ranking-position div p {
+        font-size: 0.9rem;
+    }
+    
+    .action-buttons {
+        display: grid;
+        flex-direction: column;
+        width: 100%;
+        justify-items: center;
+    }
+    
+    .btn-account {
+        width: 100%;
+        text-align: center;
+        padding: 12px 0;
+    }
+    
+    .history-section h3 {
+        font-size: 1.3rem;
+        padding-left: 10px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-details h2 {
+        font-size: 1.3rem;
+    }
+    
+    .badge {
+        padding: 4px 8px;
+        font-size: 0.7rem;
+    }
+    
+    /* Account container styles */
+    .account-container {
+        padding: 10px;
+        margin: 5px;
+    }
+    
+    /* History section responsive styles */
+    .data-table-container {
+        margin: 0 -10px;
+    }
+    
+    .data-table {
+        min-width: auto;
+        width: 100%;
+        font-size: 0.8rem;
+    }
+    
+    .data-table th, .data-table td {
+        padding: 8px 5px;
+        white-space: nowrap;
+    }
+    
+    /* Responsive table for small screens */
+    .data-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .history-section h3 {
+        font-size: 1.1rem;
+        border-left: 3px solid var(--primary);
+        padding-left: 8px;
+    }
+    
+    /* Smaller error message for small screens */
+    .error-message-account {
+        font-size: 0.85rem;
+        padding: 8px;
+    }
+}
+/* ---------- Fin Style pour la page de compte ---------- */
