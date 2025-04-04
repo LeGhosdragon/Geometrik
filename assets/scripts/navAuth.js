@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function(){
   function modifierBarreNav(){
     // Récupère le jeton
     const jeton = localStorage.getItem('jeton');
+    const username = localStorage.getItem('username');
     // Récupère le menu
     const menuDiv = document.querySelector('.menu');
     // Récupère la barre de navigation
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function(){
       menuDiv.innerHTML = `
           <div class="item">
             <a href="#" class="link" id="user-menu-link">
-                <span id="nav-username">Mon Compte</span>
+                <span id="nav-username">${username}</span>
                 <svg viewBox="0 0 360 360" xml:space="preserve">
                     <g id="SVGRepo_iconCarrier">
                         <path
@@ -126,6 +127,8 @@ document.addEventListener('DOMContentLoaded', function(){
           navLeft.appendChild(signupItem);
       }
     }
+    const navUsername = document.getElementById('nav-username');
+    console.log(navUsername);
   }
 
    /**

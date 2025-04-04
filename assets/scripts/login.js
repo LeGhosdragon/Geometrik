@@ -58,6 +58,7 @@ async function login(username, password) {
             if (data.reussite) {
                 // Stocke le jeton
                 localStorage.setItem('jeton', data.jeton);
+                localStorage.setItem('username', data.utilisateur.nom_utilisateur);
                 // Stocke la notification de succès de connexion
                 localStorage.setItem('showSuccessLoginNotification', 'true');   
                 // Redirige vers la page d'accueil
