@@ -64,6 +64,7 @@ crossHair.filters = [colorFilter];
 app.stage.addChild(crossHair);
 cursorX = crossHair.x, cursorY = crossHair.y;
 
+
 app.ennemiColor = 0xFFFFFF;
 app.backColor = 0x000000;
 app.pause = false;
@@ -158,23 +159,23 @@ function setup() {
         crossHair.visible = false;
     }
 
-    let elem = document.documentElement;
-    if(elem.requestFullscreen)
-    {
-        elem.requestFullscreen();
-    }
-    else if(elem.mozRequestFullScreen)
-    {
-        elem.mozRequestFullScreen();
-    }
-    else if(elem.webkitRequestFullScreen)
-    {
-        elem.webkitRequestFullScreen(); 
-    }
-    else if(elem.msRequestFullScreen)
-    {
-        elem.msRequestFullScreen();
-    }
+    // let elem = document.documentElement;
+    // if(elem.requestFullscreen)
+    // {
+    //     elem.requestFullscreen();
+    // }
+    // else if(elem.mozRequestFullScreen)
+    // {
+    //     elem.mozRequestFullScreen();
+    // }
+    // else if(elem.webkitRequestFullScreen)
+    // {
+    //     elem.webkitRequestFullScreen(); 
+    // }
+    // else if(elem.msRequestFullScreen)
+    // {
+    //     elem.msRequestFullScreen();
+    // }
     
     // Commencer la boucle du jeu
     app.ticker.add((delta) => play(delta));
@@ -817,4 +818,3 @@ function updatePlayerMovement() {
 document.addEventListener("touchmove", (event) => {
     event.preventDefault();
 }, { passive: false });
-
