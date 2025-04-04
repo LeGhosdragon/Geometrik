@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 name: "Guerrier",
                 description: "Un guerrier avec une épée",
-                image: "../images/logo.png",
+                image: "../images/joueur_epee.png",
                 health: 20,
                 attack: 1
             },
             {
                 name: "Tireur d'elite",
                 description: "Un tireur avec une précision incroyable",
-                image: "../images/logo.png",
+                image: "../images/joueur_gun.png",
                 health: 20,
                 attack: 1
             }
@@ -21,35 +21,35 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 name: "Normal",
                 description: "Ceci est l'ennemi de base",
-                image: "../images/logo.png",
+                image: "../images/ennemi_normal.png",
                 health: 25,
                 attack: 1
             },
             {
                 name: "Gunner",
                 description: "Cet ennemi utilise une arme à feu",
-                image: "../images/logo.png",
+                image: "../images/ennemi_gunner.png",
                 health: 15,
                 attack: 1
             },
             {
                 name: "Runner",
                 description: "Cet ennemi est rapide",
-                image: "../images/logo.png",
+                image: "../images/ennemi_runner.png",
                 health: 15,
                 attack: 1
             },
             {
                 name: "Tank",
                 description: "Cet ennemi a une grande défense",
-                image: "../images/logo.png",
+                image: "../images/ennemi_tank.png",
                 health: 50,
                 attack: 1
             },
             {
                 name: "Exp",
                 description: "Cet ennemi contient le cumul des points d'expériences non ramassés",
-                image: "../images/logo.png",
+                image: "../images/ennemi_exp.png",
                 health: 250,
                 attack: 0
             },

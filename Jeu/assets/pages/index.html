@@ -1,108 +1,129 @@
 <!doctype html>
+<link rel="manifest" href="../../../manifest.json">
 <html>
 <head>
-<meta charset="utf-8">
-<title>Geometrik</title>
-</head>
-<body id="bod">
-<!--<link rel="stylesheet" href="../styles/styles.css?v=1">-->
-<span id="expBar"></span>
-<script src="../pixi/pixi.min.js"></script>
-<script type="module" src="../js/index.js"></script>
-<script src="../../../assets/scripts/navAuth.js"></script>">
+  <meta charset="utf-8">
+  <title>Geometrik</title>
+  <!--Quelques lignes de la part d'Antoine-->
+  <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+  <meta name="viewport" content="width=device-width"/>-->
+
+  <!-- Embeds lorsque le liens est mis dans d'autres sites, comme discord -->
+  <!--<meta content="Geometrik" property="og:title" />
+  <meta content="Time to destroy shapes" property="og:description" />-->
+
+
 <style>
 
-
-  #expBar {
-    position: fixed;
-    bottom: 0;
-    left: -50px;
-    width: 200%!important;
-    height: 10px; /* Initial height */
-    background-color: rgba(44, 77, 43, 0.566); /* Visible color */
-    z-index: -1;
-  }
-  @keyframes heartbeat-darken {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-  }
-
-  .darken-effect {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(circle, rgba(255, 0, 0, 0) 50%, rgba(255, 0, 0, 0.7) 100%);
+    #leftJoystick, #rightJoystick
+    {
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+  
+    #bod { 
+      cursor: none; 
+      background-color: black;        
+    }
+    #expBar {
+      position: fixed;
+      bottom: 0;
+      left: -50px;
+      width: 200%!important;
+      height: 10px; /* Initial height */
+      background-color: rgba(44, 77, 43, 0.566); /* Visible color */
+      z-index: -1;
+    }
+    @keyframes heartbeat-darken {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
+    }
+  
+    .darken-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle, rgba(255, 0, 0, 0) 50%, rgba(255, 0, 0, 0.7) 100%);
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+  
+    .card{
+      white-space: pre-wrap;
+    }
+    /* From Uiverse.io by css.cards-io */ 
+    .card,  #stats-container ,span {
+      --glow-color: rgb(75, 225, 78);
+      --glow-spread-color: rgba(23, 183, 23, 0.781);
+      --enhanced-glow-color: rgb(32, 45, 28);
+      
+      border: .25em solid var(--glow-color);
+      padding: 1em 3em;
+      color: var(--glow-color);
+      font-size: 15px;
+      font-weight: bold;
+      background-color: var(--btn-color);
+      border-radius: 1em;
+      outline: none;
+      box-shadow: 0 0 1em .25em var(--glow-color),
+              0 0 4em 1em var(--glow-spread-color),
+              inset 0 0 .75em .25em var(--glow-color);
+      text-shadow: 0 0 .5em var(--glow-color);
+      position: relative;
+      transition: all 0.3s;
+    }
+    
+    .card::after,  #stats-container::after { 
     pointer-events: none;
-    transition: opacity 0.3s;
-  }
-
-  .card{
-    white-space: pre-wrap;
-  }
-/* From Uiverse.io by css.cards-io */ 
-.card,  #stats-container ,span {
-  --glow-color: rgb(75, 225, 78);
-  --glow-spread-color: rgba(23, 183, 23, 0.781);
-  --enhanced-glow-color: rgb(32, 45, 28);
-  --btn-color: rgb(100, 61, 136);
-  border: .25em solid var(--glow-color);
-  padding: 1em 3em;
-  color: var(--glow-color);
-  font-size: 15px;
-  font-weight: bold;
-  background-color: var(--btn-color);
-  border-radius: 1em;
-  outline: none;
-  box-shadow: 0 0 1em .25em var(--glow-color),
-          0 0 4em 1em var(--glow-spread-color),
-          inset 0 0 .75em .25em var(--glow-color);
-  text-shadow: 0 0 .5em var(--glow-color);
-  position: relative;
-  transition: all 0.3s;
-}
-
-.card::after,  #stats-container::after { 
- pointer-events: none;
- content: "";
- position: absolute;
- top: 120%;
- left: 0;
- height: 100%;
- width: 100%;
- background-color: var(--glow-spread-color);
- filter: blur(2em);
- opacity: .7;
- transform: perspective(1.5em) rotateX(35deg) scale(1, .6);
-}
-
-.card:hover, #stats-container {
- color: var(--btn-color);
- background-color: var(--glow-color);
- box-shadow: 0 0 1em .25em var(--glow-color),
-        0 0 4em 2em var(--glow-spread-color),
-        inset 0 0 .75em .25em var(--glow-color);
-}
-
-.card:active {
- box-shadow: 0 0 0.6em .25em var(--glow-color),
-        0 0 2.5em 2em var(--glow-spread-color),
-        inset 0 0 .5em .25em var(--glow-color);
-}
-/* From Uiverse.io by Smit-Prajapati */ 
-
-
-.card:hover  {
-  background-size:
-    cover,
-    10px 10px,
-    10px 10px;
-    filter: hue-rotate(200deg);
-}
-
-
-
+    content: "";
+    position: absolute;
+    top: 120%;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: var(--glow-spread-color);
+    filter: blur(2em);
+    opacity: .7;
+    transform: perspective(1.5em) rotateX(35deg) scale(1, .6);
+    }
+    
+    .card:hover{
+    color: var(--btn-color);
+    background-color: var(--glow-color);
+    box-shadow: 0 0 1em .25em var(--glow-color),
+            0 0 4em 2em var(--glow-spread-color),
+            inset 0 0 .75em .25em var(--glow-color);
+    }
+    
+    .card:active {
+    box-shadow: 0 0 0.6em .25em var(--glow-color),
+            0 0 2.5em 2em var(--glow-spread-color),
+            inset 0 0 .5em .25em var(--glow-color);
+    }
+    /* From Uiverse.io by Smit-Prajapati */ 
+    
+    
+    .card:hover  {
+      background-size:
+        cover,
+        10px 10px,
+        10px 10px;
+        filter: hue-rotate(200deg);
+    }
   </style>
+</head>
+
+<body id="bod">
+  <div id="box"></div>
+  <div class="heading" data-target-resolver> </div>
+  <!--<link rel="stylesheet" href="../styles/styles.css?v=1">-->
+  <span id="expBar"></span>
+
+  <script src="../pixi/pixi.min.js"></script>
+  <script type="module" src="../js/index.js"></script>
+  <script src="../../../assets/scripts/navAuth.js"></script>
 </body>
 </html>

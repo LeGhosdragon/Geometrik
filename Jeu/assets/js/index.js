@@ -1,5 +1,5 @@
 import { setupKeyboardControls } from './mouvement.js';
-import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan } from './monstre.js';
+import { Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan, BossBunny } from './monstre.js';
 import { Grid, updateBackgroundColor, Shape3D} from './background.js';
 import { Joueur } from './joueur.js';
 import { Weapon, Sword, Explosion, Gun } from './weapons.js';
@@ -44,22 +44,35 @@ const Application = PIXI.Application,
 // ont été perdus lors du nettoyage !
 let joueur, state,  xF = 0, yF = 0, x = 0, y = 0, x2 = 0, y2 = 0,
 monstres = Monstre.monstres, explosions = Explosion.explosions, exps = Exp.exps, exp = Exp, explosion = Explosion, bullets = Gun.bullets,
-sword, gun, hasSword = false,  dedPos = 0, elapsedTime = 0, min = 0, hour = 0, event, swinging = 0,
+sword, gun, hasSword = false,  dedPos = 0, elapsedTime = 0, min = 0, hour = 0, event, swinging = 0, menu,
 cursorX, cursorY;
 
 const app = new Application({
-    width: 900,
-    height: 900,
+    width: window.innerWidth-20,
+    height: window.innerHeight-20,
     antialias: true,
     transparent: false,
     resolution: 1,
     backgroundColor: 0x000000,
     x: 200
 });
-app.ennemiColor = 0x0000ff
+let crossHair = new PIXI.Sprite.from("../images/crossHair.png");
+crossHair.width = crossHair.height = 30;
+crossHair.zIndex = 1000000;
+let colorFilter = new PIXI.filters.ColorMatrixFilter();
+crossHair.filters = [colorFilter];
+app.stage.addChild(crossHair);
+cursorX = crossHair.x, cursorY = crossHair.y;
+
+
+app.ennemiColor = 0xFFFFFF;
 app.backColor = 0x000000;
 app.pause = false;
 app.space = false;
+app.toSpace = false;
+app.class = true;
+app.menu = false;
+app.gameOver = false;
 
 let debugText = new Text('', {
     fontFamily: 'Arial',
@@ -82,8 +95,9 @@ function setup() {
     Joueur.addExplosion(Explosion);
     Joueur.addGrid(Grid);
     joueur = new Joueur(app);
-    
+    app.menu = addMenu();
     Joueur.addUpgrade(Upgrade);
+
     resizeApp(joueur);
     joueur.updateExpBar();
     Weapon.addJoueur(joueur);
@@ -102,7 +116,9 @@ function setup() {
     Upgrade.addGrid(Grid);
     Event.addMusic(Music);
     Event.addApp(app);
-    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan);
+    Event.addMonstres(Monstre, MonstreNormal, MonstreRunner, MonstreTank, MonstreExp, MonstreGunner, BossNormal, BossRunner, BossTank, BossGunner, Err404, MilkMan, BossBunny);
+    Event.addJoueur(joueur);
+
     Joueur.addEvent(Event);
     Event.currentEvent = new Event("normal");
 
@@ -114,23 +130,35 @@ function setup() {
     joueur.chooseClass();
     activerSpace();
 
-
-
+    Event.addMilk(setupKeyboardControls,Joueur,gun);
+    Monstre.addMilk(setupKeyboardControls,gun, Joueur);
 
     // setInterval(() => { 
     //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
     // }, 10);
 
-    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur,Event);
+    setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur, Event);
+    if(isMobile())
+    {
+        joueur.hold = true;
+        joueur.clickLock = true;
+        addJoysticks();
+    }
 
 
     // Set le statut du jeu
     state = play;
 
+
+    app.menu.remove();
     Grid.pauseGrid(app);
     app.pause = true;
- 
-    
+    Shape3D.spawnShapes(Event, app);
+    if(isMobile())
+    {
+        crossHair.visible = false;
+    }
+
     // Commencer la boucle du jeu
     app.ticker.add((delta) => play(delta));
     app.stage.addChild(debugText);
@@ -159,7 +187,7 @@ function play(delta) {
             hour += 1;
         }    
 
-
+        updatePlayerMovement();
         
         let xI = xF;
         let yI = yF;
@@ -215,7 +243,7 @@ function play(delta) {
 
         for (let shape of Shape3D.shapes) {
             shape.updatePosition(deltaX, deltaY, Event.boss["err404"]);
-            shape.draw();
+            shape.draw(Monstre);
         }
 
         // Simplified Game Loop
@@ -241,7 +269,17 @@ function play(delta) {
             //console.log(swinging);
             sword.playSwordSwing(delta, cursorX, cursorY);
         }
-
+        if(joueur.hasSword)
+        {
+            if(swinging == 0) colorFilter.hue(90, false);
+            else colorFilter.hue(0, false);
+            
+        }
+        else if(gun.hasGun)
+        {
+            if(gun.cooldownTimeLeft <= 0) colorFilter.hue(90, false);
+            else colorFilter.hue(0, false);
+        }
         
         (gun.cooldownTimeLeft-=delta) <= 0 ? gun.isOnCooldown = false : gun.isOnCooldown = true;
         if(joueur.hold && !gun.isOnCooldown || joueur.clickLock && !gun.isOnCooldown){gun.shoot();}
@@ -250,6 +288,7 @@ function play(delta) {
         gun.update(delta, cursorX, cursorY, deltaX, deltaY);
 
         MonstreGunner.updateBullets(delta, deltaX, deltaY, joueur);
+        MilkMan.updateBullets(delta, deltaX, deltaY, joueur);
 
         monstres.forEach(monstre => {
             monstre.bouger(joueur,delta, deltaX, deltaY, app.ennemiColor);
@@ -279,11 +318,15 @@ function play(delta) {
         });
         
         joueur.onPlayerCollision(monstres);
-    }
-    
+    }       
     app.ennemiColor = updateBackgroundColor(app, Monstre);
     document.getElementById("bod").style.backgroundColor = intToRGB(app.backColor);
-    Shape3D.shapes.forEach(shape => shape.draw());
+    if(!isMobile())
+    {
+        crossHair.x=cursorX-30;
+        crossHair.y=cursorY-33;
+    }
+    Shape3D.shapes.forEach(shape => shape.draw(Monstre));
     Event.updateMusic();
     Monstre.cleanup();
     Exp.cleanup(delta);
@@ -335,6 +378,7 @@ function afficherDebug() {
         Elapsed time: ${hour<=0?"":hour + "h"}${min<=0?"":min+ "m"}${elapsedTime.toFixed(2)}s
         Event : ${Event.currentEvent.type}
         Song : ${Event.currentMusic.nom != null ? Event.currentMusic.nom : 0}
+        Score : ${joueur.actualiseScore()}
         FPS : ${app.ticker.FPS.toFixed(0)}
 
 
@@ -357,7 +401,7 @@ function afficherDebug() {
         // la touche Backspace commits ded
         // la touche E passe automatiquement au prochain Event
     `;
-    debugText.style.fill = app.ennemiColor;
+    debugText.style.fill = Monstre.dedMilkMan ? "black" : app.ennemiColor;
 
 }
 
@@ -460,8 +504,11 @@ function activerSpace()
 }
 // Update position du curseur avec le mouvement de la souris
 document.addEventListener("mousemove", (event) => {
-    cursorX = event.clientX;
-    cursorY = event.clientY;
+    if(!isMobile())
+    {
+        cursorX = event.clientX;
+        cursorY = event.clientY;
+    }
 });
 
 document.addEventListener("mousedown", (event) =>
@@ -483,18 +530,273 @@ document.addEventListener('keydown', event =>
 {
     if(event.key == 'Escape')
     {
-        
-        if(!app.upg)
+        if(!app.upg && !app.class && !app.gameOver)
         {
             Grid.pauseGrid(app);
             app.pause = !app.pause;
         }
-        //afficherMenu();
+        if(!document.body.contains(app.menu))
+        {
+            document.body.appendChild(app.menu);
+        }
+        else
+        {
+            app.menu.remove();
+        }
+        
     }
 });
+
 
 // Ajouter le canvas que PIXI a automatiquement créé pour vous au document HTML
 document.body.appendChild(app.view);
 loader.add("index.html").load(setup);
 
+function addMenu() {
+    const container = document.createElement("div");
+    container.id = "menuContainer";
+    container.style.position = "absolute";
+    container.style.top = "50%";
+    container.style.left = "50%";
+    container.style.transform = "translate(-50%, -50%)";
+    container.style.background = "rgba(0, 0, 0, 0.8)";
+    container.style.padding = "20px";
+    container.style.borderRadius = "10px";
+    container.style.display = "flex";
+    container.style.flexDirection = "column";
+    container.style.alignItems = "center";
+    container.style.zIndex = "1000000";
+    container.style.gap = "10px";
 
+    function createMenuItem(text, onClick) {
+        const description = document.createElement("p");
+        description.textContent = text;
+        description.style.fontFamily ="courier new";
+        description.style.fontSize = "16px";
+        description.style.userSelect = "none";
+        const item = document.createElement("div");
+        
+        item.style.width = "200px";
+        item.style.borderRadius = "15px";
+        item.style.overflow = "hidden";
+        item.style.backgroundColor = "#2a2a2a";
+        //item.style.color = "white";
+        item.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+        item.style.cursor = "pointer";
+        item.style.userSelect = "none";
+
+        item.style.padding = "10px 20px";
+        //item.style.background = "#fff";
+        item.style.borderRadius = "5px";
+        item.className = "card";
+        item.style.cursor = "pointer";
+        item.style.textAlign = "center";
+        item.style.width = "100px";
+        item.style.zIndex = "1000000";
+        item.appendChild(description);
+        item.addEventListener("click", onClick);
+        return item;
+    }
+
+    const resume = createMenuItem("Resume", () => {
+        container.remove();
+        if(!app.upg && !app.class && !app.gameOver)
+        {
+            Grid.pauseGrid(app);
+            app.pause = !app.pause;
+        }
+    });
+
+    const restart = createMenuItem("Restart", () => {
+        location.reload(); // Reloads the page to restart
+    });
+
+    const settings = createMenuItem("Settings", () => {
+        alert("Settings menu not implemented yet!");
+    });
+
+    const exit = createMenuItem("Exit", () => {
+        location.href = "../../../assets/pages/index.html";
+    });
+
+    container.append(resume, restart, settings, exit);
+    document.body.appendChild(container);
+    return container;
+}
+
+
+function addJoysticks() {
+    let leftJoystick = document.createElement("div");
+    let rightJoystick = document.createElement("div");
+    let virtualCursor = document.createElement("div"); // Simulated aiming cursor
+
+    leftJoystick.id = "leftJoystick";
+    rightJoystick.id = "rightJoystick";
+    virtualCursor.id = "virtualCursor";
+
+    leftJoystick.style = `
+        position: absolute;
+        bottom: 20%;
+        left: 20%;
+        width: 100px;
+        height: 100px;
+        background: rgba(47, 139, 155, 0.5);
+        border-radius: 50%;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    rightJoystick.style = `
+        position: absolute;
+        bottom: 20%;
+        right: 20%;
+        width: 100px;
+        height: 100px;
+        background: rgba(47, 139, 155, 0.5);
+        border-radius: 50%;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    virtualCursor.style = `
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: red;
+        border-radius: 50%;
+        z-index: 200;
+        pointer-events: none;
+    `;
+
+    document.body.appendChild(leftJoystick);
+    document.body.appendChild(rightJoystick);
+    document.body.appendChild(virtualCursor); // Add aiming cursor
+
+    setupJoystickControls();
+}
+
+function isMobile() {
+    const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+    const userAgent = navigator.userAgent.toLowerCase();
+    return hasTouch && /android|iphone|ipad|ipod|blackberry|windows phone|opera mini|opera mobi/i.test(userAgent);
+}
+
+let leftJoystickData = { x: 0, y: 0 };
+let rightJoystickData = { x: 0, y: 0 };
+
+function setupJoystickControls() {
+    let leftJoystick = document.getElementById("leftJoystick");
+    let rightJoystick = document.getElementById("rightJoystick");
+    let virtualCursor = document.getElementById("virtualCursor");
+
+    let activeTouches = { left: null, right: null }; // Track active touches
+
+    function handleJoystickMove(event) {
+        event.preventDefault();
+        let touches = event.touches;
+
+        for (let touch of touches) {
+            let touchX = touch.clientX;
+            let touchY = touch.clientY;
+
+            // Assign touch to joystick
+            if (activeTouches.left === null && touchX < window.innerWidth / 2) {
+                activeTouches.left = touch.identifier;
+            }
+            if (activeTouches.right === null && touchX > window.innerWidth / 2) {
+                activeTouches.right = touch.identifier;
+            }
+
+            // Update joystick movement
+            if (touch.identifier === activeTouches.left) {
+                leftJoystickData.x = touchX - leftJoystick.offsetLeft - 50;
+                leftJoystickData.y = touchY - leftJoystick.offsetTop - 50;
+                leftJoystick.style.transform = `translate(${leftJoystickData.x}px, ${leftJoystickData.y}px)`;
+            }
+            if (touch.identifier === activeTouches.right) {
+                rightJoystickData.x = touchX - rightJoystick.offsetLeft - 50;
+                rightJoystickData.y = touchY - rightJoystick.offsetTop - 50;
+                rightJoystick.style.transform = `translate(${rightJoystickData.x}px, ${rightJoystickData.y}px)`;
+            }
+        }
+    }
+
+    function resetJoystick(event) {
+        let touches = event.changedTouches;
+        for (let touch of touches) {
+            if (touch.identifier === activeTouches.left) {
+                leftJoystickData.x = 0;
+                leftJoystickData.y = 0;
+                leftJoystick.style.transform = `translate(0px, 0px)`;
+                activeTouches.left = null;
+            }
+            if (touch.identifier === activeTouches.right) {
+                rightJoystickData.x = 0;
+                rightJoystickData.y = 0;
+                rightJoystick.style.transform = `translate(0px, 0px)`;
+                activeTouches.right = null;
+            }
+        }
+    }
+
+    function updateCursorPosition() {
+        let playerX = window.innerWidth / 2;
+        let playerY = window.innerHeight / 2;
+
+        let joystickMagnitude = Math.sqrt(rightJoystickData.x ** 2 + rightJoystickData.y ** 2);
+
+        if (joystickMagnitude > 10) {
+            let angle = Math.atan2(rightJoystickData.y, rightJoystickData.x);
+            let aimDistance = Math.min(joystickMagnitude, 100);
+
+            cursorX = playerX + Math.cos(angle) * aimDistance;
+            cursorY = playerY + Math.sin(angle) * aimDistance;
+
+            virtualCursor.style.left = `${cursorX}px`;
+            virtualCursor.style.top = `${cursorY}px`;
+        }
+
+        requestAnimationFrame(updateCursorPosition);
+    }
+
+    // Attach listeners
+    document.addEventListener("touchmove", handleJoystickMove, { passive: false });
+    document.addEventListener("touchend", resetJoystick);
+    document.addEventListener("touchcancel", resetJoystick);
+
+    updateCursorPosition(); // Start cursor tracking
+}
+
+
+
+function updatePlayerMovement() {
+    if (isMobile()) {
+        let dx = leftJoystickData.x;
+        let dy = leftJoystickData.y;
+
+        let magnitude = Math.sqrt(dx * dx + dy * dy); // Get joystick magnitude
+
+        if (magnitude > 5) { // Prevent small movements from affecting the player
+            let normX = dx / magnitude; // Normalize X
+            let normY = dy / magnitude; // Normalize Y
+
+            let speed = Math.min(magnitude / 5, joueur.vitesse * 3); // Scale speed correctly
+
+            joueur.setVX(normX * speed);
+            joueur.setVY(normY * speed);
+        } else {
+            joueur.setVX(0);
+            joueur.setVY(0);
+        }
+    }
+}
+
+
+// Prevent scrolling when touching joysticks
+document.addEventListener("touchmove", (event) => {
+    event.preventDefault();
+}, { passive: false });

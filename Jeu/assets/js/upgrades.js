@@ -1,5 +1,5 @@
 /**
- * La classe Upgrade permet de gérer tous les upgrades des dispoinible 
+ * La classe Upgrade permet de gérer tous les upgrades disponibles
  * dans le jeu (armes, vitesse, Health etc.) 
  */
 export class Upgrade
@@ -46,7 +46,7 @@ export class Upgrade
         [   // Bullet size
             new Upg(() => Upgrade.gun.bulletSize, (val) => Upgrade.gun.bulletSize = val,
                 "+", 3,
-                "Bullet Size", () => `Bigger bullets!\n\n\n\n\n\n\n${(Upgrade.gun.bulletSize).toFixed(2)}px => ${(Upgrade.gun.bulletSize + 3).toFixed(2)}px`, "../images/bulletSize.gif",
+                "Bullet Size", () => `Bigger bullets!\n\n\n\n\n\n\n${(Upgrade.gun.bulletSize).toFixed(2)}px => ${(Upgrade.gun.bulletSize + 3).toFixed(2)}px`, "../images/BulletSize.gif",
                 true
             )//, insert more
         ],
@@ -84,7 +84,7 @@ export class Upgrade
         [   // Sword length
             new Upg(() => Upgrade.sword.length, (val) => Upgrade.sword.length = val,
                 "+", 30,
-                "Sword Length", () => `Increase sword length for greater reach!\n\n\n\n\n${Upgrade.sword.length}px => ${Upgrade.sword.length + 30}px`, "../images/bulletSize.gif",
+                "Sword Length", () => `Increase sword length for greater reach!\n\n\n\n\n${Upgrade.sword.length}px => ${Upgrade.sword.length + 30}px`, "../images/BulletSize.gif",
                 true
             )//, insérer plus
         ],
@@ -196,7 +196,7 @@ export class Upgrade
         [   // Player crit damage
             new Upg(() => Upgrade.joueur.critDMG, (val) => Upgrade.joueur.critDMG = val,
                 "x", 1.30,
-                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${Upgrade.joueur.critDMG*100}% => ${Upgrade.joueur.critDMG*100 + 30}%`, "../images/CritDMG.gif",
+                "Critical Damage", () => `When criting you deal more damage!\n\n\n\n\n\n${(Upgrade.joueur.critDMG*100).toFixed(0)}% => ${(Upgrade.joueur.critDMG*100 + 30).toFixed(0)}%`, "../images/CritDMG.gif",
                 true
             )
         ],
@@ -247,33 +247,38 @@ export class Upgrade
 
     // gestion de l'upgrade choisi
     upgradeChoisi(upgrade) {
-        let index = -1;
-        let foundIn = -1; 
-    
-        upgrade.apply();
+        if(!document.body.contains(Upgrade.app.menu))
+        {
+            let index = -1;
+            let foundIn = -1; 
         
-        // Trouver l'upgrade dans la liste et enlever si nécessaire
-        for (let i = 0; i < this.boite.length; i++) {
-            index = this.boite[i].indexOf(upgrade);
-            if (index > -1) {
-                foundIn = i;
-                break; 
+            upgrade.apply();
+            
+            // Trouver l'upgrade dans la liste et enlever si nécessaire
+            for (let i = 0; i < this.boite.length; i++) {
+                index = this.boite[i].indexOf(upgrade);
+                if (index > -1) {
+                    foundIn = i;
+                    break; 
+                }
             }
-        }
-        if (foundIn > -1 && !upgrade.exponentiel) {
-            this.boite[foundIn].splice(index, 1); 
-        }
+            if (foundIn > -1 && !upgrade.exponentiel) {
+                this.boite[foundIn].splice(index, 1); 
+            }
+        
+            // Enlever le upgrade UI container du DOM
+            const container = document.getElementById("upgrade-container");
+            if (container) {
+                container.remove();
+            }
+        
+            // Resumer le jeu
+        
+            Upgrade.app.upg = false;
     
-        // Enlever le upgrade UI container du DOM
-        const container = document.getElementById("upgrade-container");
-        if (container) {
-            container.remove();
+            Upgrade.Grid.pauseGrid(Upgrade.app);
+            Upgrade.app.pause = false;
         }
-    
-        // Resumer le jeu
-        Upgrade.Grid.pauseGrid(Upgrade.app);
-        Upgrade.app.upg = false;
-        Upgrade.app.pause = false;
     }
     
     // Gestion des upgrades des monstres 
@@ -366,7 +371,6 @@ export class Upgrade
  * Sous-classe pour définir les propritété de chaque upgrade individuellement (effet,
  * type, titre, description et son icône)
  */
-
 class Upg {
     constructor(getParam, setParam, type, augment, title, description, icon, exponentiel) {
         this.exponentiel = exponentiel;

@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", function(){
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("../../sw.js")
+          .then(() => console.log("Service Worker registered"))
+          .catch(err => console.error("Service Worker registration failed:", err));
+      }
+      
     // Récupérer la notification de succès d'inscription
     const showSuccessSignupNotification = localStorage.getItem('showSuccessSignupNotification');
     // Récupérer la notification de succès de connexion

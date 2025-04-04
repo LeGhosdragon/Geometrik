@@ -1,0 +1,22 @@
+{
+  "name": "Geometrik",
+  "short_name": "Geometrik",
+  "start_url": "index.html",
+  "display": "fullscreen",
+  "scope": "/",
+  "theme_color": "#FFFFFF",
+  "background_color": "#000000",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "./assets/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
