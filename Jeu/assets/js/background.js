@@ -337,7 +337,7 @@ export class Shape3D {
             let x, y, z;
             let attempts = 0;
             let validPosition = false;
-            while (!validPosition && (attempts < Shape3D.maxAttempts || Shape3D.onStart)) {
+            while (!validPosition && (attempts < Shape3D.maxAttempts && Shape3D.onStart)) {
                 [x, y] = Event.posRandomExterieur();
                 if(Shape3D.onStart)
                 {
