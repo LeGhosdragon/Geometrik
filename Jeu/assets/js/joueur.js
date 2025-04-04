@@ -49,7 +49,7 @@ export class Joueur {
         this.hpText.visible = false;
         this.healthBar.visible = false;
         this.damageFlash = this.createDmgFlash(app);
-        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, score : 0, jeton: ""};
+        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, timeShown : 0, score : 0, jeton: ""};
         this.statistics.jeton = localStorage.getItem('jeton');
     }
 
@@ -329,11 +329,21 @@ export class Joueur {
     
     actualiseScore()
     {
-        let val = Math.round((this.statistics.kills <= 0 ? 1 : this.statistics.kills) * 
-        (this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) * this.statistics.timePlayed <= 0 ? 1 : this.statistics.timePlayed);
-        this.statistics.score = isNaN(val) ? this.statistics.score : val;
+        let val = Number.parseInt(this.statistics.kills <= 0 ? 1 : this.statistics.kills) *
+        Number.parseInt(this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) *
+        Number.parseInt(this.statistics.timePlayed);
+    
+        console.log(val);
+        console.log( Number.parseInt(this.statistics.kills) *Number.parseInt(this.statistics.expGained) *Number.parseInt(this.statistics.timePlayed));
+        if (!isNaN(val)) {
+            this.statistics.score = Number.parseInt(val);
+        }
+    
+        console.log(Number.parseInt(this.statistics.score) + " : score");
+    
         return this.statistics.score;
     }
+    
     playerDied() {  
         this.app.gameOver = true;
         console.log("Player died!");
@@ -349,11 +359,11 @@ export class Joueur {
         const minute = ((this.statistics.timePlayed % 3600000) / 1000 - seconde);
         const heure = ((this.statistics.timePlayed % (3600000 * 60)) / 1000 - minute - seconde);
         if (Math.abs(heure.toFixed(0)) > 0) {
-            this.statistics.timePlayed = Math.abs(heure.toFixed(0)) + "h " + 
+            this.statistics.timeShown = Math.abs(heure.toFixed(0)) + "h " + 
             (minute.toFixed(0) / 60) + "min " + 
             seconde.toFixed(2) + "s";
         } else {
-            this.statistics.timePlayed = (minute.toFixed(0) / 60) + "min " + 
+            this.statistics.timeShown = (minute.toFixed(0) / 60) + "min " + 
             seconde.toFixed(2) + "s";
         }
         
@@ -577,19 +587,25 @@ export class Joueur {
 
     async sendStatsToDB()
     {
-        document.addEventListener("DOMContentLoaded", async function(){
-            const jeton = this.statistics.jeton;
-            const kills = this.statistics.kills;
-            const expGained = this.statistics.expGained;
-            const timePlayed = this.statistics.timePlayed;
-            const score = this.actualiseScore();
-
+        //J'enleve le domcontent... pcq on le fait dans une fonction async qui pourrait causer un bug avec les references this
+        //document.addEventListener("DOMContentLoaded", async function(){
+            
+            // const score = this.actualiseScore();
+            
                 try {
+                    const jeton = this.statistics.jeton;
+                    const kills = this.statistics.kills;
+                    const expGained = this.statistics.expGained;
+                    const rawTimePlayed = parseInt(Math.round(this.statistics.timePlayed));
+                    console.log(rawTimePlayed + " : time played");
+                    //Le score est calculer de mm dans le backend
+                    const score = this.actualiseScore();
+
                     const formData = new FormData();
                     formData.append('jeton', jeton);
                     formData.append('ennemis', kills);
                     formData.append('experience', expGained);
-                    formData.append('duree', timePlayed);
+                    formData.append('duree', rawTimePlayed);
                     formData.append('score', score);
                     
                     // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -597,11 +613,19 @@ export class Joueur {
                         method: 'POST',
                         body: formData
                     });
+
+
                     const responseText = await response.text();
+                    console.log("RÃ©ponse du serveur:", responseText);
 
                     let data;
                     try {
                         data = JSON.parse(responseText);
+                        if (data.reussite) {
+                            console.log("Score ajouter succes!");
+                        } else {
+                            console.error("Erreur score ajouter", data.erreurs);
+                        }
                     } catch (e) {
                         console.error("Failed to parse JSON:", e);
                         throw new Error("Invalid JSON response");
@@ -609,11 +633,10 @@ export class Joueur {
                     
                 } catch (error) {
                     console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de la connexion: ' + error.message);
+                    alert('Une erreur est survenue lors de l\'envoi des statistiques: ' + error.message);
                 }
-        });
+        //});
     }
-
     createStatsBoards() {
         const container = document.createElement("div");
         container.id = "stats-container";
@@ -661,7 +684,7 @@ export class Joueur {
         // Loop through statistics object and create text for each
         for (let [statName, statValue] of Object.entries(this.statistics)) {
 
-            if(statName != "jeton")
+            if(statName != "jeton" && statName != "timePlayed")
             {
                 const statRow = document.createElement("div");
                 statRow.style.display = "flex";
