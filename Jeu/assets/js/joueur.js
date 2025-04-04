@@ -564,6 +564,7 @@ export class Joueur {
                     this.healthBar.visible = true;
                     Joueur.Event.currentMusic.play();
                     document.body.removeChild(container);
+                    
                 }
             });
             container.appendChild(card);
