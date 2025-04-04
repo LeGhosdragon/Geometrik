@@ -1,8 +1,7 @@
 {
   "name": "Geometrik",
   "short_name": "Geometrik",
-  "start_url": "/assets/pages/index.html",
-  "scope": "/",
+  "start_url": "./pages/index.html",
   "display": "fullscreen",
   "theme_color": "#FFFFFF",
   "background_color": "#000000",
