@@ -329,18 +329,36 @@ export class Joueur {
     
     actualiseScore()
     {
-        let val = Number.parseInt(this.statistics.kills <= 0 ? 1 : this.statistics.kills) *
-        Number.parseInt(this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) *
-        Number.parseInt(this.statistics.timePlayed);
+        // let val = Number.parseInt(this.statistics.kills <= 0 ? 1 : this.statistics.kills) *
+        // Number.parseInt(this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) *
+        // Number.parseInt(this.statistics.timePlayed);
     
-        console.log(val);
-        console.log( Number.parseInt(this.statistics.kills) *Number.parseInt(this.statistics.expGained) *Number.parseInt(this.statistics.timePlayed));
-        if (!isNaN(val)) {
-            this.statistics.score = Number.parseInt(val);
+        // console.log(val);
+        // console.log( Number.parseInt(this.statistics.kills) *Number.parseInt(this.statistics.expGained) *Number.parseInt(this.statistics.timePlayed));
+        // if (!isNaN(val)) {
+        //     this.statistics.score = Number.parseInt(val);
+        // }
+    
+        // console.log(Number.parseInt(this.statistics.score) + " : score");
+    
+        // return this.statistics.score;
+
+        // S'assurer que les valeurs sont toujours des entiers positifs et au moins 1
+        const kills = Math.max(1, Math.round(this.statistics.kills));
+        const expGained = Math.max(1, Math.round(this.statistics.expGained));
+        const timePlayed = Math.round(this.statistics.timePlayed);
+        
+        // Calcul du score selon la même formule que le backend
+        const score = kills * expGained * timePlayed;
+        
+        // Vérifier et stocker le résultat
+        if (!isNaN(score)) {
+            this.statistics.score = score;
         }
-    
-        console.log(Number.parseInt(this.statistics.score) + " : score");
-    
+        
+        // Log unique et clair pour débogage
+        console.log(`Score calculé: ${this.statistics.score} (kills: ${kills}, exp: ${expGained}, time: ${timePlayed})`);
+        
         return this.statistics.score;
     }
     
@@ -594,19 +612,32 @@ export class Joueur {
             
                 try {
                     const jeton = this.statistics.jeton;
-                    const kills = this.statistics.kills;
-                    const expGained = this.statistics.expGained;
-                    const rawTimePlayed = parseInt(Math.round(this.statistics.timePlayed));
-                    console.log(rawTimePlayed + " : time played");
-                    //Le score est calculer de mm dans le backend
-                    const score = this.actualiseScore();
+                    // const kills = this.statistics.kills <= 0 ? 1 : this.statistics.kills;
+                    // const expGained = this.statistics.expGained <= 0 ? 1 : this.statistics.expGained;
+                    // const rawTimePlayed = parseInt(Math.round(this.statistics.timePlayed));
+                    // console.log(rawTimePlayed + " : time played");
+                    // //Le score est calculer de mm dans le backend
+                    // const score = this.actualiseScore();
+                    
+                    // S'assurer que les valeurs sont toujours des entiers positifs et au moins 1
+                    const kills = Math.max(1, Math.round(this.statistics.kills));
+                    const expGained = Math.max(1, Math.round(this.statistics.expGained));
+                    const timePlayed = Math.round(this.statistics.timePlayed);
+                    
+                    // Recalculer le score exactement comme le backend l'attend
+                    const score = kills * expGained * timePlayed;
 
                     const formData = new FormData();
                     formData.append('jeton', jeton);
                     formData.append('ennemis', kills);
                     formData.append('experience', expGained);
-                    formData.append('duree', rawTimePlayed);
+                    formData.append('duree', timePlayed);
                     formData.append('score', score);
+
+                    // Déboguer les valeurs envoyées
+                    console.log("Valeurs envoyées au serveur:", {
+                        jeton, kills, expGained, timePlayed, score
+                    });
                     
                     // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     let response = await fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/ajouter', {

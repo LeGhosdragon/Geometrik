@@ -103,7 +103,7 @@ async function createAccount(username, password) {
         if (data.reussite) {
             // Stocke le jeton
             localStorage.setItem('jeton', data.jeton);
-            
+            localStorage.setItem('username', username);
             // Stocke une variable pour afficher la notification sur la page suivante
             localStorage.setItem('showSuccessSignupNotification', 'true');
             

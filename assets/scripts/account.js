@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     //Vérifier si l'utilisateur est connecté
     const jeton = localStorage.getItem('jeton');
+    const username = localStorage.getItem('username');
     if (!jeton) {
         window.location.href = 'login.html';
         return;
