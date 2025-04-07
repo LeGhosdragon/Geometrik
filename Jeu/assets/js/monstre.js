@@ -280,11 +280,7 @@ export class Monstre {
             this.body.destroy({ children: true });
             this.hpText = null;
             this.body = null;
-            if(this.type == "err404")
-            {
-                Monstre.Event.boss["err404"] = null;
-                Monstre.Event.nextSong = true; 
-            }
+
             if(this.type == "bossNormal")
             {
                 Monstre.Event.boss["bossNormal"] = null;
@@ -311,11 +307,7 @@ export class Monstre {
                 Monstre.Event.boss["milkMan"] = null;
                 Monstre.Event.nextSong = true; 
             }
-            if(this.type == "bossBunny")
-            {
-                Monstre.Event.boss["bossBunny"] = null;
-                Monstre.Event.nextSong = true; 
-            }
+
             return;
         }
     
@@ -682,7 +674,7 @@ export class MonstreExp extends Monstre {
             let y = radius * Math.sin(angle);
             this.body.lineTo(x, y);
         }
-        this.exp = Monstre.Exp.expBuildUp + Monstre.joueur.reqExp;
+        this.exp = Math.round(Monstre.Exp.expBuildUp);// + Monstre.joueur.reqExp;
     
         this.body.closePath();
         this.body.endFill();
@@ -1441,7 +1433,6 @@ export class Err404 extends Monstre {
     updateHP() {
         if (this.currentHP <= 0) {
             if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
-            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
             Monstre.joueur.statistics.kills += 1;
 
             let index = Monstre.monstres.indexOf(this);
@@ -1472,7 +1463,11 @@ export class Err404 extends Monstre {
             this.body.destroy({ children: true });
             this.hpText = null;
             this.body = null;
-  
+            if(this.type == "err404")
+            {
+                Monstre.Event.boss["err404"] = null;
+                Monstre.Event.nextSong = true; 
+            }
             return;
         }
 
@@ -1636,7 +1631,6 @@ export class BossBunny extends Monstre {
     updateHP() {
         if (this.currentHP <= 0) {
             if (Monstre.dedExpl) new Monstre.Explosion(this.getX(), this.getY(), this.body.width * 6, 50, 0xFF0000);
-            if (Monstre.dedEXP) new Monstre.Exp(this.getX(), this.getY(), this.exp);
             Monstre.joueur.statistics.kills += 1;
 
             // Supprimer le monstre de l'array
@@ -1660,7 +1654,11 @@ export class BossBunny extends Monstre {
             this.body.destroy({ children: true });
             this.hpText = null;
             this.body = null;
-            Monstre.Event.boss["bossBunny"] = null;
+            if(this.type == "bossBunny")
+            {
+                Monstre.Event.boss["bossBunny"] = null;
+                Monstre.Event.nextSong = true; 
+            }
             return;
         }
 

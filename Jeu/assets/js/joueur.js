@@ -51,6 +51,7 @@ export class Joueur {
         this.damageFlash = this.createDmgFlash(app);
         this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, timeShown : 0, score : 0, jeton: ""};
         this.statistics.jeton = localStorage.getItem('jeton');
+        this.statistics.UserName = localStorage.getItem('username');
     }
 
     // Fonction pour créer le joueur
