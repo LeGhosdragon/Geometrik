@@ -135,7 +135,7 @@ function setup() {
 
     // setInterval(() => { 
     //     new Exp(joueur.getX()*1.5, joueur.getY()*1.5, 100);
-    // }, 10);
+    // }, 1);
 
     setupKeyboardControls(app, joueur, sword, Monstre, gun, exps, Joueur, Event);
     if(isMobile())

@@ -358,7 +358,7 @@ export class Joueur {
         }
         
         // Log unique et clair pour débogage
-        console.log(`Score calculé: ${this.statistics.score} (kills: ${kills}, exp: ${expGained}, time: ${timePlayed})`);
+        //console.log(`Score calculé: ${this.statistics.score} (kills: ${kills}, exp: ${expGained}, time: ${timePlayed})`);
         
         return this.statistics.score;
     }

@@ -215,9 +215,9 @@ export class Sword extends Weapon {
         {
             this.body.clear(); // Efface l'ancienne épée
             this.body.beginFill(this.color);
-            this.body.drawRect(0, 0, 10, this.length); // Met à jour avec la nouvelle longueur
+            this.body.drawRect(0, 0, 10*delta, this.length); // Met à jour avec la nouvelle longueur
             this.body.endFill();
-            this.body.pivot.set(10 / 2, this.length + 30);
+            this.body.pivot.set(10*delta / 2, this.length + 30);
 
             //Ceci permet au premier swing d'aller dans la direction de la souris
             if(this.firstSwing)
@@ -241,7 +241,7 @@ export class Sword extends Weapon {
              
             if (this.isSwinging) {
                 
-                this.swingTime += this.swingSpeed;
+                this.swingTime += this.swingSpeed ;
                 let swingOffset = Math.cos(this.swingTime / this.swingDuration * Math.PI) * this.wideness * this.swingDirection;
                 this.body.rotation = this.baseAngle + swingOffset + Math.PI / 2;
                 //console.log(swingOffset);
