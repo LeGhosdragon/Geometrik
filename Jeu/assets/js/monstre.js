@@ -957,8 +957,8 @@ export class BossRunner extends Monstre {
         this.elapsedTime += 3 * delta;
         let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
         this.body.clear();
-        this.body.lineStyle(2, 0x000000, 1);
-        this.body.beginFill(ennemiColor);
+        this.body.lineStyle(5, ennemiColor, 1);
+        this.body.beginFill(0x000000);
 
         const size = newSize * 50;
         //const points = this.sides;

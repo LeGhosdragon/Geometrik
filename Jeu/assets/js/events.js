@@ -56,13 +56,13 @@ export class Event{
             if(event.type == " ") {
                 min % 2 == 0 ? this.lastMin != min ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3): 0 : 0;
                 min % 2 == 0 ? this.lastMin != min ? Event.updateDifficultee() : 0 : "";
-                min % 2 == 0 ? this.lastMin != min ? bossChoose = true: 0 : 0;
+                //min % 2 == 0 ? this.lastMin != min ? bossChoose = true: 0 : 0;
                 this.lastMin = min;
                 let compteur = 0;
 
-                // if(Event.boss["bossRunner"] == null){
-                //     event.ajouterMONSTRE(1, "bossRunner", 2 + Event.difficultyDegree, "boss"); 
-                // }
+                if(Event.boss["bossRunner"] == null){
+                    event.ajouterMONSTRE(1, "bossRunner", 2 + Event.difficultyDegree, "boss"); 
+                }
 
 
                 while(bossChoose && compteur < 100)
