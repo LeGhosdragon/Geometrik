@@ -2280,7 +2280,7 @@ margin-top: 5px;
     gap: 20px;
 }
 
-.avatar {
+/* .avatar {
     width: 80px;
     height: 80px;
     border-radius: 50%;
@@ -2293,7 +2293,7 @@ margin-top: 5px;
     color: var(--text);
     border: 3px solid var(--accent);
     flex-shrink: 0;
-}
+} */
 
 .user-details h2 {
     font-family: 'Montserrat', sans-serif;
@@ -2657,5 +2657,69 @@ margin-top: 5px;
         font-size: 0.85rem;
         padding: 8px;
     }
+}
+
+.avatar-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text);
+    border: 3px solid var(--accent);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s;
+}
+
+.avatar-container:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.avatar-change-btn {
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.avatar-change-btn svg {
+    /* Fixer la taille exacte de l'icône */
+    width: 24px;
+    height: 24px;
+    /* Garantir que l'icône est bien centrée */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 /* ---------- Fin Style pour la page de compte ---------- */

@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
             {text: "Rang", sortable: false},
             {text: "Joueur", sortable: false},
             {text: "Score", sortable: true, key: 'score'},
-            {text: "Temps (ms)", sortable: true, key: 'temps_partie'},
+            {text: "Temps (s)", sortable: true, key: 'temps_partie'},
             {text: "Expérience", sortable: true, key: 'experience'},
             {text: "Ennemis éliminés", sortable: true, key: 'ennemis_enleve'},
             {text: "Date", sortable: true, key: 'date_soumission'}
