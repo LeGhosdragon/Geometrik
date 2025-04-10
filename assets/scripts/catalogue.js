@@ -54,12 +54,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 attack: 0
             },
             {
-                name: "Boss",
-                description: "Cet ennemi est le boss du jeu",
-                image: "../images/logo.png",
-                health: 200,
+                name: "Boss Normal",
+                description: "",
+                image: "../images/boss_normal.png",
+                health: 5950,
                 attack: 10
+            },
+            {
+                name: "Boss Tank",
+                description: "",
+                image: "../images/boss_tank.png",
+                health: 2733,
+                attack: 2
+            },
+            {
+                name: "Boss Gunner",
+                description: "",
+                image: "../images/boss_gunner.png",
+                health: 2578,
+                attack: 1
+            },
+            {
+                name: "Boss Bunny",
+                description: "",
+                image: "../images/boss_bunny.png",
+                health: 2380,
+                attack: 5
             }
+
         ],
         upgrades: [
             {
