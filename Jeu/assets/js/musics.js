@@ -55,6 +55,8 @@ export class Music {
                 return "../musics/NewJeans-Supernatural-Instrumental.mp3";
             case "gameOver":
                 return "../musics/game-over-38511.mp3";
+            case "bossRunner":
+                return "../musics/flat-8-bit-gaming.mp3";
             default:
                 return null;
         }

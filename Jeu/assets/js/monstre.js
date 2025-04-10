@@ -564,7 +564,6 @@ export class MonstreRunner extends Monstre {
         const size = newSize * 50;
         const points = this.sides;
         this.body.drawStar(0, 0, points, size, size*0.6); // Draw a star
-        this.body.endFill();
 
         // S'assurer que HP text reste à jour
         this.updateHP();
@@ -572,8 +571,6 @@ export class MonstreRunner extends Monstre {
 }
 
 export class MonstreTank extends Monstre {
-
-
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "tank";
         const size = 0.45;
@@ -638,8 +635,7 @@ export class MonstreTank extends Monstre {
 }
 
 export class MonstreExp extends Monstre {
-    constructor(x, y, sides, ennemiDifficultee)
-    {
+    constructor(x, y, sides, ennemiDifficultee) {
         const type = "expBall";
         const size = 0.5;
         const speed = 0.2;
@@ -867,8 +863,6 @@ export class BossNormal extends Monstre {
     }
 }
 export class BossTank extends Monstre {
-
-
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "bossTank";
         const size = 3;
@@ -882,7 +876,6 @@ export class BossTank extends Monstre {
         this.baseExp = this.exp;
         this.baseBaseHP = this.baseHP;
     }
-
 
     // mise a jour de l'apparence du monstre
     actualiserPolygone(delta, ennemiColor) {
@@ -940,15 +933,61 @@ export class BossTank extends Monstre {
 }
 
 export class BossRunner extends Monstre {
+    wooshCounter = null;
+    moveVector = null;
     constructor(x, y, sides, ennemiDifficultee) {
         const type = "bossRunner";
-        const size = 1.2;
-        const speed = 2;
-        const spinSpeed = 0.01;
-        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*125;
+        const size = 1;
+        const speed = 8;
+        const spinSpeed = 0.1;
+        const baseHP = Math.round(25 * ennemiDifficultee**1.2)*80;
         const exp = Math.round(2 * ennemiDifficultee/3)*100;
-        const baseDMG = Math.round(1 * ennemiDifficultee)*10;
+        const baseDMG = Math.round(1 * ennemiDifficultee)*5;
+        
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
+        this.wooshCounter = 110;
+    }
+
+    actualiserPolygone(delta, ennemiColor) {
+        if (this.sides < 3) return;
+        this.couleur = ennemiColor;
+        this.elapsedTime += 3 * delta;
+        let newSize = this.oscillates ? this.size + 0.05 * Math.cos(this.elapsedTime / 50.0) : this.size;
+        this.body.clear();
+        this.body.lineStyle(2, 0x000000, 1);
+        this.body.beginFill(ennemiColor);
+
+        const size = newSize * 50;
+        //const points = this.sides;
+        this.body.drawStar(0, 0, 6, size, size*0.6); // Draw a star
+
+        // S'assurer que HP text reste à jour
+        this.updateHP();
+    }
+
+    // Fonction pour déplacer le monstre vers le joueur
+    bouger(joueur, delta, deltaX, deltaY, ennemiColor) {
+        if (this.wooshCounter == 110) {
+            this.moveVector = this.vecteurVersLeJoueur(joueur);
+            this.wooshCounter = 0;
+        } else {
+            this.wooshCounter++;
+        }
+        
+        this.setX(this.getX() + (this.moveVector.x)*delta + deltaX);
+        this.setY(this.getY() + (this.moveVector.y)*delta + deltaY);
+        
+        this.spins ? this.body.rotation += this.spinSpeed * delta : 0;
+        this.avoidMonsterCollision();
+        this.actualiserPolygone(delta, ennemiColor);
+
+        if(this.showLife && this.currentHP > 0)
+        {
+            // Update HP text position
+            this.hpText.x = this.getX();
+            this.hpText.y = this.getY() - 10;
+            this.hpText.text = this.currentHP;
+        }
     }
 }
 
