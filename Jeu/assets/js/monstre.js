@@ -304,8 +304,11 @@ export class Monstre {
             if(this.type == "milkMan")
             {
                 Monstre.milkMode(Monstre.app, Monstre.joueur, 0, Monstre, Monstre.gun, 0, Monstre.Joueur, Monstre.Event, true);
+
                 Monstre.Event.boss["milkMan"] = null;
                 Monstre.Event.nextSong = true; 
+                Monstre.app.stage.removeChild(this.milkBody);
+                this.milkBody.destroy();
             }
 
             return;
@@ -1446,6 +1449,7 @@ export class Err404 extends Monstre {
                 if (shapeIndex !== -1) {
                     Monstre.Shape3D.shapes.splice(shapeIndex, 1);
                 }
+                shape.graphics.clear();
             }
             this.attachedShapes = [];
 

@@ -60,8 +60,8 @@ export class Event{
                 this.lastMin = min;
                 let compteur = 0;
 
-                // if(Event.boss["err404"] == null){
-                //     event.ajouterMONSTRE(1, "err404", 2 + Event.difficultyDegree, "boss"); 
+                // if(Event.boss["milkMan"] == null){
+                //     event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
                 // }
 
 
