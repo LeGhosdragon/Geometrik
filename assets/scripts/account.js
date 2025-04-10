@@ -23,9 +23,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const playBtn = document.getElementById('play-btn');
     const btnDeconnexion = document.getElementById('btn-deconnexion-action');
     const logoutLink = document.getElementById('logout-link');
-    console.log(btnDeconnexion);
-    console.log(logoutLink);
+    const avatarUpload = document.getElementById('avatar-upload');
+    loadProfilePicture();
+
     // Événements
+    avatarUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Vérifier le type de fichier
+            if (!file.type.match('image.*')) {
+                Swal.fire({
+                    title: 'Erreur',
+                    text: 'Veuillez sélectionner une image valide',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Vérifier la taille (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                Swal.fire({
+                    title: 'Erreur',
+                    text: 'L\'image ne doit pas dépasser 2MB',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            
+            // Envoyer l'image au serveur
+            uploadProfilePicture(file);
+        }
+    });
+    
+
+
     playBtn.addEventListener('click', function() {
         window.location.href = '../../Jeu/assets/pages/index.html';
     });
@@ -47,6 +80,112 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    function uploadProfilePicture(file) {
+        const jeton = localStorage.getItem('jeton');
+        if (!jeton) {
+            return;
+        }
+        
+        const formData = new FormData();
+        formData.append('jeton', jeton);
+        formData.append('image', file);
+        
+        // Afficher un indicateur de chargement
+        Swal.fire({
+            title: 'Chargement...',
+            text: 'Envoi de votre photo de profil en cours',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/utilisateur/profile-picture/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.reussite) {
+                // Afficher la nouvelle image
+                // avatarElement.style.backgroundImage = `url(http://localhost/H2025_TCH099_02_S1/api/api.php/${data.photo_url})`;
+                // avatarElement.textContent = ''; // Enlever l'initiale
+                // console.log(data.photo_url);
+                loadProfilePicture();
+                Swal.fire({
+                    title: 'Succès',
+                    text: 'Votre photo de profil a été mise à jour',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                throw new Error(data.erreurs || 'Erreur lors du téléchargement de la photo');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            Swal.fire({
+                title: 'Erreur',
+                text: 'Une erreur est survenue lors de la mise à jour de votre photo de profil',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    }
+
+    // Fonction pour charger la photo de profil
+    function loadProfilePicture() {
+        const jeton = localStorage.getItem('jeton');
+        if (!jeton) {
+            return;
+        }
+        
+        fetch(`http://localhost/H2025_TCH099_02_S1/api/api.php/utilisateur/profile-picture?jeton=${jeton}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.reussite) {
+                    if (data.photo_data) {
+                        // Utiliser directement l'URI data pour afficher l'image
+                        avatarElement.style.backgroundImage = `url(${data.photo_data})`;
+                        avatarElement.textContent = '';
+                    } else {
+                        // Aucune photo de profil
+                        const username = localStorage.getItem('username');
+                        if (username) {
+                            avatarElement.textContent = username.charAt(0).toUpperCase();
+                            avatarElement.style.backgroundImage = 'none';
+                        } else {
+                            avatarElement.textContent = '?';
+                            avatarElement.style.backgroundImage = 'none';
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                // En cas d'erreur, afficher l'initiale par défaut
+                const username = localStorage.getItem('username');
+                if (username) {
+                    avatarElement.textContent = '';
+                } else {
+                    avatarElement.textContent = '?';
+                }
+                avatarElement.style.backgroundImage = 'none';
+            });
+    }
+    
+    // Modifier la fonction loadUserData pour inclure la gestion des photos
+    const originalLoadUserData = loadUserData;
+    
+    // Réassigner la fonction avec notre propre implémentation
+    loadUserData = function() {
+        // Appeler la fonction originale
+        originalLoadUserData();
+        
+        // Charger la photo de profil
+        loadProfilePicture();
+    }
+
     function loadUserData() {
         historyLoader.style.display = 'block';
         errorMessage.style.display = 'none';
@@ -66,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     localStorage.setItem('username', username);
                     
                     // Initialiser l'avatar avec la première lettre
-                    avatarElement.textContent = username.charAt(0).toUpperCase();
+                    avatarElement.textContent = '';
                     
                     // Afficher la date d'inscription
                     const joinDate = new Date(data.utilisateur.date_inscription);
