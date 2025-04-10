@@ -644,7 +644,7 @@ export class Joueur {
                     });
                     
                     // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    let response = await fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/ajouter', {
+                    let response = await fetch('https://nexbit.ca/geometrik/api.php/palmares/ajouter', {
                         method: 'POST',
                         body: formData
                     });
