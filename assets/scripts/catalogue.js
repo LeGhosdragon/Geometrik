@@ -61,6 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 attack: 10
             },
             {
+                name: "Boss Runner",
+                description: "",
+                image: "../images/boss_runner.png",
+                health: 2000,
+                attack: 3
+            },
+            {
                 name: "Boss Tank",
                 description: "",
                 image: "../images/boss_tank.png",
