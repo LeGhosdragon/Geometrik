@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/utilisateur/profile-picture/upload', {
+        fetch('https://nexbit.ca/geometrik/api.php/utilisateur/profile-picture/upload', {
             method: 'POST',
             body: formData
         })
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        fetch(`http://localhost/H2025_TCH099_02_S1/api/api.php/utilisateur/profile-picture?jeton=${jeton}`)
+        fetch(`https://nexbit.ca/geometrik/api.php/utilisateur/profile-picture?jeton=${jeton}`)
             .then(response => response.json())
             .then(data => {
                 if (data.reussite) {
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const jeton = localStorage.getItem('jeton');
         
         // Récupérer les données de l'utilisateur depuis l'API
-        fetch(`http://localhost/H2025_TCH099_02_S1/api/api.php/utilisateur/profil?jeton=${jeton}`)
+        fetch(`https://nexbit.ca/geometrik/api.php/utilisateur/profil?jeton=${jeton}`)
             .then(response => response.json())
             .then(data => {
                 if (data.reussite) {
@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (userScore) {
             // Afficher les statistiques de l'utilisateur
             scoreElement.textContent = userScore.score;
-            playTimeElement.textContent = (userScore.temps_partie / 1000).toFixed(1);
+            playTimeElement.textContent = (userScore.temps_partie).toFixed(1);
             userXpElement.textContent = userScore.experience;
             enemiesKilledElement.textContent = userScore.ennemis_enleve;
 

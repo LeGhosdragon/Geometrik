@@ -78,7 +78,7 @@ async function createAccount(username, password) {
         formData.append('passe', password);
         
         // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        let response = await fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/inscription', {
+        let response = await fetch('https://nexbit.ca/geometrik/api.php/inscription', {
             method: 'POST',
             body: formData
         });
