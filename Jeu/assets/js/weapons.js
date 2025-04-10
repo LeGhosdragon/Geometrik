@@ -68,6 +68,8 @@ export class Sword extends Weapon {
         this.setBody(this.createSword());
         this.body.visible = false;
         this.previousSwordPosition = {x: 0, y: 0};
+        this.debugArc = new PIXI.Graphics();
+        Weapon.app.stage.addChild(this.debugArc);
     }
 
     createSword() {
@@ -164,19 +166,72 @@ export class Sword extends Weapon {
         this.body.visible = false;
     }
 
+    // isSwordCollidingWithMonster(monstre) {
+    //     if (!this.body.visible) {
+    //         return false;
+    //     }
+    //     const swordBounds =  this.body.getBounds();
+    //     const monstreBounds = monstre.body.getBounds();
+    
+    //     let bool = swordBounds.x < monstreBounds.x + monstreBounds.width &&
+    //            swordBounds.x + swordBounds.width > monstreBounds.x &&
+    //            swordBounds.y < monstreBounds.y + monstreBounds.height &&
+    //            swordBounds.y + swordBounds.height > monstreBounds.y;
+    //     return bool;
+    // }
+
     isSwordCollidingWithMonster(monstre) {
-        if (!this.body.visible) {
+        if (!this.body.visible || !this.isSwinging) {
+            this.debugArc.clear(); // Hide the arc when not swinging
             return false;
         }
-        const swordBounds =  this.body.getBounds();
-        const monstreBounds = monstre.body.getBounds();
     
-        let bool = swordBounds.x < monstreBounds.x + monstreBounds.width &&
-               swordBounds.x + swordBounds.width > monstreBounds.x &&
-               swordBounds.y < monstreBounds.y + monstreBounds.height &&
-               swordBounds.y + swordBounds.height > monstreBounds.y;
-               return bool;
+        const playerX = Weapon.joueur.getX() + 15;
+        const playerY = Weapon.joueur.getY() + 12;
+    
+        const monstreBounds = monstre.body.getBounds();
+        const monstreCenterX = monstreBounds.x + monstreBounds.width / 2;
+        const monstreCenterY = monstreBounds.y + monstreBounds.height / 2;
+    
+        const dx = monstreCenterX - playerX;
+        const dy = monstreCenterY - playerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+    
+        const angleToMonster = Math.atan2(dy, dx);
+        const arcAngle = this.baseAngle;
+        const sweep = this.wideness;
+    
+        const normalize = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
+        const angleDiff = normalize(angleToMonster - arcAngle);
+    
+        const withinAngle = Math.abs(angleDiff) <= sweep;
+        const withinRadius = distance <= this.length + 30;
+    
+        // 🎨 Draw the arc
+        this.debugArc.clear();
+        this.debugArc.lineStyle(2, 0xff0000, 0.8); // Red arc for hitbox
+        this.debugArc.beginFill(0xff0000, 0.15); // Slight fill for visibility
+        this.debugArc.moveTo(playerX, playerY);
+        this.debugArc.arc(
+            playerX, playerY,
+            this.length + 30,
+            arcAngle - sweep,
+            arcAngle + sweep
+        );
+        this.debugArc.lineTo(playerX, playerY);
+        this.debugArc.endFill();
+        if(Weapon.joueur.debug)
+        {
+            this.debugArc.visible = true;
+        }
+        else
+        {
+            this.debugArc.visible = false;
+        }
+        return withinAngle && withinRadius;
     }
+    
+    
 
     isSwordCollidingWithBullet(bullet) {
         if (!this.body.visible) {
@@ -223,8 +278,8 @@ export class Sword extends Weapon {
             if(this.firstSwing)
             {
                 //console.log(1);
-                let dx = cursorX - (Weapon.joueur.getX() + Weapon.app.view.offsetLeft);
-                let dy = cursorY - (Weapon.joueur.getY() + Weapon.app.view.offsetTop);
+                let dx = cursorX - (Weapon.joueur.getX() + 15 + Weapon.app.view.offsetLeft);
+                let dy = cursorY - (Weapon.joueur.getY() + 12 + Weapon.app.view.offsetTop);
                 this.storedAngle = Math.atan2(dy, dx);
                 this.baseAngle = this.storedAngle;
                 this.firstSwing = false;
@@ -233,8 +288,8 @@ export class Sword extends Weapon {
             }
             if (!this.isSwinging) {
                 //console.log(2);
-                let dx = cursorX - (Weapon.joueur.getX() + Weapon.app.view.offsetLeft);
-                let dy = cursorY - (Weapon.joueur.getY() + Weapon.app.view.offsetTop);
+                let dx = cursorX - (Weapon.joueur.getX() + 15 + Weapon.app.view.offsetLeft);
+                let dy = cursorY - (Weapon.joueur.getY() + 12 + Weapon.app.view.offsetTop);
                 this.storedAngle = Math.atan2(dy, dx);
                 this.baseAngle = this.storedAngle;
             }
@@ -340,8 +395,8 @@ export class Gun extends Weapon {
         this.body.x = Weapon.joueur.getX() + Weapon.joueur.getWidth() / 2 - 1;
         this.body.y = Weapon.joueur.getY() + Weapon.joueur.getHeight() / 2 - 1;
 
-        let dx = cursorX - 10 - this.body.x;
-        let dy = cursorY - 10 - this.body.y;
+        let dx = cursorX - 17 - this.body.x;
+        let dy = cursorY - 17 - this.body.y;
         this.storedAngle = Math.atan2(dy, dx) + Math.PI / 2;
         this.body.rotation = this.storedAngle;
 

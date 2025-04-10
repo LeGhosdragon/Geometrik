@@ -374,9 +374,9 @@ export class Joueur {
         this.actualiseScore();
         console.log(this.statistics.score + " : score");
 
-        const seconde = ((this.statistics.timePlayed % 60000) / 1000);
-        const minute = ((this.statistics.timePlayed % 3600000) / 1000 - seconde);
-        const heure = ((this.statistics.timePlayed % (3600000 * 60)) / 1000 - minute - seconde);
+        const seconde = ((this.statistics.timePlayed % 60000));
+        const minute = ((this.statistics.timePlayed % 3600000)  - seconde);
+        const heure = ((this.statistics.timePlayed % (3600000 * 60))  - minute - seconde);
         if (Math.abs(heure.toFixed(0)) > 0) {
             this.statistics.timeShown = Math.abs(heure.toFixed(0)) + "h " + 
             (minute.toFixed(0) / 60) + "min " + 
@@ -421,7 +421,10 @@ export class Joueur {
                 } else {
                     gameOverText.y = targetY;
                     this.createStatsBoards();
-                     this.sendStatsToDB();
+                    if(this.statistics.jeton != null && this.statistics.jeton != undefined)
+                    {
+                        this.sendStatsToDB();
+                    }
                     ticker.stop(); 
                 }
             });

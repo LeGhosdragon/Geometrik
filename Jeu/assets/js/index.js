@@ -170,12 +170,12 @@ function play(delta) {
     resizeApp(joueur);
     if(!app.pause)
     {
-        Event.updateEvents(delta);
+        Event.updateEvents(delta, min);
         if(joueur.currentHP <= Event.ennemiDifficultee*2) joueur.triggerDamageEffect();
         joueur.updatelvl();
         joueur.updateHP();
         elapsedTime += delta / 60;
-        joueur.statistics.timePlayed += (delta / 60 )*1000;
+        joueur.statistics.timePlayed += (delta / 60 );
         if(elapsedTime >= 60) 
         { 
             elapsedTime -= 60;
