@@ -36,6 +36,7 @@ export class Event{
     static nextSongIs = null;
     static lastSong = false;
     static boss = {"bossNormal":null, "bossRunner":null, "bossTank":null, "bossGunner":null, "milkMan":null, "err404":null, "bossBunny":null};
+    static lastMin = 0;
 
     constructor(type)
     {
@@ -46,16 +47,17 @@ export class Event{
         Event.events.push(this);
     }
 
-    static updateEvents(delta)
+    static updateEvents(delta, min)
     {
         let num = null;
         let bossChoose = false;
         Event.events.forEach(event => {   
             event.timeElapsed += 1;     
             if(event.type == " ") {
-                event.timeElapsed % 7200 == 0 ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3) : 0;
-                event.timeElapsed % 7200 == 0 ? Event.updateDifficultee() : "";
-                event.timeElapsed % 7200 == 0 ? bossChoose = true : 0;
+                min % 2 == 0 ? this.lastMin != min ? event.ajouterMONSTRE(Math.ceil(delta), "expBall", 3): 0 : 0;
+                min % 2 == 0 ? this.lastMin != min ? Event.updateDifficultee() : 0 : "";
+                min % 2 == 0 ? this.lastMin != min ? bossChoose = true: 0 : 0;
+                this.lastMin = min;
                 let compteur = 0;
 
                 // if(Event.boss["err404"] == null){
@@ -259,7 +261,7 @@ export class Event{
     // Méthode qui ajoute un certain nb de monstres avec le nb de coôtés donné
     ajouterMONSTRE(amount = 1, type = "normal", sides = 3, code = "") { 
         // si le nb de monstres actifs est inf a la limite -> ajouter
-        if((Event.Monstre.cleanMonstres.length < 10 || !this.comeBacks) && Event.monstres.length < 100 * Event.difficultyDegree && code == "")
+        if((Event.Monstre.cleanMonstres.length < 10 || !this.comeBacks) && Event.monstres.length < 100 * Math.min(Event.difficultyDegree, 6) && code == "")
         {
             for (let i = 0; i < amount; i++) {
                 let rngPos = Event.posRandomExterieur();

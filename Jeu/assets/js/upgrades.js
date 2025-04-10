@@ -269,8 +269,15 @@ export class Upgrade
             // Enlever le upgrade UI container du DOM
             const container = document.getElementById("upgrade-container");
             if (container) {
+                container.innerHTML = "";
                 container.remove();
             }
+
+            // if (this.upgradeContainer && Upgrade.app.stage.children.includes(this.upgradeContainer)) {
+            //     Upgrade.app.stage.removeChild(this.upgradeContainer);
+            //     this.upgradeContainer.destroy({ children: true });
+            //     this.upgradeContainer = null;
+            // }
         
             // Resumer le jeu
         
@@ -281,7 +288,7 @@ export class Upgrade
         }
     }
     
-    // Gestion des upgrades des monstres 
+    // // Gestion des upgrades des monstres 
     montrerUpgrades(upgrades) {
         const container = document.createElement("div");
         container.id = "upgrade-container";
@@ -338,6 +345,81 @@ export class Upgrade
         
         document.body.appendChild(container);
     }
+
+    // montrerUpgrades(upgrades) {
+    //     // Cleanup previous container if any
+    //     if (this.upgradeContainer && Upgrade.app.stage.children.includes(this.upgradeContainer)) {
+    //         Upgrade.app.stage.removeChild(this.upgradeContainer);
+    //         this.upgradeContainer.destroy({ children: true });
+    //     }
+    
+    //     const container = new PIXI.Container();
+    //     container.zIndex = 1000;
+    //     container.sortableChildren = true;
+    
+    //     const cardWidth = 220;
+    //     const cardHeight = 260;
+    //     const padding = 30;
+    
+    //     upgrades.forEach((upgrade, index) => {
+    //         const card = new PIXI.Container();
+    //         card.interactive = true;
+    //         card.buttonMode = true;
+    //         card.x = index * (cardWidth + padding);
+    
+    //         // Background box
+    //         const bg = new PIXI.Graphics();
+    //         bg.beginFill(0x2a2a2a, 1);
+    //         bg.drawRoundedRect(0, 0, cardWidth, cardHeight, 15);
+    //         bg.endFill();
+    //         card.addChild(bg);
+    
+    //         // Title text
+    //         const title = new PIXI.Text(upgrade.title, {
+    //             fontFamily: 'Arial',
+    //             fontSize: 20,
+    //             fill: 0xffffff,
+    //             align: 'center',
+    //         });
+    //         title.anchor.set(0.5, 0);
+    //         title.x = cardWidth / 2;
+    //         title.y = 15;
+    //         card.addChild(title);
+    
+    //         // Icon image
+    //         const icon = PIXI.Sprite.from(upgrade.icon);
+    //         icon.width = 100;
+    //         icon.height = 100;
+    //         icon.anchor.set(0.5);
+    //         icon.x = cardWidth / 2;
+    //         icon.y = 100;
+    //         card.addChild(icon);
+    
+    //         // Description
+    //         const description = new PIXI.Text(upgrade.getDescription(), {
+    //             fontFamily: 'Courier New',
+    //             fontSize: 14,
+    //             fill: 0xffffff,
+    //             wordWrap: true,
+    //             wordWrapWidth: cardWidth - 20,
+    //         });
+    //         description.anchor.set(0.5);
+    //         description.x = cardWidth / 2;
+    //         description.y = 190;
+    //         card.addChild(description);
+    
+    //         card.on('pointertap', () => this.upgradeChoisi(upgrade));
+    //         container.addChild(card);
+    //     });
+    
+    //     // Center the container on screen
+    //     container.x = (Upgrade.app.renderer.width - container.width) / 2;
+    //     container.y = (Upgrade.app.renderer.height - cardHeight) / 2;
+    
+    //     Upgrade.app.stage.addChild(container);
+    //     this.upgradeContainer = container;
+    // }
+    
     
     
     

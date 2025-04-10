@@ -18,6 +18,11 @@ export class Grid {
 
 
         if (app != null) {
+            if (app.gradientLine) {
+                app.stage.removeChild(app.gradientLine);
+                app.gradientLine.destroy(); // safely destroys texture and sprite
+            }
+            
             if (app.space && gridThickness != 100) {
                 grid.lineStyle(gridThickness*1.5, 0xFFFFFF, 1);
             } else if (gridThickness == 100 && app.space) {
