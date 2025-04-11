@@ -1,3 +1,5 @@
+import baseUrl from './config.js';
+
 document.addEventListener("DOMContentLoaded", function() {
     const feedbackForm = document.getElementById("feedback-form");
     const feedbackInput = document.getElementById("feedback");
@@ -96,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append('contenu', feedback);
             formData.append('note', rating);
             formData.append('categorie', selectedCategory);
-            fetch('https://nexbit.ca/geometrik/api.php/feedback/soumettre', {
+            fetch(`${baseUrl}/feedback/soumettre`, {
                 method: 'POST',
                 body: formData
             })

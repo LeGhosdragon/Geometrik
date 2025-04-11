@@ -1,3 +1,5 @@
+import baseUrl from './config.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     //Vérifier si l'utilisateur est connecté
     const jeton = localStorage.getItem('jeton');
@@ -100,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        fetch('https://nexbit.ca/geometrik/api.php/utilisateur/profile-picture/upload', {
+        fetch(`${baseUrl}/utilisateur/profile-picture/upload`, {
             method: 'POST',
             body: formData
         })
@@ -137,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        fetch(`https://nexbit.ca/geometrik/api.php/utilisateur/profile-picture?jeton=${jeton}`)
+        fetch(`${baseUrl}/utilisateur/profile-picture?jeton=${jeton}`)
             .then(response => response.json())
             .then(data => {
                 if (data.reussite) {
@@ -191,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const jeton = localStorage.getItem('jeton');
         
         // Récupérer les données de l'utilisateur depuis l'API
-        fetch(`https://nexbit.ca/geometrik/api.php/utilisateur/profil?jeton=${jeton}`)
+        fetch(`${baseUrl}/utilisateur/profil?jeton=${jeton}`)
             .then(response => response.json())
             .then(data => {
                 if (data.reussite) {

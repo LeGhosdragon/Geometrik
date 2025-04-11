@@ -1,3 +1,5 @@
+import baseUrl from './config.js';
+
 document.addEventListener("DOMContentLoaded", function() {
     // Constante pour le jeton
     const jeton = localStorage.getItem('jeton');
@@ -181,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         // Récupère les scores
-        fetch('https://nexbit.ca/geometrik/api.php/palmares/obtenir')
+        fetch(`${baseUrl}/palmares/obtenir`)
         // Convertir la réponse en JSON
 
         .then(response => response.json())
@@ -216,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     if (jeton) {
         // Récupère les données de l'utilisateur
-        fetch(`https://nexbit.ca/geometrik/api.php/utilisateur/estAdmin?jeton=${jeton}`)
+        fetch(`${baseUrl}/utilisateur/estAdmin?jeton=${jeton}`)
             // Convertir la réponse en JSON
             .then(response => response.json())
             .then(data => {
@@ -566,7 +568,7 @@ function supprimerScore(scoreId) {
  */
 function sendDeleteRequest(scoreId, jeton) {
     // Envoie la requête de suppression
-    fetch(`https://nexbit.ca/geometrik/api.php/palmares/supprimer/${scoreId}?jeton=${jeton}`, {
+    fetch(`${baseUrl}/palmares/supprimer/${scoreId}?jeton=${jeton}`, {
         method: 'DELETE'
     })
     // Convertir la réponse en JSON
