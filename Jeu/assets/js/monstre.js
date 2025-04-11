@@ -537,7 +537,7 @@ export class MonstreNormal extends Monstre {
         const speed = 1;
         const spinSpeed = 0.02;
         const baseHP = Math.round(25 * ennemiDifficultee**1.2);
-        const exp = Math.round(2 * ennemiDifficultee/3);
+        const exp = Math.round(2 + ennemiDifficultee/3);
         const baseDMG = Math.round(1 * ennemiDifficultee);
         super(x, y, sides, size, type, speed, spinSpeed, baseHP, exp, baseDMG);
     }
