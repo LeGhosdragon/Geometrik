@@ -60,14 +60,14 @@ export class Event{
                 this.lastMin = min;
                 let compteur = 0;
 
-                // if(Event.boss["milkMan"] == null){
-                //     event.ajouterMONSTRE(1, "milkMan", 2 + Event.difficultyDegree, "boss"); 
+                // if(Event.boss["bossRunner"] == null){
+                //     event.ajouterMONSTRE(1, "bossRunner", 2 + Event.difficultyDegree, "boss"); 
                 // }
 
 
                 while(bossChoose && compteur < 100)
                 {
-                    num = Math.floor(Math.random() * 6);
+                    num = Math.floor(Math.random() * 7);
                     switch (num) {
                         case 0:
                             if(Event.boss["bossNormal"] != null) {compteur++;}
@@ -136,6 +136,17 @@ export class Event{
                                 Event.currentMusic.stop();
                                 Event.nextSong = true;
                                 Event.nextSongIs = "bossBunny"; // Vous pouvez définir une musique spécifique pour BossBunny si vous le souhaitez
+                                bossChoose = false;
+                                compteur = 0;
+                            }
+                            break;
+                        case 6:
+                            if(Event.boss["bossRunner"] != null) { compteur++; }
+                            else {
+                                event.ajouterMONSTRE(1, "bossRunner", 2 + Event.difficultyDegree, "boss");
+                                Event.currentMusic.stop();
+                                Event.nextSong = true;
+                                Event.nextSongIs = "bossRunner"; // Vous pouvez définir une musique spécifique pour BossBunny si vous le souhaitez
                                 bossChoose = false;
                                 compteur = 0;
                             }

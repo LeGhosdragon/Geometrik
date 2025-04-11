@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         // Récupère les scores
-        fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/obtenir')
+        fetch('https://nexbit.ca/geometrik/api.php/palmares/obtenir')
         // Convertir la réponse en JSON
 
         .then(response => response.json())
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function() {
      */
     if (jeton) {
         // Récupère les données de l'utilisateur
-        fetch(`http://localhost/H2025_TCH099_02_S1/api/api.php/utilisateur/estAdmin?jeton=${jeton}`)
+        fetch(`https://nexbit.ca/geometrik/api.php/utilisateur/estAdmin?jeton=${jeton}`)
             // Convertir la réponse en JSON
             .then(response => response.json())
             .then(data => {
@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", function() {
             {text: "Rang", sortable: false},
             {text: "Joueur", sortable: false},
             {text: "Score", sortable: true, key: 'score'},
-            {text: "Temps (ms)", sortable: true, key: 'temps_partie'},
+            {text: "Temps (s)", sortable: true, key: 'temps_partie'},
             {text: "Expérience", sortable: true, key: 'experience'},
             {text: "Ennemis éliminés", sortable: true, key: 'ennemis_enleve'},
             {text: "Date", sortable: true, key: 'date_soumission'}
@@ -566,7 +566,7 @@ function supprimerScore(scoreId) {
  */
 function sendDeleteRequest(scoreId, jeton) {
     // Envoie la requête de suppression
-    fetch(`http://localhost/H2025_TCH099_02_S1/api/api.php/palmares/supprimer/${scoreId}?jeton=${jeton}`, {
+    fetch(`https://nexbit.ca/geometrik/api.php/palmares/supprimer/${scoreId}?jeton=${jeton}`, {
         method: 'DELETE'
     })
     // Convertir la réponse en JSON

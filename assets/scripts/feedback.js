@@ -96,8 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append('contenu', feedback);
             formData.append('note', rating);
             formData.append('categorie', selectedCategory);
-            // http://localhost/H2025_TCH099_02_S1/api/api.php/connexion
-            fetch('http://localhost/H2025_TCH099_02_S1/api/api.php/feedback/soumettre', {
+            fetch('https://nexbit.ca/geometrik/api.php/feedback/soumettre', {
                 method: 'POST',
                 body: formData
             })
