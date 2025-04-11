@@ -1,4 +1,4 @@
-import baseUrl from './config.js';
+import baseUrl from '../../../assets/scripts/config.js';
 
 /**
  * La classe Joueur gère ses propriétés, son affichage, so progression et ses interactions
