@@ -1,3 +1,4 @@
+import baseUrl from './config.js';
 
 /**
  * La classe Joueur gère ses propriétés, son affichage, so progression et ses interactions
@@ -644,7 +645,7 @@ export class Joueur {
                     });
                     
                     // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    let response = await fetch('https://nexbit.ca/geometrik/api.php/palmares/ajouter', {
+                    let response = await fetch(`${baseUrl}/palmares/ajouter`, {
                         method: 'POST',
                         body: formData
                     });
