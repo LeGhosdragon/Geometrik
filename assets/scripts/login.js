@@ -1,3 +1,5 @@
+import baseUrl from './config.js';
+
 document.addEventListener("DOMContentLoaded", function(){
     const passwordToggle = document.getElementById("password-toggle");
     const passwordInput = document.getElementById("password");
@@ -31,7 +33,7 @@ async function login(username, password) {
             formData.append('passe', password);
             
             // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            let response = await fetch('https://nexbit.ca/geometrik/api.php/connexion', {
+            let response = await fetch(`${baseUrl}/geometrik/api.php/connexion`, {
                 method: 'POST',
                 body: formData
             });
