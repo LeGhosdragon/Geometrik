@@ -255,7 +255,7 @@ export class Monstre {
                 new Monstre.Exp(this.getX(), this.getY(), this.exp);
                 if(this.type == "expBall")
                 {
-                    Monstre.Exp.expBuildUp = 0;
+                    Monstre.Exp.expBuildUp = Monstre.Exp.expBuildUp/2;
                 }
             }
             Monstre.joueur.statistics.kills += 1;
