@@ -108,9 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             if (data.reussite) {
                 // Afficher la nouvelle image
-                // avatarElement.style.backgroundImage = `url(http://localhost/H2025_TCH099_02_S1/api/api.php/${data.photo_url})`;
-                // avatarElement.textContent = ''; // Enlever l'initiale
-                // console.log(data.photo_url);
                 loadProfilePicture();
                 Swal.fire({
                     title: 'Succès',
