@@ -12,8 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <script src="../scripts/catalogue.js" defer></script>
     <script src="../scripts/navAuth.js" defer></script>
+    <script src="../background/noise.min.js"></script>
+    <script src="../background/util.js"></script>
+    <script src="../background/pipeline.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
 </head>
 <body>
+    <!--Conteneur de fond pour le background-->
+    <div class="content--canvas"></div>
+
+    <!--Barre de navigation-->
     <nav>
         <ul class="nav-left">
             <li>
@@ -24,16 +33,11 @@
             <li><a href="index.html">Accueil</a></li>
             <li><a href="about.html">À propos</a></li>
             <li><a href="catalogue.html">Catalogue</a></li>
-            <li><a href="play.html">Jouer</a></li>
-            <li><a href="palmares.html">Palmares</a></li>
+            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
+            <li><a href="palmares.html">Palmarès</a></li>
+            <li><a href="feedback.html">Feedback</a></li>
         </ul>
         <ul class="nav-right">
-            <div class="toggle-switch">
-                <label class="switch-label">
-                  <input type="checkbox" class="checkbox">
-                  <span class="slider"></span>
-                </label>
-            </div>  
             <div class="menu">
                 <div class="item">
                   <a href="#" class="link">
@@ -60,85 +64,91 @@
         </ul>
     </nav>
 
-    <div class="catalogue-container">
-        <div class="catalogue-buttons">
-            <button id="catalogue-characters-btn">Héros</button>
-            <button id="catalogue-enemies-btn">Ennemis</button>
-            <button id="catalogue-upgrades-btn">Amélioration</button>
-        </div>
+    <!--Conteneur principal-->
+    <main>
+        <div class="catalogue-container">
+            <!--Boutons de navigation-->
+            <div class="catalogue-buttons">
+                <button id="catalogue-characters-btn" class="glow-effect">Héros</button>
+                <button id="catalogue-enemies-btn">Ennemis</button>
+                <button id="catalogue-upgrades-btn">Améliorations</button>
+            </div>
 
-        <div class="catalogue-content" id="catalogue-content">
-            <div class="catalogue-section" id="catalogue-characters">
-                <div class="catalogue-detail-view">
-                    <div class="catalogue-image-container">
-                        <img id="character-image" src="../images/characters/character1.png" alt="Character Image">
-                    </div>
-                    <div class="catalogue-description-container">
-                        <h2 id="character-name">Personnage 1</h2>
-                        <p id="character-description">Description Personnage 1</p>
-                        <div class="character-stats">
-                            <div class="stat">
-                                <span class="stat-label">Point de vie:</span>
-                                <span class="stat-value" id="character-health">20</span>
+            <!--Contenu du catalogue-->
+            <div class="catalogue-content">
+                <!--Section Héros-->
+                <div class="catalogue-section" id="catalogue-characters">
+                    <div class="catalogue-detail-view">
+                        <div class="catalogue-image-container">
+                            <img id="character-image" src="../images/logo.png" alt="Image du personnage">
+                        </div>
+                        <div class="catalogue-description-container">
+                            <h2 id="character-name">Nom du personnage</h2>
+                            <p id="character-description">Description du personnage</p>
+                            <div class="character-stats">
+                                <div class="stat">
+                                    <span class="stat-label">Point de vie:</span>
+                                    <span class="stat-value" id="character-health">20</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Dégâts:</span>
+                                    <span class="stat-value" id="character-attack">1</span>
+                                </div>
                             </div>
-                            <div class="stat">
-                                <span class="stat-label">Dégats:</span>
-                                <span class="stat-value" id="character-attack">1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Section Ennemis-->
+                <div class="catalogue-section" id="catalogue-enemies" style="display: none;">
+                    <div class="catalogue-detail-view">
+                        <div class="catalogue-image-container">
+                            <img id="enemy-image" src="../images/logo.png" alt="Image de l'ennemi">
+                        </div>
+                        <div class="catalogue-description-container">
+                            <h2 id="enemy-name">Nom de l'ennemi</h2>
+                            <p id="enemy-description">Description de l'ennemi</p>
+                            <div class="enemy-stats">
+                                <div class="stat">
+                                    <span class="stat-label">Point de vie:</span>
+                                    <span class="stat-value" id="enemy-health">20</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Dégâts:</span>
+                                    <span class="stat-value" id="enemy-attack">1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Section Améliorations-->
+                <div class="catalogue-section" id="catalogue-upgrades" style="display: none;">
+                    <div class="catalogue-detail-view">
+                        <div class="catalogue-image-container">
+                            <img id="upgrade-image" src="../../Jeu/assets/images/Health.gif" alt="Image de l'amélioration">
+                        </div>
+                        <div class="catalogue-description-container">
+                            <h2 id="upgrade-name">Nom de l'amélioration</h2>
+                            <p id="upgrade-description">Description de l'amélioration</p>
+                            <div class="upgrade-details">
+                                <div class="stat">
+                                    <span class="stat-label">Effet:</span>
+                                    <span class="stat-value" id="upgrade-effect">Description de l'effet</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="catalogue-section" id="catalogue-enemies" style="display: none;">
-                <div class="catalogue-detail-view">
-                    <div class="catalogue-image-container">
-                        <img id="enemy-image" src="../images/enemies/enemy1.png" alt="Enemy Image">
-                    </div>
-                    <div class="catalogue-description-container">
-                        <h2 id="enemy-name">Ennemi 1</h2>
-                        <p id="enemy-description">Description of Ennemi 1</p>
-                        <div class="enemy-stats">
-                            <div class="stat">
-                                <span class="stat-label">Point de vie:</span>
-                                <span class="stat-value" id="enemy-health">20</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-label">Dégats:</span>
-                                <span class="stat-value" id="enemy-attack">1</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!--Navigation-->
+            <div class="catalogue-navigation">
+                <button id="catalogue-prev-btn">Précédent</button>
+                <button id="catalogue-next-btn">Suivant</button>
             </div>
-
-            <div class="catalogue-section" id="catalogue-upgrades" style="display: none;">
-                <div class="catalogue-detail-view">
-                    <div class="catalogue-image-container">
-                        <img id="upgrade-image" src="../images/upgrades/upgrade1.png" alt="Upgrade Image">
-                    </div>
-                    <div class="catalogue-description-container">
-                        <h2 id="upgrade-name">Amélioration 1</h2>
-                        <p id="upgrade-description">Description Amélioration 1</p>
-                        <div class="upgrade-details">
-                            <div class="stat">
-                                <span class="stat-label">Effet:</span>
-                                <span class="stat-value" id="upgrade-effect">Augmente le dégat</span>
-                            </div>
-                            <!-- <div class="stat">
-                                <span class="stat-label">Cost:</span>
-                                <span class="stat-value" id="upgrade-cost">100 points</span>
-                            </div> -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="catalogue-navigation">
-            <button id="catalogue-prev-btn">Précédant</button>
-            <button id="catalogue-next-btn">Prochain</button>
-        </div>
-    </div>
+        </div> 
+    </main>
+    
 </body>
 </html>

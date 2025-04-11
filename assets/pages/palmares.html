@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Titre de la page--> 
     <title>Palmares</title>
+    <!--Lien vers le fichier CSS-->
     <link rel="stylesheet" href="../styles/styles.css">
+    <!--Lien vers l'icône de la page-->
     <link rel="shortcut icon" href="../images/logo.png" type="image/x-icon">
+    <!--Lien vers les polices de caractères-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!--Lien vers les scripts-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../scripts/palmares.js"></script>
     <script src="../scripts/navAuth.js"></script>
 </head>
 <body>
+    <!--Barre de Navigation-->
     <nav>
         <ul class="nav-left">
             <li>
@@ -26,16 +33,11 @@
             <li><a href="index.html">Accueil</a></li>
             <li><a href="about.html">À propos</a></li>
             <li><a href="catalogue.html">Catalogue</a></li>
-            <li><a href="play.html">Jouer</a></li>
-            <li><a href="palmares.html">Palmares</a></li>
+            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
+            <li><a href="palmares.html">Palmarès</a></li>
+            <li><a href="feedback.html">Feedback</a></li>
         </ul>
         <ul class="nav-right">
-            <div class="toggle-switch">
-                <label class="switch-label">
-                  <input type="checkbox" class="checkbox">
-                  <span class="slider"></span>
-                </label>
-            </div>  
             <div class="menu">
                 <div class="item">
                   <a href="#" class="link">
@@ -61,7 +63,8 @@
               </div>
         </ul>
     </nav>
-
+    
+    <!--Conteneur principal-->
     <main>
         <div class="palmares-container">
             <h1>Tableau des scores</h1>
