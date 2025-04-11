@@ -33,7 +33,7 @@ async function login(username, password) {
             formData.append('passe', password);
             
             // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            let response = await fetch(`${baseUrl}/geometrik/api.php/connexion`, {
+            let response = await fetch(`${baseUrl}/connexion`, {
                 method: 'POST',
                 body: formData
             });

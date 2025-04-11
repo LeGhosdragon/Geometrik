@@ -3,8 +3,8 @@
 const ENV = 'dev';
 
 const baseUrl = (ENV === 'dev')
-    ? 'http://localhost/api'
-    : 'https://nexbit.ca';
+    ? 'http://localhost/H2025_TCH099_02_S1/api/api.php'
+    : 'https://nexbit.ca/geometrik/api.php';
 
 export default baseUrl;
 

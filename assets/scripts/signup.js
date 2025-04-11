@@ -80,7 +80,7 @@ async function createAccount(username, password) {
         formData.append('passe', password);
         
         // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        let response = await fetch(`${baseUrl}/geometrik/api.php/inscription`, {
+        let response = await fetch(`${baseUrl}/inscription`, {
             method: 'POST',
             body: formData
         });
