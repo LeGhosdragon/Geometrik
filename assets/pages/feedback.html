@@ -38,12 +38,22 @@
                     <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
                 </a>
             </li>
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="about.html">À propos</a></li>
-            <li><a href="catalogue.html">Catalogue</a></li>
-            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
-            <li><a href="palmares.html">Palmarès</a></li>
-            <li><a href="feedback.html">Feedback</a></li>
+            <li><a href="index.html" data-i18n="btnAcceuil" >Accueil</a></li>
+              <li><a href="about.html" data-i18n="btnApropos">À propos</a></li>
+              <li><a href="catalogue.html" data-i18n="btnCatalogue">Catalogue</a></li>
+              <li><a href="../../Jeu/assets/pages/index.html" data-i18n="btnJouer">Jouer</a></li>
+              <li><a href="palmares.html" data-i18n="btnPalmares">Palmarès</a></li>
+              <li><a href="feedback.html" >Feedback</a></li>
+              <li>
+                <label class="lang-switch">
+                  <input type="checkbox" id="lang-toggle">
+                  <span class="lang-slider">
+                    <span class="lang-label fr">FR</span>
+                    <span class="lang-label en">EN</span>
+                    <span class="lang-ball"></span>
+                  </span>
+                </label>
+              </li>
         </ul>
         <ul class="nav-right">
           <li>
@@ -79,16 +89,15 @@
     <div class="container">
         <!-- Conteneur de feedback -->
         <div class="feedback-container">
-        <h1>Feedback</h1>
-        <p>Ceci est un projet qui nous tient à coeur, nous aimerions des commentaires si</p>
-        <p>vous souhaitez nous aider à améliorer notre jeu ou tout simplement dire que vous l'appréciez!</p>
-    </div>
+            <h1 data-i18n="feedback_title">Feedback</h1>
+            <p data-i18n="feedback_intro1">Ceci est un projet qui nous tient à coeur...</p>
+            <p data-i18n="feedback_intro2">...ou tout simplement dire que vous l'appréciez!</p></div>
     </header>
 
     <!-- Conteneur principal pour le formulaire -->
     <main>
     <form id="feedback-form">
-        <h1>Votre avis compte!</h1>
+        <h1 data-i18n="feedback_form_title">Votre avis compte!</h1>
 
         <!-- From Uiverse.io by LeonKohli --> 
         <div class="radio">
@@ -138,11 +147,12 @@
             </label>
         </div>
         <div class="feedback-categories">
-            <div class="category-badge" data-category="gameplay">Gameplay</div>
-            <div class="category-badge" data-category="interface">Interface</div>
-            <div class="category-badge" data-category="difficulté">Difficulté</div>
-            <div class="category-badge" data-category="suggestions">Suggestions</div>
-            <div class="category-badge" data-category="bugs">Bugs</div>
+            <div class="category-badge" data-category="gameplay" data-i18n="cat_gameplay">Gameplay</div>
+            <div class="category-badge" data-category="interface" data-i18n="cat_interface">Interface</div>
+            <div class="category-badge" data-category="difficulté" data-i18n="cat_difficulte">Difficulté</div>
+            <div class="category-badge" data-category="suggestions" data-i18n="cat_suggestions">Suggestions</div>
+            <div class="category-badge" data-category="bugs" data-i18n="cat_bugs">Bugs</div>
+
         </div>
     
         <div class="feedback-input">
@@ -169,14 +179,14 @@
                     </svg>
                 </div>
                 </div>
-                <span>Envoyer</span>
+                <span data-i18n="btn_envoyer">Envoyer</span>
             </button>
         </div>
-        <p>Merci pour votre feedback !</p>
+        <p data-i18n="feedback_thanks">Merci pour votre feedback !</p>
     </form>
     
     </main>
-    
+    <script src="../scripts/lang.js"></script>
 
 </body>
 </html>

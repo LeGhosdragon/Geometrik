@@ -3,87 +3,125 @@ document.addEventListener('DOMContentLoaded', function() {
     const catalogueData = {
         characters: [
             {
-                name: "Guerrier",
-                description: "Un guerrier avec une épée",
-                image: "../images/joueur_epee.png",
-                health: 20,
-                attack: 1
+              name: { fr: "Guerrier", en: "Warrior" },
+              description: {
+                fr: "Un guerrier avec une épée",
+                en: "A warrior with a sword"
+              },
+              image: "../images/joueur_epee.png",
+              health: 20,
+              attack: 1
             },
             {
-                name: "Tireur d'elite",
-                description: "Un tireur avec une précision incroyable",
-                image: "../images/joueur_gun.png",
-                health: 20,
-                attack: 1
+              name: { fr: "Tireur d'elite", en: "Sharpshooter" },
+              description: {
+                fr: "Un tireur avec une précision incroyable",
+                en: "A shooter with incredible accuracy"
+              },
+              image: "../images/joueur_gun.png",
+              health: 20,
+              attack: 1
             }
-        ],
-        enemies: [
+          ],
+          
+          enemies: [
             {
-                name: "Normal",
-                description: "Ceci est l'ennemi de base",
-                image: "../images/ennemi_normal.png",
-                health: 25,
-                attack: 1
+              name: { fr: "Normal", en: "Normal" },
+              description: {
+                fr: "Ceci est l'ennemi de base",
+                en: "This is the basic enemy"
+              },
+              image: "../images/ennemi_normal.png",
+              health: 25,
+              attack: 1
             },
             {
-                name: "Gunner",
-                description: "Cet ennemi utilise une arme à feu",
-                image: "../images/ennemi_gunner.png",
-                health: 15,
-                attack: 1
+              name: { fr: "Gunner", en: "Gunner" },
+              description: {
+                fr: "Cet ennemi utilise une arme à feu",
+                en: "This enemy uses a firearm"
+              },
+              image: "../images/ennemi_gunner.png",
+              health: 15,
+              attack: 1
             },
+          
             {
-                name: "Runner",
-                description: "Cet ennemi est rapide",
+                name: { fr: "Runner", en: "Runner" },
+                description: {
+                    fr: "Cet ennemi est rapide",
+                    en: "This enemy is fast"
+                },
                 image: "../images/ennemi_runner.png",
                 health: 15,
                 attack: 1
             },
             {
-                name: "Tank",
-                description: "Cet ennemi a une grande défense",
+                name: { fr: "Tank", en: "Tank" },
+                description: {
+                    fr: "Cet ennemi a une grande défense",
+                    en: "This enemy has high defense"
+                },
                 image: "../images/ennemi_tank.png",
                 health: 50,
                 attack: 1
             },
             {
-                name: "Exp",
-                description: "Cet ennemi contient le cumul des points d'expériences non ramassés",
+                name: { fr: "Exp", en: "Exp" },
+                description: {
+                    fr: "Cet ennemi contient le cumul des points d'expériences non ramassés",
+                    en: "This enemy contains uncollected experience points"
+                },
                 image: "../images/ennemi_exp.png",
                 health: 250,
                 attack: 0
             },
             {
-                name: "Boss Normal",
-                description: "",
+                name: { fr: "Boss Normal", en: "Normal Boss" },
+                description: {
+                    fr: "Un boss standard avec des statistiques équilibrées",
+                    en: "A standard boss with balanced stats"
+                },
                 image: "../images/boss_normal.png",
                 health: 5950,
                 attack: 10
             },
             {
-                name: "Boss Runner",
-                description: "",
+                name: { fr: "Boss Runner", en: "Runner Boss" },
+                description: {
+                    fr: "Un boss rapide et agile",
+                    en: "A fast and agile boss"
+                },
                 image: "../images/boss_runner.png",
                 health: 2000,
                 attack: 3
             },
             {
-                name: "Boss Tank",
-                description: "",
+                name: { fr: "Boss Tank", en: "Tank Boss" },
+                description: {
+                    fr: "Un boss avec une défense exceptionnelle",
+                    en: "A boss with exceptional defense"
+                },
                 image: "../images/boss_tank.png",
                 health: 2733,
                 attack: 2
             },
             {
-                name: "Boss Gunner",
-                description: "",
+                name: { fr: "Boss Gunner", en: "Gunner Boss" },
+                description: {
+                    fr: "Un boss qui utilise des armes à feu",
+                    en: "A boss that uses firearms"
+                },
                 image: "../images/boss_gunner.png",
                 health: 2578,
                 attack: 1
             },
             {
-                name: "Boss Bunny",
-                description: "",
+                name: { fr: "Boss Bunny", en: "Bunny Boss" },
+                description: {
+                    fr: "Un boss rapide et imprévisible",
+                    en: "A fast and unpredictable boss"
+                },
                 image: "../images/boss_bunny.png",
                 health: 2380,
                 attack: 5
@@ -92,88 +130,130 @@ document.addEventListener('DOMContentLoaded', function() {
         ],
         upgrades: [
             {
-                name: "Point de vie",
-                description: "Joueur",
+                name: { fr: "Point de vie", en: "Health Points" },
+                description: { fr: "Joueur", en: "Player" },
                 image: "../../Jeu/assets/images/Health.gif",
-                effect: "Augmente les points de vies du joueur"
+                effect: {
+                    fr: "Augmente les points de vies du joueur",
+                    en: "Increases the player's health points"
+                }
             },
             {
-                name: "Vitesse",
-                description: "Joueur",
+                name: { fr: "Vitesse", en: "Speed" },
+                description: { fr: "Joueur", en: "Player" },
                 image: "../../Jeu/assets/images/MovementSpeed.gif",
-                effect: "Augmente la vitesse du joueur"
+                effect: {
+                    fr: "Augmente la vitesse du joueur",
+                    en: "Increases the player's speed"
+                }
             },
             {
-                name: "Zone de Collection",
-                description: "Joueur",
+                name: { fr: "Zone de Collection", en: "Collection Zone" },
+                description: { fr: "Joueur", en: "Player" },
                 image: "../../Jeu/assets/images/Magnet.gif",
-                effect: "Augmente la zone de collection d'expérience du joueur"
+                effect: {
+                    fr: "Augmente la zone de collection d'expérience du joueur",
+                    en: "Increases the player's experience collection zone"
+                }
             },
             {
-                name: "Explosion de joueur",
-                description: "Joueur",
+                name: { fr: "Explosion de joueur", en: "Player Explosion" },
+                description: { fr: "Joueur", en: "Player" },
                 image: "../../Jeu/assets/images/PlayerBoom.gif",
-                effect: "Le joueur cause une explosion autour de lui lorsqu'un ennemie le touche"
+                effect: {
+                    fr: "Le joueur cause une explosion autour de lui lorsqu'un ennemi le touche",
+                    en: "The player causes an explosion around them when an enemy touches them"
+                }
             },
             {
-                name: "Zone d'explosion",
-                description: "Joueur",
+                name: { fr: "Zone d'explosion", en: "Explosion Zone" },
+                description: { fr: "Joueur", en: "Player" },
                 image: "../../Jeu/assets/images/PlayerBoom.gif",
-                effect: "Augmente la zone d'explosion du joueur"
+                effect: {
+                    fr: "Augmente la zone d'explosion du joueur",
+                    en: "Increases the player's explosion zone"
+                }
             },
             {
-                name: "Chance de coup critique",
-                description: "Joueur",
+                name: { fr: "Chance de coup critique", en: "Critical Hit Chance" },
+                description: { fr: "Joueur", en: "Player" },
                 image: "../../Jeu/assets/images/CritChance.gif",
-                effect: "Augmente les chances de coup critique du joueur"
+                effect: {
+                    fr: "Augmente les chances de coup critique du joueur",
+                    en: "Increases the player's critical hit chance"
+                }
             },
             {
-                name: "Augmentation de dégâts critiques",
-                description: "Joueur",
+                name: { fr: "Augmentation de dégâts critiques", en: "Critical Damage Increase" },
+                description: { fr: "Joueur", en: "Player" },
                 image: "../../Jeu/assets/images/CritDMG.gif",
-                effect: "Augmente les dégâts critiques du joueur"
+                effect: {
+                    fr: "Augmente les dégâts critiques du joueur",
+                    en: "Increases the player's critical damage"
+                }
             },
             {
-                name: "Temps de recharge",
-                description: "Guerrier et Tireur d'élite",
+                name: { fr: "Temps de recharge", en: "Cooldown" },
+                description: { fr: "Guerrier et Tireur d'élite", en: "Warrior and Sharpshooter" },
                 image: "../../Jeu/assets/images/Cooldown.gif",
-                effect: "Diminue le temps de recharge des attaques du joueur"
+                effect: {
+                    fr: "Diminue le temps de recharge des attaques du joueur",
+                    en: "Decreases the player's attack cooldown"
+                }
             },
             {
-                name: "Dégâts",
-                description: "Guerrier et Tireur d'élite",
+                name: { fr: "Dégâts", en: "Damage" },
+                description: { fr: "Guerrier et Tireur d'élite", en: "Warrior and Sharpshooter" },
                 image: "../../Jeu/assets/images/Dmg.gif",
-                effect: "Augmente les dégâts du joueur"
+                effect: {
+                    fr: "Augmente les dégâts du joueur",
+                    en: "Increases the player's damage"
+                }
             },
             {
-                name: "Recul",
-                description: "Guerrier et Tireur d'élite",
+                name: { fr: "Recul", en: "Knockback" },
+                description: { fr: "Guerrier et Tireur d'élite", en: "Warrior and Sharpshooter" },
                 image: "../../Jeu/assets/images/Knockback.gif",
-                effect: "Augmente le recul des ennemis touchés par l'arme du joueur"
+                effect: {
+                    fr: "Augmente le recul des ennemis touchés par l'arme du joueur",
+                    en: "Increases the knockback of enemies hit by the player's weapon"
+                }
             },
             {
-                name: "Piercing",
-                description: "Tireur d'élite",
+                name: { fr: "Piercing", en: "Piercing" },
+                description: { fr: "Tireur d'élite", en: "Sharpshooter" },
                 image: "../../Jeu/assets/images/Pierce.gif",
-                effect: "Augmente le nombre d'ennemis touchés par les balles du joueur"
+                effect: {
+                    fr: "Augmente le nombre d'ennemis touchés par les balles du joueur",
+                    en: "Increases the number of enemies hit by the player's bullets"
+                }
             },
             {
-                name: "Grandeur de la balle",
-                description: "Tireur d'élite",
+                name: { fr: "Grandeur de la balle", en: "Bullet Size" },
+                description: { fr: "Tireur d'élite", en: "Sharpshooter" },
                 image: "../../Jeu/assets/images/BulletSize.gif",
-                effect: "Augmente la taille des balles du Tireur d'élite"
+                effect: {
+                    fr: "Augmente la taille des balles du Tireur d'élite",
+                    en: "Increases the size of the Sharpshooter's bullets"
+                }
             },
             {
-                name: "Largeur de l'epée",
-                description: "Guerrier",
+                name: { fr: "Largeur de l'épée", en: "Sword Width" },
+                description: { fr: "Guerrier", en: "Warrior" },
                 image: "../../Jeu/assets/images/SwordWidth.gif",
-                effect: "Augmente la largeur de l'épée du Guerrier"
+                effect: {
+                    fr: "Augmente la largeur de l'épée du Guerrier",
+                    en: "Increases the Warrior's sword width"
+                }
             },
             {
-                name: "Longueur de l'epée",
-                description: "Guerrier",
+                name: { fr: "Longueur de l'épée", en: "Sword Length" },
+                description: { fr: "Guerrier", en: "Warrior" },
                 image: "../../Jeu/assets/images/BulletSize.gif",
-                effect: "Augmente la longueur de l'épée du Guerrier"
+                effect: {
+                    fr: "Augmente la longueur de l'épée du Guerrier",
+                    en: "Increases the Warrior's sword length"
+                }
             }
         ]
     };
@@ -271,9 +351,11 @@ document.addEventListener('DOMContentLoaded', function() {
      */ 
     function updateDetailView() {
         const currentData = catalogueData[state.currentSection][state.currentIndex];
+        const lang = localStorage.getItem('lang') || 'fr';
         if (!currentData) {
             console.error(`No data found for section ${state.currentSection} at index ${state.currentIndex}`);
             return;
+            
         }
         
         // Mapping pour obtenir le bon préfixe d'ID pour chaque section
@@ -300,8 +382,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const descriptionElement = document.getElementById(elementIds.description);
         const imageElement = document.getElementById(elementIds.image);
         
-        if (nameElement) nameElement.textContent = currentData.name;
-        if (descriptionElement) descriptionElement.textContent = currentData.description;
+
+        if (nameElement) nameElement.textContent = currentData.name[lang] || currentData.name.fr;
+        if (descriptionElement) descriptionElement.textContent = currentData.description[lang] || currentData.description.fr;
+
         if (imageElement) imageElement.src = currentData.image;
         
         // Mettre à jour les statistiques spécifiques
@@ -319,8 +403,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (enemyAttackElement) enemyAttackElement.textContent = currentData.attack || 'N/A';
                 break;
             case 'upgrades':
-                const effectElement = document.getElementById('upgrade-effect');
-                if (effectElement) effectElement.textContent = currentData.effect || 'N/A';
+                    const effectElement = document.getElementById('upgrade-effect');
+                    if (effectElement) effectElement.textContent = currentData.effect[lang] || currentData.effect.fr;
                 break;
         }
         console.log(state.currentIndex, currentData);
@@ -470,4 +554,6 @@ document.addEventListener('DOMContentLoaded', function() {
             );
         }
     }
+    window.updateCatalogueLanguage = updateDetailView;
+
 });

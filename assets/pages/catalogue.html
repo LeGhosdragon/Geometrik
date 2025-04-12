@@ -30,12 +30,22 @@
                     <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
                 </a>
             </li>
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="about.html">À propos</a></li>
-            <li><a href="catalogue.html">Catalogue</a></li>
-            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
-            <li><a href="palmares.html">Palmarès</a></li>
-            <li><a href="feedback.html">Feedback</a></li>
+            <li><a href="index.html" data-i18n="btnAcceuil" >Accueil</a></li>
+              <li><a href="about.html" data-i18n="btnApropos">À propos</a></li>
+              <li><a href="catalogue.html" data-i18n="btnCatalogue">Catalogue</a></li>
+              <li><a href="../../Jeu/assets/pages/index.html" data-i18n="btnJouer">Jouer</a></li>
+              <li><a href="palmares.html" data-i18n="btnPalmares">Palmarès</a></li>
+              <li><a href="feedback.html" >Feedback</a></li>
+              <li>
+                <label class="lang-switch">
+                  <input type="checkbox" id="lang-toggle">
+                  <span class="lang-slider">
+                    <span class="lang-label fr">FR</span>
+                    <span class="lang-label en">EN</span>
+                    <span class="lang-ball"></span>
+                  </span>
+                </label>
+              </li>
         </ul>
         <ul class="nav-right">
             <div class="menu">
@@ -69,9 +79,9 @@
         <div class="catalogue-container">
             <!--Boutons de navigation-->
             <div class="catalogue-buttons">
-                <button id="catalogue-characters-btn" class="glow-effect">Héros</button>
-                <button id="catalogue-enemies-btn">Ennemis</button>
-                <button id="catalogue-upgrades-btn">Améliorations</button>
+                <button id="catalogue-characters-btn" class="glow-effect" data-i18n="heros">Héros</button>
+                <button id="catalogue-enemies-btn" data-i18n="ennemis">Ennemis</button>
+                <button id="catalogue-upgrades-btn" data-i18n="amelioration">Améliorations</button>
             </div>
 
             <!--Contenu du catalogue-->
@@ -87,11 +97,11 @@
                             <p id="character-description">Description du personnage</p>
                             <div class="character-stats">
                                 <div class="stat">
-                                    <span class="stat-label">Point de vie:</span>
+                                    <span class="stat-label" data-i18n="pv">Point de vie:</span>
                                     <span class="stat-value" id="character-health">20</span>
                                 </div>
                                 <div class="stat">
-                                    <span class="stat-label">Dégâts:</span>
+                                    <span class="stat-label" data-i18n="degats">Dégâts:</span>
                                     <span class="stat-value" id="character-attack">1</span>
                                 </div>
                             </div>
@@ -110,11 +120,11 @@
                             <p id="enemy-description">Description de l'ennemi</p>
                             <div class="enemy-stats">
                                 <div class="stat">
-                                    <span class="stat-label">Point de vie:</span>
+                                    <span class="stat-label" data-i18n="pv">Point de vie:</span>
                                     <span class="stat-value" id="enemy-health">20</span>
                                 </div>
                                 <div class="stat">
-                                    <span class="stat-label">Dégâts:</span>
+                                    <span class="stat-label" data-i18n="degats">Dégâts:</span>
                                     <span class="stat-value" id="enemy-attack">1</span>
                                 </div>
                             </div>
@@ -133,7 +143,7 @@
                             <p id="upgrade-description">Description de l'amélioration</p>
                             <div class="upgrade-details">
                                 <div class="stat">
-                                    <span class="stat-label">Effet:</span>
+                                    <span class="stat-label" data-i18n="effet">Effet:</span>
                                     <span class="stat-value" id="upgrade-effect">Description de l'effet</span>
                                 </div>
                             </div>
@@ -144,11 +154,13 @@
 
             <!--Navigation-->
             <div class="catalogue-navigation">
-                <button id="catalogue-prev-btn">Précédent</button>
-                <button id="catalogue-next-btn">Suivant</button>
+                <button id="catalogue-prev-btn" data-i18n="btnPrecedent">Précédent</button>
+                <button id="catalogue-next-btn" data-i18n="btnSuivant">Suivant</button>
             </div>
         </div> 
     </main>
-    
+    <script src="../scripts/lang.js"></script>
+    <script src="../scripts/catalogue.js"></script>
+
 </body>
 </html>
