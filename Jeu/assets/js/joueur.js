@@ -625,11 +625,11 @@ export class Joueur {
                     
                     // S'assurer que les valeurs sont toujours des entiers positifs et au moins 1
                     const kills = Math.max(1, Math.round(this.statistics.kills));
-                    const expGained = Math.max(1, Math.round(this.statistics.expGained));
+                    const expGained = this.lvl;//Math.max(1, Math.round(this.statistics.expGained));
                     const timePlayed = Math.round(this.statistics.timePlayed);
                     
                     // Recalculer le score exactement comme le backend l'attend
-                    const score = kills * expGained * timePlayed;
+                    const score = kills * this.lvl * timePlayed;
 
                     const formData = new FormData();
                     formData.append('jeton', jeton);
