@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function(){
               confirmButtonText: 'OK'
               }).then((result) => {
               if (result.isConfirmed) {
-                  localStorage.removeItem('jeton');
+                localStorage.removeItem('jeton');
                   window.location.href = '../pages/index.html';
               }
               });
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function(){
                   confirmButtonText: 'OK'
               }).then((result) => {
                   if (result.isConfirmed) {
-                      localStorage.removeItem('jeton');
+                    localStorage.removeItem('jeton');
                       window.location.href = '../pages/index.html';
                   }
               });

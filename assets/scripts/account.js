@@ -158,6 +158,19 @@ document.addEventListener('DOMContentLoaded', function() {
                             avatarElement.style.backgroundImage = 'none';
                         }
                     }
+                } else if (data.erreurs === 'JETON_INVALIDE') {
+                    // Jeton expiré, rediriger vers la page de connexion
+                    localStorage.removeItem('jeton');
+                    localStorage.removeItem('username');
+                    Swal.fire({
+                        title: 'Session expirée',
+                        text: 'Votre session a expiré. Veuillez vous reconnecter.',
+                        icon: 'info',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = 'login.html';
+                    });
+                    return;
                 }
             })
             .catch(error => {

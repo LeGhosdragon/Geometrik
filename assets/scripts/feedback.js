@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const categoryBadges = document.querySelectorAll('.category-badge');
     let selectedCategory = "";
     
-    // Récupérer le jeton depuis localStorage ou sessionStorage
-    const jeton = localStorage.getItem('jeton') || sessionStorage.getItem('jeton');
+    // Récupérer le jeton depuis localStorage
+    const jeton = localStorage.getItem('jeton');
     
     // Vérification si l'utilisateur est connecté
     if (!jeton) {
