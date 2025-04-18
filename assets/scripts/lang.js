@@ -12,6 +12,21 @@ const translations = {
       play: "JOUER",
       createAccount: "CRÉER COMPTE",
       trailer: "Bande-annonce",
+      connection: "Connexion",
+      signIn: "Se connecter",
+      signUp: "s'inscrire",
+
+      // page connexion
+      welcome : "Bon Retour!",
+      username: "Nom d'utilisateur:",
+      password: "Mot de passe:",
+      noAccount: "Vous n'avez pas de compte?",
+      link: "Inscrivez-vous",
+
+      //page créer un compte
+      welcome2: "Bienvenue chez Geometrik!",
+      haveAccount: "Vous avez déjà un compte?",
+
 
       // catalogue
       heros: "Héros",
@@ -97,6 +112,18 @@ const translations = {
       play: "PLAY",
       createAccount: "CREATE ACCOUNT",
       trailer: "Trailer",
+      connection: "Sign in",
+      signIn: "Log in",
+      signUp: "Sign up",
+
+      welcome : "Welcome back!",
+      username: "Username:",
+      password: "Password:",
+      noAccount: "You don't have an account?",
+
+      welcome2: "Welcome to Geometrik!",
+      haveAccount: "Already have an account?",
+
 
       heros: "Heros",
       ennemis: "Ennemies",
