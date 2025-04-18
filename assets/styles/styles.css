@@ -95,7 +95,9 @@ nav ul {
 .nav-right li {
     list-style: none;
 }
-/* Style du bouton langue comme un lien navbar */
+
+
+/* Style du bouton langue navbar */
 .nav-lang {
     display: flex;
     align-items: center;
@@ -106,42 +108,50 @@ nav ul {
   
   .lang-switch {
     position: relative;
-    width: 90px;
+    width: 75px;
     height: 36px;
     display: inline-block;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
+    
   }
   
   .lang-switch input {
     display: none;
+    
   }
   
   .lang-slider {
-    background-color: var(--accent); /* même couleur que les hover/link */
+    position: relative;
+    background-color: var(--accent); 
     border-radius: 50px;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 12px;
+    padding: 0 7px;
     color: var(--text);
     font-size: 0.9rem;
-    position: relative;
     text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary);
     transition: background-color 0.3s ease;
-    box-shadow: inset 0 0 5px rgba(var(--accent-rgb), 0.4);
+    box-shadow: 0 0 10px var(--primary);
+    overflow: hidden;
+    font-family: "Work Sans", sans-serif; 
+    font-weight: 500;
+    
   }
   
   .lang-slider:hover {
-    box-shadow: 0 0 10px var(--primary);
-  }
+
+    background: var(--btn-hover-bg);
+    background-color: #007acc;  }
   
   .lang-label {
     z-index: 2;
     width: 30px;
     text-align: center;
     pointer-events: none;
+    
   }
   
   .lang-ball {
@@ -152,13 +162,14 @@ nav ul {
     height: 32px;
     background: white;
     border-radius: 50%;
-    z-index: 1;
+    z-index: 2;
     transition: transform 0.3s ease;
-  }
+}
   
   /* Animation du curseur */
   .lang-switch input:checked + .lang-slider .lang-ball {
-    transform: translateX(50px);
+    transform: translateX(39px);
+    
   }
   
   

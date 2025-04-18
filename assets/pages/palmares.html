@@ -30,12 +30,22 @@
                     <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
                 </a>
             </li>
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="about.html">À propos</a></li>
-            <li><a href="catalogue.html">Catalogue</a></li>
-            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
-            <li><a href="palmares.html">Palmarès</a></li>
-            <li><a href="feedback.html">Feedback</a></li>
+            <li><a href="index.html" data-i18n="btnAcceuil" >Accueil</a></li>
+            <li><a href="about.html" data-i18n="btnApropos">À propos</a></li>
+            <li><a href="catalogue.html" data-i18n="btnCatalogue">Catalogue</a></li>
+            <li><a href="../../Jeu/assets/pages/index.html" data-i18n="btnJouer">Jouer</a></li>
+            <li><a href="palmares.html" data-i18n="btnPalmares">Palmarès</a></li>
+            <li><a href="feedback.html" >Feedback</a></li>
+            <li>
+              <label class="lang-switch">
+                <input type="checkbox" id="lang-toggle">
+                <span class="lang-slider">
+                  <span class="lang-label fr">FR</span>
+                  <span class="lang-label en">EN</span>
+                  <span class="lang-ball"></span>
+                </span>
+              </label>
+            </li>
         </ul>
         <ul class="nav-right">
             <div class="menu">
@@ -67,7 +77,7 @@
     <!--Conteneur principal-->
     <main>
         <div class="palmares-container">
-            <h1>Tableau des scores</h1>
+            <h1 data-i18n="title3">Tableau des scores</h1>
             <div id="palmares-container" class="palmares-container">
                 <div class="loading">Chargement des scores...</div>
             </div>

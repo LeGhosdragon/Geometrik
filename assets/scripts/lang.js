@@ -52,6 +52,9 @@ const translations = {
       cat_bugs: "Bugs",
       btn_envoyer: "Envoyer",
 
+      // Palmarès
+      title3: "Tableau des scores",
+
       // A propos
       title2: "Geometrik : Le jeu qui défie vos capacités comme joueur",
       descriptionText1: "Geometrik est un jeu d'action inspiré du jeu populaire \"Vampire Survivors\", où vous contrôlez des héros géométriques dans un monde envahi par des formes ennemies. Choisissez votre champion - un guerrier ou un tireur - et affrontez des vagues d'adversaires de plus en plus difficiles.",
@@ -133,6 +136,8 @@ const translations = {
       pv: "Healt points:",
       degats: "Damage:",
       effet: "Effect:",
+
+      title3: "Leaderboad",
 
       feedback_title: "Feedback",
       feedback_intro1: "This project is close to our hearts, we would love some comments if",
