@@ -51,7 +51,7 @@ export class Music {
                 return "../musics/mold-250080.mp3";
             case "milkMan":
                 return "../musics/panic-182769.mp3";
-            case "bossBunny" :
+            case "bossBunny":
                 return "../musics/NewJeans-Supernatural-Instrumental.mp3";
             case "gameOver":
                 return "../musics/game-over-38511.mp3";

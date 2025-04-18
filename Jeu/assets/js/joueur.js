@@ -49,7 +49,7 @@ export class Joueur {
         this.hpText.visible = false;
         this.healthBar.visible = false;
         this.damageFlash = this.createDmgFlash(app);
-        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0,  timePlayed : 0, timeShown : 0, score : 0, jeton: ""};
+        this.statistics = {UserName: "Guest", kills : 0, dmgDealt : 0, dmgTaken : 0, expGained : 0, level : 0,  timePlayed : 0, timeShown : 0, score : 0, jeton: ""};
         this.statistics.jeton = localStorage.getItem('jeton');
         this.statistics.UserName = localStorage.getItem('username');
     }
@@ -260,6 +260,7 @@ export class Joueur {
         if(this.exp >= this.expReq)
         {
             this.lvl++;
+            this.statistics.level = this.lvl;
             this.exp -= this.expReq < 0 ? 0 : this.expReq;
             this.expReq = 7 + Math.round(this.lvl**1.9);
             let upgrades = Joueur.upgrade.choisirUpgrade(this.numChoix);
@@ -330,27 +331,12 @@ export class Joueur {
     
     actualiseScore()
     {
-        // let val = Number.parseInt(this.statistics.kills <= 0 ? 1 : this.statistics.kills) *
-        // Number.parseInt(this.statistics.expGained <= 0 ? 1 : this.statistics.expGained) *
-        // Number.parseInt(this.statistics.timePlayed);
-    
-        // console.log(val);
-        // console.log( Number.parseInt(this.statistics.kills) *Number.parseInt(this.statistics.expGained) *Number.parseInt(this.statistics.timePlayed));
-        // if (!isNaN(val)) {
-        //     this.statistics.score = Number.parseInt(val);
-        // }
-    
-        // console.log(Number.parseInt(this.statistics.score) + " : score");
-    
-        // return this.statistics.score;
-
         // S'assurer que les valeurs sont toujours des entiers positifs et au moins 1
         const kills = Math.max(1, Math.round(this.statistics.kills));
-        const expGained = Math.max(1, Math.round(this.statistics.expGained));
         const timePlayed = Math.round(this.statistics.timePlayed);
         
         // Calcul du score selon la même formule que le backend
-        const score = kills * expGained * timePlayed;
+        const score = kills * 100 + timePlayed * 250 + this.lvl * 10000;
         
         // Vérifier et stocker le résultat
         if (!isNaN(score)) {
@@ -625,11 +611,11 @@ export class Joueur {
                     
                     // S'assurer que les valeurs sont toujours des entiers positifs et au moins 1
                     const kills = Math.max(1, Math.round(this.statistics.kills));
-                    const expGained = this.lvl;//Math.max(1, Math.round(this.statistics.expGained));
+                    const expGained = Math.max(1, Math.round(this.statistics.expGained));
                     const timePlayed = Math.round(this.statistics.timePlayed);
                     
                     // Recalculer le score exactement comme le backend l'attend
-                    const score = kills * this.lvl * timePlayed;
+                    const score = kills * 100 + timePlayed * 250 + this.lvl * 10000;
 
                     const formData = new FormData();
                     formData.append('jeton', jeton);
