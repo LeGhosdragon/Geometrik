@@ -1407,8 +1407,8 @@ animation: glowing_401 5s linear infinite;
 
 .github-link{
     text-align: center; 
-    margin-top: 50px; 
-    margin-bottom: 30px;
+    margin-top: 10px; 
+    margin-bottom: 10px;
 }
 
 .github-link a{
