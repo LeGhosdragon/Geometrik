@@ -1,3 +1,5 @@
+import baseUrl from './config.js';
+
 document.addEventListener("DOMContentLoaded", function(){
     // Constante pour les éléments du formulaire
     const passwordToggle = document.getElementById("password-toggle");
@@ -78,7 +80,7 @@ async function createAccount(username, password) {
         formData.append('passe', password);
         
         // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        let response = await fetch('https://nexbit.ca/geometrik/api.php/inscription', {
+        let response = await fetch(`${baseUrl}/inscription`, {
             method: 'POST',
             body: formData
         });
