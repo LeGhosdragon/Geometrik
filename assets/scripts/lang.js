@@ -154,7 +154,7 @@ const translations = {
 
       title2: "Geometrik: The game that challenges your skills as a player",
         descriptionText1: "Geometrik is an action game inspired by the popular game \"Vampire Survivors\" where you control geometric heroes in a world overrun by enemy shapes. Choose your champion - a warrior or a shooter - and face increasingly difficult waves of opponents.",
-        descriptionText2: "In this minimalist yet captivating universe, each entity is represented by distinctive geometric shapes. Heroes, enemies, and bosses possess unique abilities tied to their shapes, creating a visually simple yet strategically deep gaming experience.",
+        descriptionText2: "In this minimalist yet captivating universe, each entity is represented by a distinctive geometric shape. Heroes, enemies, and bosses possess unique abilities tied to their shapes, creating a visually simple yet strategically deep gaming experience.",
         descriptionText3: "Collect upgrades, develop your character, and try to survive as long as possible against the relentless assault of hostile geometric shapes. Face impressive bosses and see how far your skills can take you!",
 
         features: "Key Features:",
@@ -211,6 +211,11 @@ const translations = {
       }
     });
   
+
+    // Mettre a jour les textes du catalogue dynamiquement
+    if (typeof window.updateCatalogueLanguage === 'function') {
+      window.updateCatalogueLanguage(); }
+
     // Pour les placeholders (comme textarea)
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
       const key = el.getAttribute('data-i18n-placeholder');
