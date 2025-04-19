@@ -2638,9 +2638,10 @@ margin-top: 5px;
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 1em;
     font-weight: bold;
     margin: 10px 0;
+    margin-left: 10px;
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -2648,6 +2649,8 @@ margin-top: 5px;
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.8);
     font-family: 'Work Sans', sans-serif;
+    display: flex;
+    align-items: center;
 }
 
 .history-section {
