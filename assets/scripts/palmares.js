@@ -310,6 +310,24 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     /**
+     * Formate un nombre de secondes en "Xh Ymin Zs" ou "Ymin Zs"
+     * @param {number} totalSeconds 
+     * @returns {string}
+     */
+    function formatTime(totalSeconds) {
+        // Convertit en entier
+        const secs = Math.floor(totalSeconds);
+        const heures   = Math.floor(secs / 3600);
+        const minutes  = Math.floor((secs % 3600) / 60);
+        const secondes = secs % 60;
+    
+        if (heures > 0) {
+        return `${heures}h ${minutes}min ${secondes}s`;
+        }
+        return `${minutes}min ${secondes}s`;
+    }
+
+    /**
      * Cette fonction affiche les palmares
      * @param {*} palmares le palmares
      * @param {*} estAdmin si l'utilisateur est un admin
@@ -356,7 +374,7 @@ document.addEventListener("DOMContentLoaded", function() {
             {text: "Rang", sortable: false},
             {text: "Joueur", sortable: false},
             {text: "Score", sortable: true, key: 'score'},
-            {text: "Temps (s)", sortable: true, key: 'temps_partie'},
+            {text: "Temps", sortable: true, key: 'temps_partie'},
             {text: "Expérience", sortable: true, key: 'experience'},
             {text: "Ennemis éliminés", sortable: true, key: 'ennemis_enleve'},
             {text: "Date", sortable: true, key: 'date_soumission'}
@@ -427,7 +445,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             // Cellule temps
             const timeCell = document.createElement('td');
-            timeCell.textContent = score.temps_partie;
+            timeCell.textContent = formatTime(score.temps_partie);
             row.appendChild(timeCell);
             
             // Cellule experience

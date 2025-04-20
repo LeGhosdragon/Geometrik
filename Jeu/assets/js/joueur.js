@@ -167,6 +167,7 @@ export class Joueur {
         this.updatelvl();
         this.updateExpBar();
     }
+
     // Vérifie si le joueur a accumulé assez d'EXP
     updateExpBar() {
         let height = window.innerHeight;
@@ -361,18 +362,33 @@ export class Joueur {
         this.actualiseScore();
         console.log(this.statistics.score + " : score");
 
-        const seconde = ((this.statistics.timePlayed % 60000));
-        const minute = ((this.statistics.timePlayed % 3600000)  - seconde);
-        const heure = ((this.statistics.timePlayed % (3600000 * 60))  - minute - seconde);
-        if (Math.abs(heure.toFixed(0)) > 0) {
-            this.statistics.timeShown = Math.abs(heure.toFixed(0)) + "h " + 
-            (minute.toFixed(0) / 60) + "min " + 
-            seconde.toFixed(2) + "s";
+        const secondTotale = Math.floor(this.statistics.timePlayed);
+
+        const secondes = secondTotale % 60;
+        const minutes = Math.floor((secondTotale % 3600) / 60);
+        const heures = Math.floor(secondTotale / 3600);
+
+        if(heures > 0){
+            this.statistics.timeShown = `${heures}h ${minutes}min ${secondes}s`;
         } else {
-            this.statistics.timeShown = (minute.toFixed(0) / 60) + "min " + 
-            seconde.toFixed(2) + "s";
+            this.statistics.timeShown = `${minutes}min ${secondes}s`;
         }
+
+        // const seconde = ((this.statistics.timePlayed % 60000));
+        // const minute = ((this.statistics.timePlayed % 3600000)  - seconde);
+        // const heure = ((this.statistics.timePlayed % (3600000 * 60))  - minute - seconde);
+        // if (Math.abs(heure.toFixed(0)) > 0) {
+        //     this.statistics.timeShown = Math.abs(heure.toFixed(0)) + "h " + 
+        //     (minute.toFixed(0) / 60) + "min " + 
+        //     seconde.toFixed(2) + "s";
+        // } else {
+        //     this.statistics.timeShown = (minute.toFixed(0) / 60) + "min " + 
+        //     seconde.toFixed(2) + "s";
+        // }
         
+        console.log(secondes);
+        console.log(minutes);
+        console.log(heures);
     
         // Create PIXI text object
         const gameOverText = new PIXI.Text("", {  
@@ -596,68 +612,54 @@ export class Joueur {
 
     async sendStatsToDB()
     {
-        //J'enleve le domcontent... pcq on le fait dans une fonction async qui pourrait causer un bug avec les references this
-        //document.addEventListener("DOMContentLoaded", async function(){
+        try {
+            const jeton = this.statistics.jeton;
+            // S'assurer que les valeurs sont toujours des entiers positifs et au moins 1
+            const kills = Math.max(1, Math.round(this.statistics.kills));
+            const expGained = Math.max(1, Math.round(this.statistics.expGained));
+            const timePlayed = Math.round(this.statistics.timePlayed);
             
-            // const score = this.actualiseScore();
+            // Recalculer le score exactement comme le backend l'attend
+            const score = kills * 100 + timePlayed * 250 + this.lvl * 10000;
+
+            const formData = new FormData();
+            formData.append('jeton', jeton);
+            formData.append('ennemis', kills);
+            formData.append('experience', expGained);
+            formData.append('duree', timePlayed);
+            formData.append('score', score);
+
+            // Déboguer les valeurs envoyées
+            console.log("Valeurs envoyées au serveur:", {
+                jeton, kills, expGained, timePlayed, score
+            });
             
-                try {
-                    const jeton = this.statistics.jeton;
-                    // const kills = this.statistics.kills <= 0 ? 1 : this.statistics.kills;
-                    // const expGained = this.statistics.expGained <= 0 ? 1 : this.statistics.expGained;
-                    // const rawTimePlayed = parseInt(Math.round(this.statistics.timePlayed));
-                    // console.log(rawTimePlayed + " : time played");
-                    // //Le score est calculer de mm dans le backend
-                    // const score = this.actualiseScore();
-                    
-                    // S'assurer que les valeurs sont toujours des entiers positifs et au moins 1
-                    const kills = Math.max(1, Math.round(this.statistics.kills));
-                    const expGained = Math.max(1, Math.round(this.statistics.expGained));
-                    const timePlayed = Math.round(this.statistics.timePlayed);
-                    
-                    // Recalculer le score exactement comme le backend l'attend
-                    const score = kills * 100 + timePlayed * 250 + this.lvl * 10000;
-
-                    const formData = new FormData();
-                    formData.append('jeton', jeton);
-                    formData.append('ennemis', kills);
-                    formData.append('experience', expGained);
-                    formData.append('duree', timePlayed);
-                    formData.append('score', score);
-
-                    // Déboguer les valeurs envoyées
-                    console.log("Valeurs envoyées au serveur:", {
-                        jeton, kills, expGained, timePlayed, score
-                    });
-                    
-                    // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    let response = await fetch(`${baseUrl}/palmares/ajouter`, {
-                        method: 'POST',
-                        body: formData
-                    });
+            let response = await fetch(`${baseUrl}/palmares/ajouter`, {
+                method: 'POST',
+                body: formData
+            });
 
 
-                    const responseText = await response.text();
-                    console.log("RÃ©ponse du serveur:", responseText);
+            const responseText = await response.text();
+            console.log("RÃ©ponse du serveur:", responseText);
 
-                    let data;
-                    try {
-                        data = JSON.parse(responseText);
-                        if (data.reussite) {
-                            console.log("Score ajouter succes!");
-                        } else {
-                            console.error("Erreur score ajouter", data.erreurs);
-                        }
-                    } catch (e) {
-                        console.error("Failed to parse JSON:", e);
-                        throw new Error("Invalid JSON response");
-                    }
-                    
-                } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Une erreur est survenue lors de l\'envoi des statistiques: ' + error.message);
+            let data;
+            try {
+                data = JSON.parse(responseText);
+                if (data.reussite) {
+                    console.log("Score ajouter succes!");
+                } else {
+                    console.error("Erreur score ajouter", data.erreurs);
                 }
-        //});
+            } catch (e) {
+                console.error("Failed to parse JSON:", e);
+                throw new Error("Invalid JSON response");
+            }
+            
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Une erreur est survenue lors de l\'envoi des statistiques: ' + error.message);
+        }
     }
     createStatsBoards() {
         const container = document.createElement("div");

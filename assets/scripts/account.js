@@ -185,6 +185,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 avatarElement.style.backgroundImage = 'none';
             });
     }
+
+    /**
+    * Formate un nombre de secondes en "Xh Ymin Zs" ou "Ymin Zs"
+    * @param {number} totalSeconds 
+    * @returns {string}
+    */
+    function formatTime(totalSeconds) {
+        // Convertit en entier
+        const secs = Math.floor(totalSeconds);
+        const heures   = Math.floor(secs / 3600);
+        const minutes  = Math.floor((secs % 3600) / 60);
+        const secondes = secs % 60;
+    
+        if (heures > 0) {
+        return `${heures}h ${minutes}m ${secondes}s`;
+        }
+        return `${minutes}m ${secondes}s`;
+    }
     
     // Modifier la fonction loadUserData pour inclure la gestion des photos
     const originalLoadUserData = loadUserData;
@@ -222,7 +240,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Afficher la date d'inscription
                     const joinDate = new Date(data.utilisateur.date_inscription);
                     memberSinceElement.textContent = formatDate(joinDate);
-                    
+
+                    console.log(data);
+
                     // Afficher le classement
                     if (data.classement) {
                         rankingElement.textContent = data.classement;
@@ -243,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Afficher les statistiques
                     if (data.score) {
                         scoreElement.textContent = data.score.score;
-                        playTimeElement.textContent = (data.score.temps_partie / 1000).toFixed(1);
+                        playTimeElement.textContent = formatTime(data.score.temps_partie);
                         userXpElement.textContent = data.score.experience;
                         enemiesKilledElement.textContent = data.score.ennemis_enleve;
                         
@@ -345,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <tr>
                 <td>${formatDate(latestDate)}</td>
                 <td>${latestScore.score}</td>
-                <td>${(latestScore.temps_partie / 1000).toFixed(1)} sec</td>
+                <td>${formatTime(latestScore.temps_partie)}</td>
                 <td>${latestScore.experience}</td>
                 <td>${latestScore.ennemis_enleve}</td>
             </tr>

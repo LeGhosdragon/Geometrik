@@ -1658,7 +1658,8 @@ animation: glowing_401 5s linear infinite;
 .empty-message {
     text-align: center;
     font-size: 1.2rem;
-    color: #777;
+    color: var(--primary);
+    font-family: "Work Sans", sans-serif;
     padding: 3rem;
     background-color: var(--dark-background);
     border-radius: 8px;
@@ -2646,7 +2647,7 @@ margin-top: 5px;
 }
 
 .stat-label {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: rgba(255, 255, 255, 0.8);
     font-family: 'Work Sans', sans-serif;
     display: flex;
@@ -2866,7 +2867,7 @@ margin-top: 5px;
     }
     
     .stat-label {
-        font-size: 0.8rem;
+        font-size: 1.2rem;
     }
     
     .ranking-info {
