@@ -17,19 +17,11 @@
     <!-- Lien vers le script de feedback -->
     <script type="module" src="../scripts/feedback.js"></script>
     <!-- Lien vers le script de navigation et d'authentification -->
-    <script src="../scripts/navAuth.js"></script>
+    <script type="module" src="../scripts/navAuth.js"></script>
     <!-- Lien vers la librairie de SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Lien vers le script de background -->
-    <!-- <script src="../background/noise.min.js"></script>
-    <script src="../background/util.js"></script>
-    <script src="../background/swirl.js"></script> -->
-
 </head>
 <body>
-    <!--Conteneur de fond pour le background-->
-    <!-- <div class="content--canvas"></div> -->
-
     <!-- Barre de navigation -->
     <nav>
         <ul class="nav-left">
@@ -73,6 +65,8 @@
           </li>
         </ul>
     </nav>
+
+    <!-- Conteneur pour le feedback -->
     <div class="container">
         <!-- Conteneur principal -->
         <header id="feedback-header">
@@ -209,10 +203,5 @@
             </div>
         </main>
     </div>
-    
-
-    
-    
-
 </body>
 </html>

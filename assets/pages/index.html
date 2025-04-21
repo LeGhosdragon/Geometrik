@@ -16,8 +16,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <!-- Lien vers les scripts -->
-    <script src="../scripts/index.js"></script>
-    <script src="../scripts/navAuth.js"></script>
+    <script type="module" src="../scripts/index.js"></script>
+    <script type="module" src="../scripts/navAuth.js"></script>
     <script src="../background/noise.min.js"></script>
 		<script src="../background/util.js"></script>
 		<script src="../background/coalesce.js"></script>
@@ -73,16 +73,18 @@
       </nav>
       
       <!-- Conteneur principal -->
-      <div class="hero-container">
-        <div class="hero-content">
-            <h1 class="hero-title">Geometrik</h1>
-            <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
-            <div class="hero-buttons">
-              <button id="btn-jouer" class="btn btn-primary"> JOUER</button>
-              <button id="btn-compte" class="btn btn-secondary"> CRÉER COMPTE</button>
-            </div>
+      <main>
+        <div class="hero-container">
+          <div class="hero-content">
+              <h1 class="hero-title">Geometrik</h1>
+              <p class="hero-description">Personnalisez votre héros, élaborez une stratégie, et conquérez des vagues infinies d'ennemis!</p>
+              <div class="hero-buttons">
+                <button id="btn-jouer" class="btn btn-primary"> JOUER</button>
+                <button id="btn-compte" class="btn btn-secondary"> CRÉER COMPTE</button>
+              </div>
+          </div>
         </div>
-      </div>
+      </main>
       
       <!-- Section de la vidéo -->
       <section class="trailer-section">

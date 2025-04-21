@@ -1,4 +1,4 @@
-import baseUrl from './config.js';
+import Auth from './auth.js';
 
 document.addEventListener("DOMContentLoaded", function(){
     // Constante pour les éléments du formulaire
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function(){
     showPassword(passwordToggle, passwordInput);
 
     // Ajoute un écouteur de soumission sur le formulaire
-    signupForm.addEventListener("submit", function(event){  
+    signupForm.addEventListener("submit", async function(event){  
         // Empêche le formulaire de se soumettre
         event.preventDefault();
 
@@ -18,13 +18,75 @@ document.addEventListener("DOMContentLoaded", function(){
         let username = document.getElementById('username').value;
         let password = document.getElementById('password').value;
 
-        // Crée un compte
-        createAccount(username, password);
+        try {
+            // Utilise la méthode signup de Auth pour créer un compte
+            await Auth.signup(username, password);
+            localStorage.setItem('showSuccessSignupNotification', 'true');
+            window.location.href = '../pages/index.html';
+        } catch (error) {
+            handleSignupError(error);
+        }
     });
 });
 
-/**
- * Cette fonction permet de montrer ou cacher le mot de passe
+/** Gère les erreurs d'inscription et affiche les notifications appropriées
+ * 
+ * @param {Error} error - L'erreur capturée
+ */
+function handleSignupError(error){
+    console.error('Erreur:', error);
+
+    // Crée une notification
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showCancelButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+        }
+    });
+    
+    // Gestion des différents types d'erreurs
+    const errorMessage = error.message || "";
+
+    if(errorMessage.includes("Longueur du mot de passe invalide")){
+        Toast.fire({
+            icon: "error",
+            title: "Le mot de passe doit contenir entre 8 et 32 caractères"
+        });
+    } else if(errorMessage.includes("ne contiens pas de majuscule")){
+        Toast.fire({
+            icon: "error",
+            title: "Le mot de passe doit contenir au moins une majuscule"
+        });
+    } else if(errorMessage.includes("ne contiens pas de minuscule")){
+        Toast.fire({
+            icon: "error",
+            title: "Le mot de passe doit contenir au moins une minuscule"
+        });
+    } else if(errorMessage.includes("ne contiens pas de chiffres")){
+        Toast.fire({
+            icon: "error",
+            title: "Le mot de passe doit contenir au moins un chiffre"
+        });
+    } else if(errorMessage.includes("L'identifiant existe deja")){
+        Toast.fire({
+            icon: "error",
+            title: "Nom d'utilisateur déjà utilisé"
+        });
+    } else {
+        Toast.fire({
+            icon: "error",
+            title: "Erreur d'inscription"
+        });
+    }
+}
+
+/** Cette fonction permet de montrer ou cacher le mot de passe
+ * 
  * @param {*} passwordToggle le bouton pour montrer ou cacher le mot de passe
  * @param {*} passwordInput le champ de mot de passe
  */
@@ -43,8 +105,8 @@ function showPassword(passwordToggle, passwordInput){
     });
 }
 
-/**
- * Cette fonction permet d'afficher l'image de l'icône de mot de passe
+/** Cette fonction permet d'afficher l'image de l'icône de mot de passe
+ * 
  * @param {*} src le chemin de l'image
  * @param {*} width la largeur de l'image
  * @param {*} height la hauteur de l'image
@@ -64,135 +126,4 @@ function showImage(src, width, height, alt){
     passwordToggle.innerHTML = '';
     // Ajoute l'image à l'élément passwordToggle
     passwordToggle.appendChild(image);
-}
-
-/**
- * Cette fonction permet de créer un compte
- * @param {*} username le nom d'utilisateur
- * @param {*} password le mot de passe
- */
-async function createAccount(username, password) {  
-    try {
-        // Crée un objet FormData pour envoyer les données du formulaire
-        const formData = new FormData();
-        // Ajoute les données du formulaire à l'objet FormData
-        formData.append('identifiant', username);
-        formData.append('passe', password);
-        
-        // AJUSTER LE FETCH URL AU BESOIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        let response = await fetch(`${baseUrl}/inscription`, {
-            method: 'POST',
-            body: formData
-        });
-
-        // Vérifie si la réponse est ok
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const responseText = await response.text();
-        
-        // Analyse la réponse en JSON
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (e) {
-            console.error("Failed to parse JSON:", e);
-            throw new Error("Invalid JSON response");
-        }
-        
-        // Si la réponse est une réussite
-        if (data.reussite) {
-            // Stocke le jeton
-            localStorage.setItem('jeton', data.jeton);
-            localStorage.setItem('username', username);
-            // Stocke une variable pour afficher la notification sur la page suivante
-            localStorage.setItem('showSuccessSignupNotification', 'true');
-            
-            // Redirige vers la page principale
-            window.location.href = '../pages/index.html';
-        } else {
-            // Crée une notification
-            const Toast = Swal.mixin({
-                toast: true,
-                position: "top-end",
-                showCancelButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.onmouseenter = Swal.stopTimer;
-                    toast.onmouseleave = Swal.resumeTimer;
-                }
-            });
-            
-            // Vérifie les différents types d'erreurs
-            if (Array.isArray(data.erreurs)) {
-                // Si erreurs est pour les mots de passe
-                if (data.erreurs.some(err => err.includes("Longueur du mot de passe invalide"))) {
-                    Toast.fire({
-                        icon: "error",
-                        title: "Le mot de passe doit contenir entre 8 et 32 caractères"
-                    });
-                } else if (data.erreurs.some(err => err.includes("ne contiens pas de majuscule"))) {
-                    // Si le mot de passe ne contient pas de majuscule
-                    Toast.fire({
-                        icon: "error",
-                        title: "Le mot de passe doit contenir au moins une majuscule"
-                    });
-                } else if (data.erreurs.some(err => err.includes("ne contiens pas de minuscule"))) {
-                    // Si le mot de passe ne contient pas de minuscule
-                    Toast.fire({
-                        icon: "error",
-                        title: "Le mot de passe doit contenir au moins une minuscule"
-                    });
-                } else if (data.erreurs.some(err => err.includes("ne contiens pas de chiffres"))) {
-                    // Si le mot de passe ne contient pas de chiffre
-                    Toast.fire({
-                        icon: "error",
-                        title: "Le mot de passe doit contenir au moins un chiffre"
-                    });
-                } else {
-                    // Si le mot de passe ne contient pas de majuscule, de minuscule et de chiffre
-                    Toast.fire({
-                        icon: "error",
-                        title: data.erreurs[0] || "Erreur d'inscription"
-                    });
-                }
-            } else {
-                // Si erreurs est une chaîne de caractères pour le nom d'utilisateur
-                if (data.erreurs === "L'identifiant existe deja") {
-                    // Affiche une notification
-                    Toast.fire({
-                        icon: "error",
-                        title: "Nom d'utilisateur déjà utilisé"
-                    });
-                } else {
-                    // Affiche une notification
-                    Toast.fire({
-                        icon: "error",
-                        title: data.erreurs || "Erreur d'inscription"
-                    });
-                }
-            }
-        }   
-    } catch (error) {
-        // Affiche une notification
-        console.error('Erreur:', error);
-        const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showCancelButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.onmouseenter = Swal.stopTimer;
-                toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-        // Affiche une notification
-        Toast.fire({
-            icon: "error",
-            title: "Une erreur est survenue lors de l'inscription: " + error.message
-        });
-    }
 }

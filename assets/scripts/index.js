@@ -1,3 +1,5 @@
+import Auth from './auth.js';
+
 document.addEventListener("DOMContentLoaded", function(){
     // Récupérer la notification de succès d'inscription
     const showSuccessSignupNotification = localStorage.getItem('showSuccessSignupNotification');
@@ -5,8 +7,10 @@ document.addEventListener("DOMContentLoaded", function(){
     const showSuccessLoginNotification = localStorage.getItem('showSuccessLoginNotification');
     // Récupérer le conteneur de la page d'accueil
     const heroContainer = document.querySelector('.hero-container');
-    // Récupérer le jeton
-    const jeton = localStorage.getItem('jeton');
+    // Constante pour le bouton jouer
+    const btnJouer = document.getElementById("btn-jouer");
+    // Constante pour le bouton creer un compte
+    const btnCompte = document.getElementById("btn-compte");
     // Créer une instance de Toast
     const Toast = Swal.mixin({
         toast: true,
@@ -42,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     //Enlever le bouton compte lorsqu'on est connecté
-    if(jeton){
+    if(Auth.getAccessToken()){
         heroContainer.innerHTML = `<div class="hero-container">
         <div class="hero-content">
             <h1 class="hero-title">Geometrik</h1>
@@ -53,10 +57,6 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
       </div>`;
     }
-
-    // Constante pour les boutons
-    const btnJouer = document.getElementById("btn-jouer");
-    const btnCompte = document.getElementById("btn-compte");
 
     //Fonction pour le bouton jouer
     btnJouer.addEventListener("click", function(){
