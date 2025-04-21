@@ -21,6 +21,12 @@ Ce Dépot peut être utilisé avec le  **[Serveur](https://github.com/LeGhosdrag
 
 ## Diagrammes
 
+### Tech Stack
+![Geometrik_TechStack_Web](https://github.com/user-attachments/assets/8b8e925d-bd38-4dff-b3fb-b70c31ccadc1)
+
+### Diagramme de cas d'utilisation
+![Geometrik_Cas_dutilisation_Diagram](https://github.com/user-attachments/assets/dafd887c-7377-4ce6-8fac-13ca5f65696d)
+
 ---
 ## Fonctionnalités
 
