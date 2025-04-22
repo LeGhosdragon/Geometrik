@@ -491,6 +491,40 @@ transition: 0.3s;
     .nav-left {
         width: 85%;
     }
+
+    .hamburger {
+        width: 25px;
+        height: 18px;
+    }
+}
+
+/* ✅ Très petits mobiles (≤ 375px)*/
+@media screen and (max-width: 375px) {
+    nav {
+        padding: 8px 3%;
+        height: 50px; 
+    }
+    
+    .hamburger {
+        width: 22px;
+        height: 16px;
+    }
+    
+    .nav-left {
+        width: 90%; 
+    }
+    
+    nav a {
+        font-size: 0.9em;
+    }
+    
+    .nav-left li {
+        margin: 12px 0;
+    }
+    
+    .submenu .submenu-link {
+        padding: 12px 20px;
+    }
 }
 
 /* ---------- Fin Style Barre de navigation ---------- */
