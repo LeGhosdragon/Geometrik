@@ -40,8 +40,7 @@ const translations = {
 
       // feedback
       feedback_title: "Feedback",
-      feedback_intro1: "Ceci est un projet qui nous tient à coeur, nous aimerions des commentaires si",
-      feedback_intro2: "vous souhaitez nous aider à améliorer notre jeu ou tout simplement dire que vous l'appréciez!",
+      feedback_intro1: "Ceci est un projet qui nous tient à coeur, nous aimerions des commentaires si vous souhaitez nous aider à améliorer notre jeu ou tout simplement dire que vous l'appréciez!",
       feedback_form_title: "Votre avis compte!",
       feedback_placeholder: "Dites-nous ce que vous pensez de notre jeu...",
       feedback_thanks: "Merci pour votre feedback !",
@@ -148,11 +147,10 @@ const translations = {
       title3: "Leaderboad",
 
       feedback_title: "Feedback",
-      feedback_intro1: "This project is close to our hearts, we would love some comments if",
-      feedback_intro2: "you want to help us improve the game or just say you enjoy it!",
+      feedback_intro1: "This project is close to our hearts! Please let us know how we can improve the game or just say what you liked!",
       feedback_form_title: "We value your feedback!",
       feedback_placeholder: "Tell us what you think about our game...",
-      feedback_thanks: "Thanks for your feedback!",
+      feedback_thanks: "Thank you for your feedback!",
       cat_gameplay: "Gameplay",
       cat_interface: "Interface",
       cat_difficulte: "Difficulty",
