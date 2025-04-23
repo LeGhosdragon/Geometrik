@@ -36,12 +36,22 @@
                     <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik">
                 </a>
             </li>
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="about.html">À propos</a></li>
-            <li><a href="catalogue.html">Catalogue</a></li>
-            <li><a href="../../Jeu/assets/pages/index.html">Jouer</a></li>
-            <li><a href="palmares.html">Palmarès</a></li>
-            <li><a href="feedback.html">Feedback</a></li>
+            <li><a href="index.html" data-i18n="btnAcceuil" >Accueil</a></li>
+            <li><a href="about.html" data-i18n="btnApropos">À propos</a></li>
+            <li><a href="catalogue.html" data-i18n="btnCatalogue">Catalogue</a></li>
+            <li><a href="../../Jeu/assets/pages/index.html" data-i18n="btnJouer">Jouer</a></li>
+            <li><a href="palmares.html" data-i18n="btnPalmares">Palmarès</a></li>
+            <li><a href="feedback.html" >Feedback</a></li>
+            <li>
+              <label class="lang-switch">
+                <input type="checkbox" id="lang-toggle">
+                <span class="lang-slider">
+                  <span class="lang-label fr">FR</span>
+                  <span class="lang-label en">EN</span>
+                  <span class="lang-ball"></span>
+                </span>
+              </label>
+            </li>
         </ul>
         <ul class="nav-right">
             <div class="menu">
@@ -76,16 +86,16 @@
           <div class="form-container">
               <div class="form-section">
                   <img src="../images/logo.png" width="32" height="32" alt="Logo Geometrik" class="form-logo">
-                  <h1 class="form-title">Bon Retour!</h1>
+                  <h1 class="form-title" data-i18n="welcome" >Bon Retour!</h1>
                   
                   <form id="loginForm">
                       <div class="form-group">
-                          <label for="username">Nom d'utilisateur:</label>                   
+                          <label for="username" data-i18n="username">Nom d'utilisateur:</label>                   
                               <input type="text" name="username" id="username">       
                       </div>
                       
                       <div class="form-group">
-                          <label for="password">Mot de passe:</label>
+                          <label for="password" data-i18n="password">Mot de passe:</label>
                           <div class="password-container">
                               <input type="password" name="password" id="password">
                               <button type="button" class="password-toggle" id="password-toggle"><img src="../images/hide.png" alt="Hide password" width="20"></button>
@@ -95,7 +105,7 @@
 
                       
                       <div class="form-button">
-                          <button type="submit" id="btnSignup">
+                          <button type="submit" id="btnSignup" data-i18n="signIn">
                             <span>
                               Se Connecter
                             </span>
@@ -114,5 +124,8 @@
           </div>
       </div>
     </main>
+    
+    <script src="../scripts/lang.js"></script>
+
 </body>
 </html>
