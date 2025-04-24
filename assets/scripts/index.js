@@ -7,8 +7,6 @@ document.addEventListener("DOMContentLoaded", function(){
     const showSuccessLoginNotification = localStorage.getItem('showSuccessLoginNotification');
     // Récupérer le conteneur de la page d'accueil
     const heroContainer = document.querySelector('.hero-container');
-    // Constante pour le bouton jouer
-    const btnJouer = document.getElementById("btn-jouer");
     // Constante pour le bouton creer un compte
     const btnCompte = document.getElementById("btn-compte");
     // Créer une instance de Toast
@@ -57,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
       </div>`;
     }
+    const btnJouer = document.getElementById("btn-jouer");
 
     //Fonction pour le bouton jouer
     btnJouer.addEventListener("click", function(){
