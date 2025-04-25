@@ -162,6 +162,7 @@ function setup() {
     // Commencer la boucle du jeu
     app.ticker.add((delta) => play(delta));
     app.stage.addChild(debugText);
+
 }
 
 
@@ -522,9 +523,9 @@ document.addEventListener("mouseup", (event) =>
         joueur.hold = false;
     }
 });
-document.addEventListener('contextmenu', (event) =>{
-    event.preventDefault();
-});
+// document.addEventListener('contextmenu', (event) =>{
+//     event.preventDefault();
+// });
 
 document.addEventListener('keydown', event =>
 {
@@ -611,8 +612,15 @@ function addMenu() {
         location.reload(); // Reloads the page to restart
     });
 
-    const settings = createMenuItem("Settings", () => {
-        alert("Settings menu not implemented yet!");
+    const settings = createMenuItem("FullScreen", () => {
+        if(!document.fullscreenElement) {
+            document.body.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+            });
+        }
+        else {
+            document.exitFullscreen();
+        }
     });
 
     const exit = createMenuItem("Exit", () => {
@@ -624,6 +632,11 @@ function addMenu() {
     return container;
 }
 
+document.addEventListener('fullscreenchange', (event) => {
+    if (event.target.fullscreenElement) { // If fullscreen is entering
+      event.preventDefault(); // Prevent default action (exit fullscreen)
+    }
+  });
 
 function addJoysticks() {
     let leftJoystick = document.createElement("div");

@@ -1,5 +1,3 @@
-import baseUrl from '../../../assets/scripts/config.js';
-
 /**
  * La classe Joueur gère ses propriétés, son affichage, so progression et ses interactions
  * avec les monstres.
@@ -601,6 +599,9 @@ export class Joueur {
                     document.body.removeChild(container);
                     
                 }
+                document.body.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
             });
             container.appendChild(card);
         });
