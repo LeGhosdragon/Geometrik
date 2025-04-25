@@ -8,7 +8,6 @@ import { Upgrade } from './upgrades.js';
 import { Event } from './events.js';
 import { Music } from './musics.js';
 
-
 // Aliases
 const Application = PIXI.Application,
     Container = PIXI.Container,

@@ -11,6 +11,8 @@ export class Joueur {
     static Explosion = null;
     static EXP_BAR = document.getElementById('expBar');
     static Grid = null;
+    //static baseUrl = "https://nexbit.ca/geometrik/api.php";
+    static baseUrl = "http://localhost/H2025_TCH099_02_S1/api/api.php";
 
     constructor(app, size = 16, vitesse = 1, baseHP = 20, currentHP = baseHP, baseDMG = 15, elapsedTime = 0, couleur = 0xFF0000, weapons = ["sword","gun"]) {
         this.hold = false;
@@ -635,7 +637,7 @@ export class Joueur {
                 jeton, kills, expGained, timePlayed, score
             });
             
-            let response = await fetch(`${baseUrl}/palmares/ajouter`, {
+            let response = await fetch(`${Joueur.baseUrl}/palmares/ajouter`, {
                 method: 'POST',
                 body: formData
             });
