@@ -77,6 +77,11 @@ function handleSignupError(error){
             icon: "error",
             title: "Nom d'utilisateur déjà utilisé"
         });
+    } else if(errorMessage.includes("Nom d'utilisateur invalide: La longueur doit etre comprise entre 3 et 32 caracteres et ne doit pas contenir de caracteres speciaux")){
+        Toast.fire({
+            icon: "error",
+            title: "Le nom d'utilisateur doit contenir entre 3 et 20 caractères et ne doit pas contenir de caractères spéciaux"
+        });
     } else {
         Toast.fire({
             icon: "error",
